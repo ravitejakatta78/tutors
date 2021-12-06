@@ -705,6 +705,7 @@ class ServiceboyComponent extends Component{
 						$orderarray['preparedate'] =  $orderlist['preparedate'];
 						$orderarray['preparetime'] = $orderlist['preparetime']; 
 						$orderarray['orderline'] =  $orderlist['orderline'];
+						$orderarray['instructions'] =  $orderlist['instructions'];
 						$orderarray['discount_number'] =  sprintf("%.2f", (!empty($orderlist['discount_number']) ?   $orderlist['discount_number'] : 0));;;
 						$sqlpendingamount = "select sum(totalamount) as pendingamount from order_transactions 
 						where order_id = '".$orderlist['ID']."' and merchant_id = '".$orderlist['merchant_id']."' 
