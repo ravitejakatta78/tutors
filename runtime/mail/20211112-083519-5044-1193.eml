@@ -1,0 +1,312 @@
+Message-ID: <89664a67231ecf008335e5e4d2359174@superpilot.in>
+Date: Fri, 12 Nov 2021 08:35:19 +0530
+Subject: Database errors at example.com
+From: log@example.com
+To: admin@example.com, developer@example.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+2021-11-12 08:35:19
+[103.99.8.152][1][8f869e06757e365b46a1deb24a813101][e=
+rror][yii\db\Exception]
+PDOException: SQLSTATE[42000]: Syntax error or ac=
+cess violation: 1064
+You have an error in your SQL syntax; check the manu=
+al that
+corresponds to your MySQL server version for the right syntax to =
+use
+near 'fc.food_category=20
+=09=09,fc.ID food_category_id,REPLACE(REPLACE(REPLACE(title, " ",' at line=
+
+2 in
+/home/superqcp/public_html/dev/tutors/vendor/yiisoft/yii2/db/Comm=
+and.php:1302
+Stack trace:
+#0
+/home/superqcp/public_html/dev/tutors/ve=
+ndor/yiisoft/yii2/db/Command.php(1302):
+PDOStatement->execute()
+#1
+/h=
+ome/superqcp/public_html/dev/tutors/vendor/yiisoft/yii2/db/Command.php(1168=
+):
+yii\db\Command->internalExecute('select P.ID,P.t...')
+#2
+/home/sup=
+erqcp/public_html/dev/tutors/vendor/yiisoft/yii2/db/Command.php(410):
+yii=
+\db\Command->queryInternal('fetchAll', NULL)
+#3
+/home/superqcp/public_h=
+tml/dev/tutors/controllers/MerchantController.php(886):
+yii\db\Command->q=
+ueryAll()
+#4 [internal function]:
+app\controllers\MerchantController->a=
+ctionCoupon()
+#5
+/home/superqcp/public_html/dev/tutors/vendor/yiisoft/y=
+ii2/base/InlineAction.php(57):
+call_user_func_array(Array, Array)
+#6
+=
+/home/superqcp/public_html/dev/tutors/vendor/yiisoft/yii2/base/Controller.p=
+hp(181):
+yii\base\InlineAction->runWithParams(Array)
+#7
+/home/superqc=
+p/public_html/dev/tutors/vendor/yiisoft/yii2/base/Module.php(534):
+yii\ba=
+se\Controller->runAction('coupon', Array)
+#8
+/home/superqcp/public_html=
+/dev/tutors/vendor/yiisoft/yii2/web/Application.php(104):
+yii\base\Module=
+->runAction('merchant/coupon', Array)
+#9
+/home/superqcp/public_html/dev=
+/tutors/vendor/yiisoft/yii2/base/Application.php(392):
+yii\web\Applicatio=
+n->handleRequest(Object(yii\web\Request))
+#10 /home/superqcp/public_html/=
+dev/tutors/web/index.php(12):
+yii\base\Application->run()
+#11 {main}
+=
+
+Next yii\db\Exception: SQLSTATE[42000]: Syntax error or access
+violati=
+on: 1064 You have an error in your SQL syntax; check the manual
+that corr=
+esponds to your MySQL server version for the right syntax to
+use near 'fc=
+.food_category=20
+=09=09,fc.ID food_category_id,REPLACE(REPLACE(REPLACE(title, " ",' at line=
+
+2
+The SQL being executed was: select
+P.ID,P.title,P.food_category_qu=
+antity
+=09=09,P.image,,fc.food_category=20
+=09=09,fc.ID food_category_id,REPLACE(REPLACE(REPLACE(title, " ",
+"_"),"'=
+","_"),"/",",") modified_title
+=09=09,food_type_name
+=09=09,case when concat(title , " ",food_type_name) is null then title
+el=
+se concat(title , " ",food_type_name) end   titlewithqty
+=09=09from product P=20
+=09=09left join food_categeries fc on fc.ID =3D P.foodtype =20
+=09=09left join food_category_types fct on fct.ID =3D=20
+P.food_category_qu=
+antity and fct.merchant_id =3D  '8'
+=09=09where P.merchant_id =3D '8' and status=3D'1'  in
+/home/superqcp/pub=
+lic_html/dev/tutors/vendor/yiisoft/yii2/db/Schema.php:678
+Stack trace:
+=
+#0
+/home/superqcp/public_html/dev/tutors/vendor/yiisoft/yii2/db/Command.p=
+hp(1307):
+yii\db\Schema->convertException(Object(PDOException), 'select=
+
+P.ID,P.t...')
+#1
+/home/superqcp/public_html/dev/tutors/vendor/yiisof=
+t/yii2/db/Command.php(1168):
+yii\db\Command->internalExecute('select P.ID=
+,P.t...')
+#2
+/home/superqcp/public_html/dev/tutors/vendor/yiisoft/yii2/=
+db/Command.php(410):
+yii\db\Command->queryInternal('fetchAll', NULL)
+#3=
+
+/home/superqcp/public_html/dev/tutors/controllers/MerchantController.php=
+(886):
+yii\db\Command->queryAll()
+#4 [internal function]:
+app\control=
+lers\MerchantController->actionCoupon()
+#5
+/home/superqcp/public_html/d=
+ev/tutors/vendor/yiisoft/yii2/base/InlineAction.php(57):
+call_user_func_a=
+rray(Array, Array)
+#6
+/home/superqcp/public_html/dev/tutors/vendor/yiis=
+oft/yii2/base/Controller.php(181):
+yii\base\InlineAction->runWithParams(A=
+rray)
+#7
+/home/superqcp/public_html/dev/tutors/vendor/yiisoft/yii2/base=
+/Module.php(534):
+yii\base\Controller->runAction('coupon', Array)
+#8
+=
+/home/superqcp/public_html/dev/tutors/vendor/yiisoft/yii2/web/Application.p=
+hp(104):
+yii\base\Module->runAction('merchant/coupon', Array)
+#9
+/hom=
+e/superqcp/public_html/dev/tutors/vendor/yiisoft/yii2/base/Application.php(=
+392):
+yii\web\Application->handleRequest(Object(yii\web\Request))
+#10 /=
+home/superqcp/public_html/dev/tutors/web/index.php(12):
+yii\base\Applicat=
+ion->run()
+#11 {main}
+Additional Information:
+Array
+(
+    [0] =3D=
+> 42000
+    [1] =3D> 1064
+    [2] =3D> You have an error in your SQL sy=
+ntax; check the manual that
+corresponds to your MySQL server version for =
+the right syntax to use
+near 'fc.food_category=20
+=09=09,fc.ID food_category_id,REPLACE(REPLACE(REPLACE(title, " ",' at line=
+
+2
+)
+
+2021-11-12 08:35:19
+[103.99.8.152][1][8f869e06757e365b46a1d=
+eb24a813101][info][application]
+$_GET =3D []
+
+$_POST =3D []
+
+$_FI=
+LES =3D []
+
+$_COOKIE =3D [
+    '_csrf' =3D>
+'f57c3be72adc2fe92fc9c8=
+fd02cf5bdc4afcbaa9a2678495a6e1feb1663c7340a:2:{i:0;s:5:\"_csrf\";i:1;s:32:\=
+"DC1LwyKlzI-CsORG-4YL84nyWAPQxWnR\";}'
+    'PHPSESSID' =3D> '8f869e06757e=
+365b46a1deb24a813101'
+    '_identity' =3D>
+'c3b889cd877b5726118837083d5=
+33a3873e3aa7244d8bea834f1b0300e8e943ca:2:{i:0;s:9:\"_identity\";i:1;s:16:\"=
+[1,null,2592000]\";}'
+]
+
+$_SESSION =3D [
+    '__flash' =3D> []
+  =
+  '__id' =3D> 1
+    '__authKey' =3D> null
+]
+
+$_SERVER =3D [
+    '=
+CONTEXT_DOCUMENT_ROOT' =3D> '/home/superqcp/public_html'
+    'CONTEXT_PRE=
+FIX' =3D> ''
+    'DOCUMENT_ROOT' =3D> '/home/superqcp/public_html'
+    =
+'GATEWAY_INTERFACE' =3D> 'CGI/1.1'
+    'HTTPS' =3D> 'on'
+    'HTTP_ACCE=
+PT' =3D>
+'text/html,application/xhtml+xml,application/xml;q=3D0.9,image/a=
+vif,image/webp,*/*;q=3D0.8'
+    'HTTP_ACCEPT_ENCODING' =3D> 'gzip, deflat=
+e, br'
+    'HTTP_ACCEPT_LANGUAGE' =3D> 'en-US,en;q=3D0.5'
+    'HTTP_CAC=
+HE_CONTROL' =3D> 'max-age=3D0'
+    'HTTP_CONNECTION' =3D> 'keep-alive'
+=
+    'HTTP_COOKIE' =3D>
+'_csrf=3Df57c3be72adc2fe92fc9c8fd02cf5bdc4afcbaa9a=
+2678495a6e1feb1663c7340a%3A2%3A%7Bi%3A0%3Bs%3A5%3A%22_csrf%22%3Bi%3A1%3Bs%3=
+A32%3A%22DC1LwyKlzI-CsORG-4YL84nyWAPQxWnR%22%3B%7D;
+PHPSESSID=3D8f869e067=
+57e365b46a1deb24a813101;
+_identity=3Dc3b889cd877b5726118837083d533a3873e3=
+aa7244d8bea834f1b0300e8e943ca%3A2%3A%7Bi%3A0%3Bs%3A9%3A%22_identity%22%3Bi%=
+3A1%3Bs%3A16%3A%22%5B1%2Cnull%2C2592000%5D%22%3B%7D'
+    'HTTP_HOST' =3D>=
+ 'superpilot.in'
+    'HTTP_REFERER' =3D>
+'https://superpilot.in/dev/tut=
+ors/web/merchant/coupon'
+    'HTTP_SEC_FETCH_DEST' =3D> 'document'
+    =
+'HTTP_SEC_FETCH_MODE' =3D> 'navigate'
+    'HTTP_SEC_FETCH_SITE' =3D> 'sam=
+e-origin'
+    'HTTP_SEC_FETCH_USER' =3D> '?1'
+    'HTTP_UPGRADE_INSECUR=
+E_REQUESTS' =3D> '1'
+    'HTTP_USER_AGENT' =3D> 'Mozilla/5.0 (Windows NT =
+10.0; Win64; x64;
+rv:94.0) Gecko/20100101 Firefox/94.0'
+    'HTTP_X_HTT=
+PS' =3D> '1'
+    'PATH' =3D> '/bin:/usr/bin'
+    'PHP_INI_SCAN_DIR' =3D=
+>
+'/opt/cpanel/ea-php73/root/etc:/opt/cpanel/ea-php73/root/etc/php.d:.'=
+
+    'QUERY_STRING' =3D> ''
+    'REDIRECT_HTTPS' =3D> 'on'
+    'REDIR=
+ECT_SCRIPT_URI' =3D>
+'https://superpilot.in/dev/tutors/web/merchant/coupo=
+n'
+    'REDIRECT_SCRIPT_URL' =3D> '/dev/tutors/web/merchant/coupon'
+   =
+ 'REDIRECT_SSL_TLS_SNI' =3D> 'superpilot.in'
+    'REDIRECT_STATUS' =3D> '=
+200'
+    'REDIRECT_UNIQUE_ID' =3D> 'YY3Z73FFhGEGnZoRMc-yjwAAARU'
+    'R=
+EDIRECT_URL' =3D> '/dev/tutors/web/merchant/coupon'
+    'REMOTE_ADDR' =3D=
+> '103.99.8.152'
+    'REMOTE_PORT' =3D> '50704'
+    'REQUEST_METHOD' =
+=3D> 'GET'
+    'REQUEST_SCHEME' =3D> 'https'
+    'REQUEST_URI' =3D> '/d=
+ev/tutors/web/merchant/coupon'
+    'SCRIPT_FILENAME' =3D>
+'/home/superq=
+cp/public_html/dev/tutors/web/index.php'
+    'SCRIPT_NAME' =3D> '/dev/tut=
+ors/web/index.php'
+    'SCRIPT_URI' =3D>
+'https://superpilot.in/dev/tut=
+ors/web/merchant/coupon'
+    'SCRIPT_URL' =3D> '/dev/tutors/web/merchant/=
+coupon'
+    'SERVER_ADDR' =3D> '116.206.105.109'
+    'SERVER_ADMIN' =3D=
+> 'webmaster@superpilot.in'
+    'SERVER_NAME' =3D> 'superpilot.in'
+    =
+'SERVER_PORT' =3D> '443'
+    'SERVER_PROTOCOL' =3D> 'HTTP/1.1'
+    'SER=
+VER_SIGNATURE' =3D> ''
+    'SERVER_SOFTWARE' =3D> 'Apache'
+    'SSL_TLS=
+_SNI' =3D> 'superpilot.in'
+    'UNIQUE_ID' =3D> 'YY3Z73FFhGEGnZoRMc-yjwAA=
+ARU'
+    'PHP_SELF' =3D> '/dev/tutors/web/index.php'
+    'REQUEST_TIME_=
+FLOAT' =3D> 1636686319.1677
+    'REQUEST_TIME' =3D> 1636686319
+    'arg=
+v' =3D> []
+    'argc' =3D> 0
+]

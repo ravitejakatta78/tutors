@@ -1,0 +1,133 @@
+<?php
+namespace app\controllers;
+use yii;
+use sizeg\jwt\Jwt;
+use sizeg\jwt\JwtHttpBearerAuth;
+use yii\rest\Controller;
+
+class ApiController extends Controller
+{
+
+public function beforeAction($action)
+{
+ 
+    $this->enableCsrfValidation = false;
+ 
+  //return true;
+  return parent::beforeAction($action);
+}
+    public function actionApiservice(){
+		
+
+	$action = trim($_REQUEST['action']);
+		if(!empty($action)){
+			switch($action){
+				case 'login':
+				$this->login($_REQUEST);
+				break; 
+				case 'merchants':
+				$this->login($_REQUEST);
+				break;
+			}
+		}
+	}
+	
+		public function login($val)
+		{
+				  if(!empty($val['username'])){
+			if(!empty($val['password'])){
+			
+		  $mymailid = $val['username'];
+		  $mypassword = ($val['password']); 
+		  if(filter_var($mymailid, FILTER_VALIDATE_EMAIL)) {
+		   $sqlrow = 'SELECT * FROM users WHERE email = \''.$mymailid.'\'';
+		  
+		  }else{
+			$sqlrow = 'SELECT * FROM users WHERE mobile = \''.$mymailid.'\'';
+		  }
+		 
+		  $row = Yii::$app->db->createCommand($sqlrow)->queryOne();
+		  if(!empty($row['ID'])){
+
+			  if(password_verify($mypassword,$row['password'])){
+				if($row['status']==1){
+					 
+						 $token = md5('M3avenue');
+						 $key = "foodgenee_key";
+						 $jwt = md5('M3avenue');
+	
+						 $payload = array("status" => '1',"text" => "Successful login.","usersid" => $jwt);
+				} else {
+					$userwherearray = $userarray = array();
+					$userwherearray['ID'] = $row['ID'];
+					$userarray['otp'] = rand(1111,9999);
+					//$result = updateQuery($userarray,"users",$userwherearray);
+					$sqlupdate = 'update users set otp = \''.$userarray['otp'].'\' where ID = \''.$userwherearray['ID'].'\'';
+					$result = Yii::$app->db->createCommand($sqlupdate)->execute();
+					$message = "Hi ".$row['name']." ".$userarray['otp']." is your otp for verification.";
+					\app\helpers\otp_sms($row['mobile'],$message); 
+					$payload = array("status"=>'2',"usersid"=>$row['ID'],"text"=>"Please verify your account");	 
+				}
+			  }  else {
+						
+					$payload = array("status"=>'0',"text"=>"Invalid Password");
+			  }
+			  }  else {
+						
+					$payload = array("status"=>'0',"text"=>"Invalid Email / Mobile number");
+			  }
+		  }else{
+						
+			$payload = array("status"=>'0',"text"=>"Please enter the password");
+		  }
+		  }else{
+						
+			 	$payload = array("status"=>'0',"text"=>"Please enter the email");
+		  }
+		return $this->asJson($payload);
+	}
+    public function merchants()
+	{
+		if(!empty($_POST['latitude'])&&!empty($_POST['longitude'])){
+					$latitude = mysqli_real_escape_string($conn,$_POST['latitude']); 
+					$longitude = mysqli_real_escape_string($conn,$_POST['longitude']); 
+					$merchantsarray = runloopQuery("SELECT * FROM (SELECT *,(((acos(sin((".$latitude."*pi()/180)) * sin((latitude*pi()/180))+cos((".$latitude."*pi()/180)) * 
+cos((latitude*pi()/180)) * cos(((".$longitude."- longitude)* pi()/180))))*180/pi())*60*1.1515 ) as distance FROM merchant WHERE 1 GROUP BY ID ) as X where distance <= 5 and status = '1' ORDER BY ID DESC"); 
+					 if(!empty($merchantsarray)){
+							$merchantlist = $merchants = array();
+							foreach($merchantsarray as $merchantsdata){
+							$merchants['id'] = $merchantsdata['ID'];
+							$merchants['unique_id'] = $merchantsdata['unique_id'];
+							$merchants['name'] = $merchantsdata['name'];
+							$merchants['email'] = $merchantsdata['email'];
+							$merchants['storename'] = $merchantsdata['storename'];
+							$merchants['storetype'] = $merchantsdata['storetype'];
+							$merchants['address'] = $merchantsdata['address'];
+							$merchants['state'] = $merchantsdata['state'];
+							$merchants['city'] = $merchantsdata['city'];
+							$merchants['location'] = $merchantsdata['location'];
+							$merchants['latitude'] =  $merchantsdata['latitude'];
+							$merchants['longitude'] =  $merchantsdata['longitude'];
+							$merchants['servingtype'] =  $merchantsdata['servingtype'];
+							$merchants['verify'] =  $merchantsdata['verify'];
+							$merchants['showpage'] =  $merchantsdata['storetype'] == 'Restaurant' ? '1' : '0';
+							$feedbackrating = runQuery("select avg(rating) as rating from feedback where merchant_id =  '".$merchantsdata['ID']."'");
+							$merchants['rating'] = !empty($feedbackrating) ? ceil($feedbackrating['rating']) : 0;
+							$merchants['logo'] = !empty($merchantsdata['logo']) ?  MERCHANT_LOGO.$merchantsdata['logo'] : '';
+							$merchants['coverpic'] = !empty($merchantsdata['coverpic']) ? MERCHANT_LOGO.$merchantsdata['coverpic'] : '';
+								$merchantlist[] = $merchants;
+							} 
+							$payload = array("status"=>'1',"merchantlist"=>$merchantlist);
+						}else{
+						
+						$payload = array("status"=>'0',"text"=>"No Restaurant Found.");
+					 }
+					}else{
+						
+						$payload = array("status"=>'0',"text"=>"Invalid parameters");
+					 }
+	}
+
+
+
+}

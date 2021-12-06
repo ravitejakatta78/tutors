@@ -1,0 +1,105 @@
+
+<?php
+use app\helpers\Utility;
+use yii\bootstrap\ActiveForm;
+use yii\helpers\Html;
+use yii\helpers\Url;
+$actionId = Yii::$app->controller->action->id;
+?>
+<header class="page-header">
+
+          </header>
+          <section>
+              <div class="col-lg-12">
+            <div class="card">
+              <div class="card-header d-flex align-items-center pt-0 pb-0">
+                <h3 class="h4 col-md-6 pl-0 tab-title">Counter Settlement</h3>
+				<div class="col-md-6 text-right pr-0">
+			
+				</div>
+              </div>
+
+
+              <div class="card-body">
+			  <form class="form-inline" method="POST" action="counter-settlement">
+                  <div class="form-group">
+                    <label class="control-label">Start Date:</label>
+                  <div class="input-group mb-3 mr-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                  </div>
+                  <input type="text" class="form-control datepicker1" name="sdate" placeholder="Start Date" value="<?= $sdate ; ?>">
+                </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="control-label">End Date:</label>
+                  <div class="input-group mb-3 mr-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                  </div>
+                  <input type="text" class="form-control datepicker2" name="edate" placeholder="End Date" value="<?= $edate ; ?>">
+                </div>
+                  </div>
+                  <div class="form-group">
+                    <input type="submit" value="Search" class="btn btn-add btn-sm btn-search"/>
+                  </div>
+                  
+                </form>
+   
+ 
+                  <table id="example" class="table table-striped table-bordered ">
+                    <thead>
+                      <tr>
+                    <th>S No</th>
+									<th>Date</th> 
+									<th>Service Boy</th>
+									<th>Pending</th>
+									<th>Order Amount</th>
+									<th>Payment</th>
+									<th>Action</th>
+								  </tr>
+                    </thead>
+		            <tbody>
+					    <?php for($i=0;$i<count($res);$i++){ ?> 
+					        <tr>
+					           <td><?= ($i+1); ?></td>
+					           <td><?= $res[$i]['orders_date']; ?></td>
+					           <td><?=  $res[$i]['name']; ?></td>
+					           <td><?=  $res[$i]['pending_amount']  ?></td>
+					           <td><?= $res[$i]['totalamount'];  ?></td>
+					           <td><input type="text" id="paid_<?= $i+1 ?>" ></td>
+					           <td ><a style="cursor:pointer" onclick="settlement('<?= $res[$i]['orders_date']; ?>','<?= $res[$i]['closed_by']; ?>','<?= $res[$i]['totalamount']; ?>','<?= $i+1 ?>')">Settle</a></td>
+					       </tr>     
+					    <?php } ?>			
+                    </tbody>
+                  </table>
+
+
+              </div>
+            </div>
+          </div>
+
+        </section>
+		<?php
+$script = <<< JS
+    $('#example').DataTable();
+JS;
+$this->registerJs($script);
+?>
+<script>
+$(document).ready(function(){
+	
+
+});
+function settlement(order_date,closed_by,total_amount,id){
+    var paid_amount = $("#paid_"+id).val();
+    var request = $.ajax({
+  url: "addsettlement",
+  type: "POST",
+  data: {order_date : order_date,closed_by:closed_by,total_amount:total_amount,paid_amount:paid_amount},
+}).done(function(msg) {
+    location.reload()
+});
+}
+</script>

@@ -1,0 +1,356 @@
+Message-ID: <b018b43be8ede2a9e89882431a4d4680@superpilot.in>
+Date: Sat, 13 Nov 2021 02:47:08 +0530
+Subject: Database errors at example.com
+From: log@example.com
+To: admin@example.com, developer@example.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+2021-11-13 02:47:07
+[223.237.17.23][69][69bec9bd09a4425f1797216f743ff002]=
+[error][yii\db\IntegrityException]
+PDOException: SQLSTATE[23000]: Integri=
+ty constraint violation: 1048
+Column 'tax_value' cannot be null in
+/hom=
+e/superqcp/public_html/dev/tutors/vendor/yiisoft/yii2/db/Command.php:1302=
+
+Stack trace:
+#0
+/home/superqcp/public_html/dev/tutors/vendor/yiisoft=
+/yii2/db/Command.php(1302):
+PDOStatement->execute()
+#1
+/home/superqcp=
+/public_html/dev/tutors/vendor/yiisoft/yii2/db/Command.php(1102):
+yii\db\=
+Command->internalExecute('INSERT INTO `me...')
+#2
+/home/superqcp/public=
+_html/dev/tutors/controllers/MerchantController.php(3793):
+yii\db\Command=
+->execute()
+#3 [internal function]:
+app\controllers\MerchantController-=
+>actionUpdatefoodcategerytax()
+#4
+/home/superqcp/public_html/dev/tutors=
+/vendor/yiisoft/yii2/base/InlineAction.php(57):
+call_user_func_array(Arra=
+y, Array)
+#5
+/home/superqcp/public_html/dev/tutors/vendor/yiisoft/yii2/=
+base/Controller.php(181):
+yii\base\InlineAction->runWithParams(Array)
+#=
+6
+/home/superqcp/public_html/dev/tutors/vendor/yiisoft/yii2/base/Module.p=
+hp(534):
+yii\base\Controller->runAction('updatefoodcateg...', Array)
+#7=
+
+/home/superqcp/public_html/dev/tutors/vendor/yiisoft/yii2/web/Applicatio=
+n.php(104):
+yii\base\Module->runAction('merchant/update...', Array)
+#8=
+
+/home/superqcp/public_html/dev/tutors/vendor/yiisoft/yii2/base/Applicati=
+on.php(392):
+yii\web\Application->handleRequest(Object(yii\web\Request))=
+
+#9 /home/superqcp/public_html/dev/tutors/web/index.php(12):
+yii\base\A=
+pplication->run()
+#10 {main}
+
+Next yii\db\IntegrityException: SQLSTAT=
+E[23000]: Integrity constraint
+violation: 1048 Column 'tax_value' cannot =
+be null
+The SQL being executed was: INSERT INTO `merchant_food_category_t=
+ax`
+(`merchant_id`, `food_category_id`, `merchant_tax_id`, `tax_type`,
+=
+`tax_value`) VALUES (34, 192, 10, '2', NULL) in
+/home/superqcp/public_htm=
+l/dev/tutors/vendor/yiisoft/yii2/db/Schema.php:678
+Stack trace:
+#0
+/h=
+ome/superqcp/public_html/dev/tutors/vendor/yiisoft/yii2/db/Command.php(1307=
+):
+yii\db\Schema->convertException(Object(PDOException), 'INSERT INTO
+`=
+me...')
+#1
+/home/superqcp/public_html/dev/tutors/vendor/yiisoft/yii2/db=
+/Command.php(1102):
+yii\db\Command->internalExecute('INSERT INTO `me...')=
+
+#2
+/home/superqcp/public_html/dev/tutors/controllers/MerchantControlle=
+r.php(3793):
+yii\db\Command->execute()
+#3 [internal function]:
+app\co=
+ntrollers\MerchantController->actionUpdatefoodcategerytax()
+#4
+/home/su=
+perqcp/public_html/dev/tutors/vendor/yiisoft/yii2/base/InlineAction.php(57)=
+:
+call_user_func_array(Array, Array)
+#5
+/home/superqcp/public_html/de=
+v/tutors/vendor/yiisoft/yii2/base/Controller.php(181):
+yii\base\InlineAct=
+ion->runWithParams(Array)
+#6
+/home/superqcp/public_html/dev/tutors/vend=
+or/yiisoft/yii2/base/Module.php(534):
+yii\base\Controller->runAction('upd=
+atefoodcateg...', Array)
+#7
+/home/superqcp/public_html/dev/tutors/vendo=
+r/yiisoft/yii2/web/Application.php(104):
+yii\base\Module->runAction('merc=
+hant/update...', Array)
+#8
+/home/superqcp/public_html/dev/tutors/vendor=
+/yiisoft/yii2/base/Application.php(392):
+yii\web\Application->handleReque=
+st(Object(yii\web\Request))
+#9 /home/superqcp/public_html/dev/tutors/web/=
+index.php(12):
+yii\base\Application->run()
+#10 {main}
+Additional Info=
+rmation:
+Array
+(
+    [0] =3D> 23000
+    [1] =3D> 1048
+    [2] =3D=
+> Column 'tax_value' cannot be null
+)
+
+2021-11-13 02:47:07
+[223.237=
+.17.23][69][69bec9bd09a4425f1797216f743ff002][info][application]
+$_GET =
+=3D []
+
+$_POST =3D [
+    'update_food_category' =3D> 'FLAVORED RICE'=
+
+    'food_category_id' =3D> '192'
+    'category_tax_id' =3D> 'SGST'
+=
+    'tax_type_44' =3D> '2'
+    'update_tax_value' =3D> [
+        0 =3D>=
+ '0.00'
+    ]
+    'update_food_cat_tax_id' =3D> [
+        0 =3D> '44'=
+
+    ]
+    'tax_id' =3D> [
+        0 =3D> '10'
+    ]
+    'tax_typ=
+e' =3D> [
+        0 =3D> '2'
+    ]
+    'tax_value' =3D> [
+        0=
+ =3D> ''
+    ]
+]
+
+$_FILES =3D []
+
+$_COOKIE =3D [
+    'roundcu=
+be_cookies' =3D> 'enabled'
+    'timezone' =3D> 'Asia/Kolkata'
+    'webm=
+ailsession' =3D>
+'yaswanth.g@superpilot.in:jQLjsoIOMkFykFXJ,14281ad6b72e6=
+60a17c99e2247ca55d0'
+    'advanced-frontend' =3D> 'dd5fd2bbb76c0ff232de3b=
+5ac90d2850'
+    'roundcube_sessid' =3D> '88dbaf77ff1f9f9e247ce8a49357f8f2=
+'
+    'PHPSESSID' =3D> '69bec9bd09a4425f1797216f743ff002'
+    '_identit=
+y' =3D>
+'dfa2bf3059397ca011caf7485993c6bb47a2df956cb5c7b4573e02da3f5fb769=
+a:2:{i:0;s:9:\"_identity\";i:1;s:17:\"[69,null,2592000]\";}'
+    '_csrf' =
+=3D>
+'12b2e3b075841a5ca29bd7370049a6e842812832d5dc9002b61df520ce8a1a1ea:2=
+:{i:0;s:5:\"_csrf\";i:1;s:32:\"4OqdbsCIbooSMbvYssMjdIhBKaiMDNEQ\";}'
+    =
+'roundcube_sessauth' =3D>
+'ySH31NtUdCYFNteosefbXDRsMj5mtwGC-1636751700'=
+
+]
+
+$_SESSION =3D [
+    '__flash' =3D> []
+    '__id' =3D> 69
+  =
+  '__authKey' =3D> null
+]
+
+$_SERVER =3D [
+    'CONTENT_LENGTH' =3D>=
+ '200'
+    'CONTENT_TYPE' =3D> 'application/x-www-form-urlencoded'
+    =
+'CONTEXT_DOCUMENT_ROOT' =3D> '/home/superqcp/public_html'
+    'CONTEXT_PR=
+EFIX' =3D> ''
+    'DOCUMENT_ROOT' =3D> '/home/superqcp/public_html'
+   =
+ 'GATEWAY_INTERFACE' =3D> 'CGI/1.1'
+    'H2PUSH' =3D> 'on'
+    'H2_PUSH=
+' =3D> 'on'
+    'H2_PUSHED' =3D> ''
+    'H2_PUSHED_ON' =3D> ''
+    'H=
+2_STREAM_ID' =3D> '7'
+    'H2_STREAM_TAG' =3D> '21-7'
+    'HTTP2' =3D> =
+'on'
+    'HTTPS' =3D> 'on'
+    'HTTP_ACCEPT' =3D>
+'text/html,applicat=
+ion/xhtml+xml,application/xml;q=3D0.9,image/avif,image/webp,image/apng,*/*;=
+q=3D0.8,application/signed-exchange;v=3Db3;q=3D0.9'
+    'HTTP_ACCEPT_ENCO=
+DING' =3D> 'gzip, deflate, br'
+    'HTTP_ACCEPT_LANGUAGE' =3D> 'en-US,en;=
+q=3D0.9'
+    'HTTP_CACHE_CONTROL' =3D> 'max-age=3D0'
+    'HTTP_COOKIE' =
+=3D> 'roundcube_cookies=3Denabled;
+timezone=3DAsia/Kolkata;
+webmailsess=
+ion=3Dyaswanth.g%40superpilot.in%3ajQLjsoIOMkFykFXJ%2c14281ad6b72e660a17c99=
+e2247ca55d0;
+advanced-frontend=3Ddd5fd2bbb76c0ff232de3b5ac90d2850;
+roun=
+dcube_sessid=3D88dbaf77ff1f9f9e247ce8a49357f8f2;
+PHPSESSID=3D69bec9bd09a4=
+425f1797216f743ff002;
+_identity=3Ddfa2bf3059397ca011caf7485993c6bb47a2df9=
+56cb5c7b4573e02da3f5fb769a%3A2%3A%7Bi%3A0%3Bs%3A9%3A%22_identity%22%3Bi%3A1=
+%3Bs%3A17%3A%22%5B69%2Cnull%2C2592000%5D%22%3B%7D;
+_csrf=3D12b2e3b075841a=
+5ca29bd7370049a6e842812832d5dc9002b61df520ce8a1a1ea%3A2%3A%7Bi%3A0%3Bs%3A5%=
+3A%22_csrf%22%3Bi%3A1%3Bs%3A32%3A%224OqdbsCIbooSMbvYssMjdIhBKaiMDNEQ%22%3B%=
+7D;
+roundcube_sessauth=3DySH31NtUdCYFNteosefbXDRsMj5mtwGC-1636751700'
+ =
+   'HTTP_HOST' =3D> 'superpilot.in'
+    'HTTP_ORIGIN' =3D> 'https://super=
+pilot.in'
+    'HTTP_REFERER' =3D>
+'https://superpilot.in/dev/tutors/web=
+/merchant/food-categeries'
+    'HTTP_SEC_CH_UA' =3D> '\"Google Chrome\";v=
+=3D\"95\",
+\"Chromium\";v=3D\"95\", \";Not A Brand\";v=3D\"99\"'
+    'H=
+TTP_SEC_CH_UA_MOBILE' =3D> '?0'
+    'HTTP_SEC_CH_UA_PLATFORM' =3D> '\"Win=
+dows\"'
+    'HTTP_SEC_FETCH_DEST' =3D> 'document'
+    'HTTP_SEC_FETCH_M=
+ODE' =3D> 'navigate'
+    'HTTP_SEC_FETCH_SITE' =3D> 'same-origin'
+    '=
+HTTP_SEC_FETCH_USER' =3D> '?1'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' =3D> =
+'1'
+    'HTTP_USER_AGENT' =3D> 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)=
+
+AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69
+Safari/537.=
+36'
+    'HTTP_X_HTTPS' =3D> '1'
+    'PATH' =3D> '/bin:/usr/bin'
+    '=
+PHP_INI_SCAN_DIR' =3D>
+'/opt/cpanel/ea-php73/root/etc:/opt/cpanel/ea-php7=
+3/root/etc/php.d:.'
+    'QUERY_STRING' =3D> ''
+    'REDIRECT_H2PUSH' =
+=3D> 'on'
+    'REDIRECT_H2_PUSH' =3D> 'on'
+    'REDIRECT_H2_PUSHED' =3D=
+> ''
+    'REDIRECT_H2_PUSHED_ON' =3D> ''
+    'REDIRECT_H2_STREAM_ID' =
+=3D> '7'
+    'REDIRECT_H2_STREAM_TAG' =3D> '21-7'
+    'REDIRECT_HTTP2' =
+=3D> 'on'
+    'REDIRECT_HTTPS' =3D> 'on'
+    'REDIRECT_SCRIPT_URI' =3D>=
+
+'https://superpilot.in/dev/tutors/web/merchant/updatefoodcategerytax'
+=
+    'REDIRECT_SCRIPT_URL' =3D>
+'/dev/tutors/web/merchant/updatefoodcatege=
+rytax'
+    'REDIRECT_SSL_TLS_SNI' =3D> 'superpilot.in'
+    'REDIRECT_ST=
+ATUS' =3D> '200'
+    'REDIRECT_UNIQUE_ID' =3D> 'YY7Z04J7NS_dm8mbdGZ0HgAAN=
+wY'
+    'REDIRECT_URL' =3D> '/dev/tutors/web/merchant/updatefoodcategeryt=
+ax'
+    'REMOTE_ADDR' =3D> '223.237.17.23'
+    'REMOTE_PORT' =3D> '7165=
+'
+    'REQUEST_METHOD' =3D> 'POST'
+    'REQUEST_SCHEME' =3D> 'https'
+=
+    'REQUEST_URI' =3D> '/dev/tutors/web/merchant/updatefoodcategerytax'
+ =
+   'SCRIPT_FILENAME' =3D>
+'/home/superqcp/public_html/dev/tutors/web/inde=
+x.php'
+    'SCRIPT_NAME' =3D> '/dev/tutors/web/index.php'
+    'SCRIPT_U=
+RI' =3D>
+'https://superpilot.in/dev/tutors/web/merchant/updatefoodcateger=
+ytax'
+    'SCRIPT_URL' =3D> '/dev/tutors/web/merchant/updatefoodcategeryt=
+ax'
+    'SERVER_ADDR' =3D> '116.206.105.109'
+    'SERVER_ADMIN' =3D> 'w=
+ebmaster@superpilot.in'
+    'SERVER_NAME' =3D> 'superpilot.in'
+    'SER=
+VER_PORT' =3D> '443'
+    'SERVER_PROTOCOL' =3D> 'HTTP/2.0'
+    'SERVER_=
+SIGNATURE' =3D> ''
+    'SERVER_SOFTWARE' =3D> 'Apache'
+    'SSL_TLS_SNI=
+' =3D> 'superpilot.in'
+    'UNIQUE_ID' =3D> 'YY7Z04J7NS_dm8mbdGZ0HgAANwY'=
+
+    'PHP_SELF' =3D> '/dev/tutors/web/index.php'
+    'REQUEST_TIME_FLOA=
+T' =3D> 1636751827.9025
+    'REQUEST_TIME' =3D> 1636751827
+    'argv' =
+=3D> []
+    'argc' =3D> 0
+]

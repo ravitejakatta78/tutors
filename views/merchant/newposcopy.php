@@ -1,0 +1,1176 @@
+<?php
+use yii\helpers\Html;
+use aryelds\sweetalert\SweetAlert;
+$actionId = Yii::$app->controller->action->id;
+?>
+
+   <link rel="stylesheet" href="<?= Yii::$app->request->baseUrl.'/css/css/newpos.css';?>">
+
+   <?php 
+foreach (Yii::$app->session->getAllFlashes() as $message) {
+    echo SweetAlert::widget([
+        'options' => [
+            'title' => (!empty($message['title'])) ? Html::encode($message['title']) : 'Title Not Set!',
+            'text' => (!empty($message['text'])) ? Html::encode($message['text']) : 'Text Not Set!',
+            'type' => (!empty($message['type'])) ? $message['type'] : SweetAlert::TYPE_INFO,
+            'timer' => (!empty($message['timer'])) ? $message['timer'] : 4000,
+            'showConfirmButton' =>  (!empty($message['showConfirmButton'])) ? $message['showConfirmButton'] : true
+        ]
+    ]);
+}
+?>
+
+<section class="col-md-12" style="padding-top:0px !important;">
+          <div class="row">
+            <div class="col-md-5 pr-0 pl-0">
+              <div class="userdiv">
+                <div class="row">
+                <div class="col-md-3 ">
+                  <span class="usricn p-1"><i class="fa fa-user"></i></span>
+                  <?php echo $userDet['name'] ?? 'User Name'; ?>
+                  <input type="hidden" id="submitorder" value="0">
+                </div>
+                <div class="col-md-4">
+                   <?php 
+                   $sectionNameArray = array_column($tableDetails,'sectionname','ID');
+                   echo $tableName." (".$sectionNameArray[$tableid].")"; ?></i>
+                </div>
+                <div class="col-md-5 text-right">
+                  <div class="usertyps">
+                    <div class="kds">
+                      <a style="text-decoration: none;" href="<?= \yii\helpers\Url::to('../merchant/viewkdsone'); ?>"><span style="color:white">KDS</span></a>
+                    </div>
+                    <div class="kds">
+                      H
+                    </div>
+                    <div class="kds">
+                      Draft
+                    </div>
+                    <div class="kds">
+                      P
+                    </div>
+                    <div class="kds p-1">
+                      <i class="fa fa-home"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              </div>
+              <div class="clearfix"></div>
+              <div class="row">
+            <div class="col-md-4 pr-0">
+              <div class="rung-ordrs handcursor" id="runningorder">
+                <span>Running Orders</span>
+                <span style="cursor:pointer;"><a><i class="fa fa-refresh"></i></a></span>
+              </div>
+              <div class="card mb-1">
+                
+                <div class="card-body p-2 rung-order-body">
+                  <div class="runngorders">
+                  <div>
+                  <input type="text" class="form-control mb-2" id="myInput2"  placeholder="Search">
+                  </div>
+                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                  
+                  <?php if(count($runningOrders) > 0) {
+                    for($r=0;$r<count($runningOrders);$r++) { ?>
+                      <div class="panel panel-default filtersearch2">
+                        <div class="panel-heading" role="tab" id="headingOne">
+                          <h4 class="panel-title">
+                            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse<?= ($r+1) ?>" aria-expanded="true" aria-controls="collapseOne">
+                              <i class="more-less fa fa-plus" id="<?= ($r+1); ?>"></i>
+                              <?php echo   $runningOrders[$r]['username'] ?? $runningOrders[$r]['order_id']; ?> 
+                            </a>
+                          </h4>
+                        </div>
+                        <div id="collapse<?= ($r+1) ?>"   class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                          <div class="panel-body" style="cursor:pointer" onclick="changetable('<?= $runningOrders[$r]['tablename']; ?>',null,'<?= $runningOrders[$r]['ID']; ?>')">
+                              <p class="ordr-dtls">Pilot: <?= $runningOrders[$r]['pilot_name'] ?? "Not Assigned"; ?></p>
+                              <p class="ordr-dtls">Order: <?= $runningOrders[$r]['order_id']; ?></p>
+                              <p class="ordr-dtls"><?= \app\helpers\Utility::orderstatus_details($runningOrders[$r]['orderprocess']); ?></p>
+                          </div>
+                        </div>
+                      </div>
+                  <?php } }?>    
+                  
+
+                  
+
+
+                  
+                    </div><!-- panel-group -->
+                    
+                    
+                  </div><!-- container -->
+                  
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-body p-2">
+                    <div class="col-md-12 text-center">
+                      <!--<div class="modify mb-1">
+                        <a>Modify Orders</a>
+                      </div>
+                      <div class="modify">
+                        <a>Order Details</a>
+                      </div> -->
+                      
+                    </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-8 pl-0">
+              <div class="type-details" >
+                <div class="type ordertype <?php if($tableName != 'PARCEL' ) {?> active <?php } ?>" data-toggle="modal" data-target="#dinein">
+                  <i class="fa fa-picture-o"></i> Dine In
+                </div>
+                <div class="type ordertype <?php if($tableName == 'PARCEL' ) {?> active <?php } ?>" onclick="changetable('PARCEL','','')">
+                  <i class="fa fa-picture-o"></i> Take Away
+                </div>
+                <div class="type ordertype">
+                  <i class="fa fa-picture-o"></i> Delivery
+                </div>
+                <!-- <div class="type">
+                  <i class="fa fa-picture-o"></i> Table
+                </div> -->
+              </div>
+              <div class="row">
+              <div class="col-md-6 text-center pr-0">
+              <div class="pilot" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModalPilot">Pilot Assign <span class="ml-2"><i class="fa fa-edit"></i></span></div>
+              </div>
+              <div class="col-md-6 text-center pl-0">
+              <div class="custmer" data-toggle="modal" data-target="#myModalCustomer">Customer <span class="ml-2"><i class="fa fa-edit"></i></span></div>
+              </div>
+              </div>
+            <div class="card">
+              <div class="card-body p-0">
+              <form id="mainorderdiv" class="ordrlist" id="saveorder" method="POST" action="saveneworder" onsubmit="return validatesubmitorder()">
+              <table class="table table-striped table-bordered dataTable no-footer mt-0" id="itemtable" style="margin-top: 0px !important">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Price</th>
+                    <th>Qty</th>
+                    <th>Total</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="appenditems">
+                <?php
+                $itemidarr = []; 
+                $totalorderprice = [];
+                $titlewithqty = array_column($productDetails,'titlewithqty','ID');
+                
+                if(count($prevOrderDetails)){
+                  $ordertypedet = \app\helpers\Utility::order_details($prevOrderDetails[0]['order_id'],'ordertype') ;
+                    if($ordertypedet == '1'){
+                        $toShowPopUp = '1';   
+                    }else{
+                        $toShowPopUp = '2';
+                    }
+                    
+                }else{	
+                    $toShowPopUp = '0';
+                }
+                
+
+                for($p=0;$p<count($prevOrderDetails);$p++) {
+                  $itemidarr[] = $prevOrderDetails[$p]['product_id'];
+                  ?>
+                  <tr id="row_id_<?= $prevOrderDetails[$p]['product_id']; ?>" class="itemrowclass">
+                    <td><?= $titlewithqty[$prevOrderDetails[$p]['product_id']]; ?>
+                    <input type="hidden" name="itemid[]" id="item_id_<?= $prevOrderDetails[$p]['product_id']; ?>" value="<?= $prevOrderDetails[$p]['product_id']; ?>">
+                    <input type="hidden" name="priceind[]" id="priceind_<?= $prevOrderDetails[$p]['product_id']; ?>" value="<?= $prevOrderDetails[$p]['price']; ?>">
+                    <input type="hidden" name="pricetot[]" id="pricetot_<?= $prevOrderDetails[$p]['product_id']; ?>" value="<?= $prevOrderDetails[$p]['totalprice']; ?>">
+                    <input type="hidden" name="qtyitem[]" id="qtyind_<?= $prevOrderDetails[$p]['product_id']; ?>" value="<?= $prevOrderDetails[$p]['count']; ?>">
+                    </td>
+                    <td><?= $prevOrderDetails[$p]['price']; ?></td>
+                    <td>
+                      <div class="number-input">
+                        <button onclick="this.parentNode.querySelector('input[type=number]').stepDown();plusorminusagain('<?= $prevOrderDetails[$p]['product_id']; ?>','<?= $prevOrderDetails[$p]['price']; ?>')" ></button>
+                        <input class="quantity" min="0" name="quantity" id="real_quant_<?= $prevOrderDetails[$p]['product_id']; ?>" value="<?= $prevOrderDetails[$p]['count']; ?>" type="number">
+                        <input type="hidden" class="tableid" name="tableid" value="<?= $tableid;?>">
+                        <button onclick="this.parentNode.querySelector('input[type=number]').stepUp();plusorminusagain('<?= $prevOrderDetails[$p]['product_id']; ?>','<?= $prevOrderDetails[$p]['price']; ?>')" class="plus"></button>
+                      </div>
+                    </td>
+                    <td><span class="realitemtotalprice" id="realitemtotalprice_<?= $prevOrderDetails[$p]['product_id']; ?>"><?php echo   $prevOrderDetails[$p]['totalprice']; ?></td>
+                    <td><i class="fa fa-trash" style="cursor:pointer" onclick="checktoadd('<?= $prevOrderDetails[$p]['product_id']; ?>','<?= $prevOrderDetails[$p]['price']; ?>','','2')"></i></td>
+                                      </tr>
+                <?php } ?>  
+                </tbody>
+              </table>
+              <input type="hidden" id="ttl_tax" name="ttl_tax" >
+              <input type="hidden" id="ttl_discount" name="ttl_discount" >
+              <input type="hidden" id="ttl_discount_type" name="ttl_discount_type" >
+              <input type="hidden" id="ttl_cpn_amt" name="ttl_cpn_amt" >
+              <input type="hidden" id="ttl_sub_amt" name="ttl_sub_amt" >
+              <input type="hidden" id="ttl_amt" name="ttl_amt" >
+              <input type="hidden" id="pilotid" name="pilotid" value="" >
+              <input type="hidden" id="user_name" name="user_name" value="<?= $userDet['name'] ?? '' ; ?>" >
+              <input type="hidden" id="user_mobile" name="user_mobile" value="<?= $userDet['mobile'] ?? '' ; ?>" >
+
+              </form>
+              <hr>
+              <div class="col-md-12">
+              
+              <div class="row">
+                <div class="col-md-4">
+                  <span class="ttl-item">Total Item :</span> 
+                  <span class="item-count" id="item-count"><?= isset($prevOrderDetails) ? array_sum(array_column($prevOrderDetails,'count')) : 0 ?></span>
+                </div>
+                <div class="col-md-4">
+                  <span class="ttl-item">Tax :</span> 
+                  <span class="ttl-tax" id="ttl_tax"> <?php echo $ttltax = !empty($prevFullSingleOrderDet['tax']) ? $prevFullSingleOrderDet['tax'] : 0 ?></span>
+                </div>
+                <div class="col-md-4 handcursor">
+                  <span class="ttl-item handcursor" data-toggle="modal" data-target="#myModalDiscount">Discount :</span> 
+                  <span class="ttl-discount"><?php echo $ttl_discount =  !empty($prevFullSingleOrderDet['discount_number']) ? $prevFullSingleOrderDet['discount_number'] : 0 ?></span>
+                </div>
+              </div>
+              <div class="row mt-2">
+                <div class="col-md-4">
+                  <span class="ttl-item">Coupon :</span> 
+                  <span class="item-count ttl-cpn-amt" id="item-count"><?php echo $ttl_cpn_amt =  !empty($prevFullSingleOrderDet['couponamount']) ? $prevFullSingleOrderDet['couponamount'] : 0 ?></span>
+                </div>
+                <div class="col-md-4">
+                  <span class="ttl-item">Sub Total :</span> 
+                  <span class="ttl-sub-amt"><?php echo $ttl_sub_amt = !empty($prevFullSingleOrderDet['amount']) ? $prevFullSingleOrderDet['amount'] : 0 ?></span>
+                </div>
+                <!-- <div class="col-md-4">
+                  <span class="ttl-item">Discount :</span> 
+                  <span >10</span>
+                </div> -->
+              </div>
+            </div>
+            <div class="col-md-12">
+              <div class="row">
+                <div class="ttl-payble" onclick="saveorder()" style="cursor:pointer">
+                  Place Order : <span id="ttl_payble"> <?php echo $ttl_amt =  $prevFullSingleOrderDet['totalamount'] ?? 0; ?></span>
+                </div>
+                <div class="buts mt-2 text-center col-md-12">
+                  <button class="btn btn-danger mb-2 fnt" onclick = "statusPopUp('<?= $toShowPopUp; ?>','<?= !empty($prevOrderDetails) ? $prevOrderDetails[0]['order_id'] : "" ; ?>')">Checkout</button>
+                  <button class="btn btn-warning mb-2 fnt" onclick="return bckot('<?= $prevFullSingleOrderDet['ID'] ?? ''; ?>');">KOT</button>
+                  <button class="btn btn-Info mb-2 fnt">BOT</button>
+                  <button class="btn btn-Success mb-2 fnt" onclick="billview('<?= $prevFullSingleOrderDet['ID'] ?? '' ;?>');">Bill</button>
+                  <button class="btn btn-primary mb-2 fnt" data-toggle="modal" data-target="#myModalDiscount">Discount</button>
+                </div>
+              </div>
+          </div>
+
+              </div>
+              </div>
+            </div>
+            </div>
+            </div>
+            <?php
+            $refcount = count($resfc);
+            if($refcount == '2'){
+              $classtype = 'type1';
+            }else{
+              $classtype = 'type5';
+            }
+            ?>
+            <div class="col-md-7 pl-0 pr-0">
+              <div class="type-details1 pl-1">
+                
+                <div class="<?= $classtype; ?> btn-food-types active  dropdown dropdown-toggle" data-toggle="dropdown">
+                  <i class="fa fa-picture-o"></i> <span>Category</span>
+                  <ul class="dropdown-menu">
+  
+                  <li><a onclick="getFoodTypeProducts('','1')">All</a></li>
+                <?php $food_cat_id_arr = array_keys($result);
+  
+                  for( $fc = 0; $fc < count($food_cat_id_arr) ; $fc++ ) {
+                  ?>
+                    <li><a onclick="getFoodTypeProducts('<?= $food_cat_id_arr[$fc]; ?>','1')"><?php echo $result[$food_cat_id_arr[$fc]][0]['food_category'] ; ?></a></li>
+                  <?php } ?> 
+
+                  </ul>
+                </div>
+                <?php 
+                for($fs=0;$fs<count($resfc);$fs++) {
+                ?>
+                
+                <div class="<?= $classtype; ?> btn-food-types" id="fc_<?= $resfc[$fs]['ID']; ?>" onclick="getFoodTypeProducts('<?= $resfc[$fs]['ID']; ?>','2')">
+                  <i class="fa fa-picture-o"></i> <a ><?= $resfc[$fs]['food_section_name'] ;?></a>
+                </div>
+                                <?php } ?>
+                <div class="<?= $classtype; ?>">
+                <input type="text" class="form-control" id="myInput1" placeholder="Search">
+                </div>
+              </div>
+              <div class="card itmlist ">
+                <div class="card-body pt-0 pl-2 ml-1">
+              <div class="row" id="mainproductsdisplay">
+                <?php 
+                $imgArr = array_column($productDetails,'image','modified_title');
+
+                foreach($result as $key => $value) {
+                    for($i=0 ; $i < count($value); $i++) {
+                    ?>
+                <div class="col-lg-2 col-md-2 pl-1 pr-1 filtersearch">
+                  <div class="nd_options_section nd_options_position_relative mb-2 min-hgt"  onclick="foodquantitypopup('<?php echo $value[$i]['modified_title']; ?>')">
+          
+                    <img class="nd_options_section" alt="" src="<?= Yii::$app->request->baseUrl.'/uploads/productimages/'.$imgArr[$value[$i]['modified_title']];?>">
+          
+                    <!--start filter-->
+                    <div class="nd_options_bg_greydark_alpha_gradient_6 nd_options_position_absolute nd_options_left_0 nd_options_height_100_percentage nd_options_width_100_percentage nd_options_padding_30 nd_options_box_sizing_border_box">
+                    
+          
+                      <a class="price-color nd_options_position_absolute nd_options_top_30 nd_options_right_30 nd_options_padding_5_10 nd_options_border_radius_3 nd_options_line_height_14 nd_options_text_transform_uppercase nd_options_color_white nd_options_second_font">Rs. <?= $allProductDetails[$value[$i]['modified_title']][0]['price'] ; ?></a>
+          
+                      <a class="nd_options_color_white nd_options_position_absolute nd_options_left_0 nd_options_bottom_30 nd_options_section nd_options_text_align_center" >
+                        <h3 class="nd_options_margin_0_important nd_options_color_white nd_options_second_font">
+                        <?= $value[$i]['title'] ; ?>
+                        </h3>
+                      </a>
+          
+                    </div>
+                    <!--END filter-->
+                  </div>
+                </div>
+                <?php } } ?>
+            
+              </div>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+          </section>
+          <div id="dinein" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        
+        <h4 class="modal-title">Table Selection</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-2">
+          <div class="col-md-8">
+            <h4>Section Type</h4>
+          </div>
+          <div class="col-md-4 text-right">
+            <input type="text" class="form-control" id="myInput3" placeholder="Search Table">
+          </div>
+        </div>
+      <div class="tab">
+  <?php $sectionMainArr = array_column($tableDetails,'sectionname','section_id');
+  foreach($sectionMainArr as $section_id => $section_name) {
+  ?>    
+  <button class="tablinks" onclick="openCity(event, '<?= "sec_".$section_id; ?>')" id="defaultOpen"><?= $section_name;?></button>
+  <?php } ?>
+</div>
+
+<?php 
+
+$secTableIndexArr = yii\helpers\ArrayHelper::index($tableDetails, null, 'section_id');
+
+foreach($secTableIndexArr as $sec_id => $tableDetails ) {
+
+?>
+<div id="<?= "sec_".$sec_id; ?>" class="tabcontent">
+<div class="row">
+			  
+        <?php 
+        for($tn=0; $tn < count($tableDetails);$tn++ ) {
+        ?>         				
+         <div class="col-sm-4 filtersearch3" id="nopadding" style="cursor:pointer">
+           <!-- normal -->
+           <div class="ih-item circle effect10 top_to_bottom"  >
+             <a onclick="changetable('<?= $tableDetails[$tn]['ID']?>','<?= $tableDetails[$tn]['name']?>','<?= $tableDetails[$tn]['current_order_id']?>')">
+               <div class="img" width="20px" height="20px">
+                 <?php 
+                     $table_status = ($tableDetails[$i]['table_status'] ?? 5);
+                     if($table_status == '1' || $table_status == '2') { ?>
+                     <img  src="<?= Yii::$app->request->baseUrl.'/img/table/servingtable.png' ?>" alt="img">
+                     <?php } else {
+                     ?>
+                       <img  src="<?= Yii::$app->request->baseUrl.'/img/table/emptytable.png' ?>" alt="img">
+                       
+                 <?php }?>
+               </div>
+               <p>
+                 <?php $tableStatus = $tableDetails[$tn]['table_status'] ?? 5 ;
+                   if($tableStatus == '5' || $tableStatus == '' ){ ?>
+                   <div class="info Available">
+                     <h3><?= $tableDetails[$tn]['name']?></h3>
+                     <span class="badge badge-success">Available</span>
+                   </div>
+                   <?php }
+                   else if($tableStatus == '2'){ ?>
+                   <div class="info Serving"> 
+                     <h3><?= $tableDetails[$tn]['name']?></h3>
+                     <span class="badge badge-warning">Serving</span>
+                   </div>
+                   <?php }else { ?>
+                   <div class="info occupied"> 
+                     <h3><?= $tableDetails[$tn]['name']?></h3>
+                     <span class="badge badge-danger">Occupied</span>
+                   </div>
+                 <?php } ?>
+               </p>
+            </a>
+           </div>
+           <!-- end normal -->
+           </div>
+        <?php } ?>   
+       </div>
+</div>
+<?php } ?>
+
+      
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+     <!-- Modal -->
+     <div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" ><span id="modal_title_header"></span></h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        
+      </div>
+      <div class="modal-body">
+        <div class="col-md-12 pop-head">
+        <div class="row">
+          <div class="col-md-3">
+            Item Type
+          </div>
+          <div class="col-md-3">
+            Quantity
+          </div>
+          <div class="col-md-3">
+            Item Price
+          </div>
+          <div class="col-md-3">
+            Price
+          </div>
+        </div>
+        </div>
+        <div  id="modal_body">
+          
+        </div>
+        
+        <div class="col-md-12 pop-head">
+          <div class="row">
+            <div class="col-md-6">
+              Total
+            </div>
+            <div class="col-md-6 text-right">
+              <i class="fa fa-inr"></i> <span id="product_total">0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<div id="updateorderstatuschange" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md" >
+      <div class="modal-content">
+      
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Order Close</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+	    <div class="modal-body" id="updateorderstatuschangebody">
+			<div class="row">	
+
+                               
+	<div class="col-md-6">	
+	   <div class="form-group row">
+	   <label class="control-label col-md-4">Payment Method</label>
+	   <div class="col-md-8">
+			      <select id="orderpaymethod">
+			          <option value="Cash">Cash</option>
+			          <option value="Card">Card</option>
+			          <option value="Gpay">Gpay</option>
+			          <option value="Pending">Pending</option>
+			     </select>     
+	   </div>
+	   </div>
+	   
+	    <div class="form-group row">
+	   <label class="control-label col-md-4">Company</label>
+	   <div class="col-md-8">
+			      <select id="orderorigin">
+			          <option value="Swiggy">Swiggy</option>
+			          <option value="Card">Zomato</option>
+			          <option value="">None</option>
+			     </select> 
+			     <input type="hidden" id="curr_Order_id" >
+	   </div>
+	   </div>
+	   
+	   
+	   </div>
+	   </div>
+		</div>	
+		
+		  <div class="modal-footer">
+		<?= Html::submitButton('Confirm', ['class'=> 'btn btn-add btn-hide','id'=>'closeOrderStatus']); ?>
+		<button class="btn btn-danger btn-xs" data-dismiss="modal">Cancel</button>
+
+      </div> 
+		
+	</div>
+	</div>
+</div>
+
+
+<!-- Modal -->
+<div id="myModalPilot" class="modal fade" role="dialog">
+<div class="modal-dialog">
+  <!-- Modal content-->
+  <div class="modal-content">
+  <div class="modal-header">
+    <h4 class="modal-title" >Pilot Assign</h4>
+    <button type="button" class="close" data-dismiss="modal">&times;</button>
+  </div>
+      <div class="modal-body">
+      <select id="pilotselection">
+        <option value="">Select Pilot</option>
+        <?php $pilotArr = array_column($resServiceBoy,'name','ID');
+        $serviceboy_id = !empty($prevFullSingleOrderDet['serviceboy_id']) ? $prevFullSingleOrderDet['serviceboy_id'] : ''; 
+        foreach($pilotArr as $id => $name){ ?>
+        <option value="<?= $id ;?>" <?php if($serviceboy_id == $id) { ?>selected <?php } ?>><?= $name; ?></option>
+        <?php }
+        ?>
+      </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="myModalCustomer" class="modal fade" role="dialog">
+<div class="modal-dialog">
+  <!-- Modal content-->
+  <div class="modal-content">
+  <div class="modal-header">
+    <h4 class="modal-title" >Customer Details</h4>
+    <button type="button" class="close" data-dismiss="modal">&times;</button>
+  </div>
+
+  <div class="modal-body" >
+
+					<div class="form-group row">
+					<label class="control-label col-md-3">User Name</label>
+					<div class="col-md-9">
+          <input type="text" id="username" autocomplete="off" class="form-control" value="<?= $userDet['name'] ?? '' ; ?>">
+					</div>
+					</div>
+
+	   
+					<div class="form-group row">
+					<label class="control-label col-md-3">User Mobile</label>
+					<div class="col-md-9">
+          <input type="text" id="usermobile" autocomplete="off" class="form-control" value="<?= $userDet['mobile'] ?? '' ; ?>">
+					</div>
+					</div>
+			  
+		</div>
+
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal -->
+<div id="myModalDiscount" class="modal fade" role="dialog">
+<div class="modal-dialog">
+  <!-- Modal content-->
+  <div class="modal-content">
+  <div class="modal-header">
+    <h4 class="modal-title" >Discount Details</h4>
+    <button type="button" class="close" data-dismiss="modal">&times;</button>
+  </div>
+
+  <div class="modal-body" >
+			<div class="row">	
+				<div class="col-md-6">	
+					<div class="form-group row">
+					<label class="control-label col-md-4">Discount Type</label>
+					<div class="col-md-8">
+            <select id="discounttype" name="discounttype" onchange="discountchange()">
+          <option value="">Discount Type</option>
+                    <option value="1">Overall</option>
+                     <option value="2">Percentage</option>
+        </select>
+                    </div>
+					</div>
+	   
+					<div class="form-group row">
+					<label class="control-label col-md-4">Discount Value</label>
+					<div class="col-md-8">
+          <input type="text" id="discountvalue" onchange="discountchange()" autocomplete="off" >
+					</div>
+					</div>
+			   </div>
+	   		</div>
+		</div>
+
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openCity(evt, cityName) {
+      
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(cityName).style.display =  "block"; ;
+  
+  evt.currentTarget.className += " active";
+
+      
+  }
+
+// Get the element with id="defaultOpen" and click on it
+document.getElementById("defaultOpen").click();
+$(document).ready(function() {
+    $('.ordrlist').slimScroll({
+        height: '380px'
+    });
+    $('.runngorders').slimScroll({
+        height: '400px'
+    });
+    $('.itmlist').slimScroll({
+        height: '700px'
+    });
+
+    $("#myInput1").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $(".filtersearch").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+
+  $("#myInput2").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $(".filtersearch2").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+
+  $("#myInput3").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $(".filtersearch3").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+
+  $('.btn-food-types').on("click", function() {
+  $(this).addClass('active') //add class to clicked button
+         .siblings(".active") //look for any other button at the same level
+         .removeClass('active'); //remove the class from the found button
+});
+
+$('.ordertype').on("click", function() {
+  $(this).addClass('active') //add class to clicked button
+         .siblings(".active") //look for any other button at the same level
+         .removeClass('active'); //remove the class from the found button
+});
+
+});
+
+$("#pilotselection").change(function(){
+  $("#pilotid").val(this.value);
+});
+
+$("#username").change(function(){
+  $("#user_name").val(this.value);
+});
+
+$("#usermobile").change(function(){
+  $("#user_mobile").val(this.value);
+});
+
+function discountchange(){
+  var discounttype = $("#discounttype").val();
+  var discountvalue = $("#discountvalue").val();
+  
+  $("#ttl_discount_type").val(discounttype);
+  $("#ttl_discount").val(discountvalue);
+  totlrealprice();
+
+
+}
+
+itemaddarr = [];
+itemaddphparr = '<?= json_encode($itemidarr) ; ?>';
+if(itemaddphparr.length > 1){
+  itemaddarr =  JSON.parse(itemaddphparr);
+
+}
+console.log(itemaddarr);
+
+function getFoodTypeProducts(foodtype,foodsecvalue)
+{
+
+
+
+    var result = '<?= json_encode($result)?>';
+    var mainArr = JSON.parse(result);
+
+    var res = '<?= json_encode($res)?>';
+    var mainArrRes = JSON.parse(res);
+
+    var fsresult = '<?= json_encode($fsresult)?>';
+    var mainfsresult = JSON.parse(fsresult);
+
+    var imgArrjs = '<?= json_encode($imgArr)?>';
+    var imgArr = JSON.parse(imgArrjs);
+  
+    
+    var title_products_quantity = '<?= json_encode($allProductDetails); ?>';
+    var title_products_quantity_arr = JSON.parse(title_products_quantity);
+
+    var baseUrl = '<?= Yii::$app->request->baseUrl."/uploads/productimages/" ?>';
+
+    $("#mainproductsdisplay").html('');
+
+  if(foodsecvalue == '1'){
+    if(foodtype == ''){
+        var productArr = mainArrRes;
+    }else{
+        var productArr = mainArr[foodtype];
+    }
+  }else{
+
+    var productArr = mainfsresult[foodtype];
+
+  }
+    for(var p=0; p < productArr.length; p++){
+    $("#mainproductsdisplay").append('<div class="col-lg-2 col-md-2 pl-1 pr-1 filtersearch">\
+                  <div class="nd_options_section nd_options_position_relative mb-2 min-hgt"  onclick="foodquantitypopup(\''+productArr[p]['modified_title']+'\')">\
+                    <img class="nd_options_section" alt="" src="'+baseUrl+imgArr[productArr[p]['modified_title']]+'">\
+                    <div class="nd_options_bg_greydark_alpha_gradient_6 nd_options_position_absolute nd_options_left_0 nd_options_height_100_percentage nd_options_width_100_percentage nd_options_padding_30 nd_options_box_sizing_border_box">\
+                     <a class="price-color nd_options_position_absolute nd_options_top_30 nd_options_right_30 nd_options_padding_5_10 nd_options_border_radius_3 nd_options_line_height_14 nd_options_text_transform_uppercase nd_options_color_white nd_options_second_font">Rs. '+title_products_quantity_arr[productArr[p]['modified_title']][0]['price']+'</a>\
+                     <a class="nd_options_color_white nd_options_position_absolute nd_options_left_0 nd_options_bottom_30 nd_options_section nd_options_text_align_center" >\
+                        <h3 class="nd_options_margin_0_important nd_options_color_white nd_options_second_font">'+productArr[p]['title']+'\
+                        </h3>\
+                      </a>\
+                    </div>\
+                  </div>\
+                </div>');
+            }
+}
+
+var foodquantitypopup = (function() {
+  return function (total_modified_name)
+  {
+    var title_name = total_modified_name.replaceAll("_", " ");  
+    $("#modal_title_header").html(title_name);
+    var title_products_quantity = '<?= json_encode($allProductDetails); ?>';
+    var title_products_quantity_arr = JSON.parse(title_products_quantity);
+    var quantity_arr = title_products_quantity_arr[total_modified_name];
+    $("#modal_body").html('');
+      
+        for(var i=0; i < quantity_arr.length ; i++) {
+          if(quantity_arr[i]['food_type_name'] == null) {  
+           var food_type_name = title_name;
+          }else{
+            var food_type_name = quantity_arr[i]['food_type_name'];
+          }
+
+            $("#modal_body").append('<div class="row"><div class="col-md-3">\
+                    <label class="container">'+food_type_name+'\
+                      <input type="checkbox" id="check_id_'+quantity_arr[i]['ID']+'" \
+                      onclick="checktoadd(\''+quantity_arr[i]['ID']+'\',\''+quantity_arr[i]['price']+'\',\''+quantity_arr[i]['food_type_name']+'\',\'\')"  >\
+                      <span class="checkmark"></span>\
+                    </label>\
+                  </div>\
+                  <div class="col-md-3">\
+                    <div class="number-input">\
+                      <button onclick="this.parentNode.querySelector(\'input[type=number]\').stepDown();plusorminus(\''+quantity_arr[i]['ID']+'\',\''+quantity_arr[i]['price']+'\')" ></button>\
+                      <input class="quantity" min="0" name="quantity" value="1" id="quant_id_'+quantity_arr[i]['ID']+'" type="number">\
+                      <button onclick="this.parentNode.querySelector(\'input[type=number]\').stepUp();plusorminus(\''+quantity_arr[i]['ID']+'\',\''+quantity_arr[i]['price']+'\')"  class="plus"></button>\
+                    </div>\
+                  </div>\
+                  <div class="col-md-3">\
+                    <div class="pop-price">\
+                      <i class="fa fa-inr"></i> '+quantity_arr[i]['price']+'\
+                    </div>\
+                  </div>\
+                  <div class="col-md-3 text-right">\
+                    <div class="pop-price">\
+                      <i class="fa fa-inr"></i> <span class="added_price" id="added_price_'+quantity_arr[i]['ID']+'">0\
+                    <input type="hidden" id="single_qty_'+quantity_arr[i]['ID']+'" value = "0">\
+                    </div>\
+                  </div>\
+                  </div>');
+                  if (jQuery.inArray(quantity_arr[i]['ID'], itemaddarr)!='-1') {
+                    $('#check_id_'+quantity_arr[i]['ID']).prop('checked', true);
+                    $("#quant_id_"+quantity_arr[i]['ID']).val($("#qtyind_"+quantity_arr[i]['ID']).val());
+                    $("#added_price_"+quantity_arr[i]['ID']).html($("#pricetot_"+quantity_arr[i]['ID']).val());
+                    totalPrice();
+              }
+           
+
+        }
+        if(quantity_arr.length >= 2){
+          $("#myModal").modal('show');
+        }
+        else{
+          if($("#single_qty_"+quantity_arr[0]['ID']).val() == 0){
+            $('#check_id_'+quantity_arr[0]['ID']).prop('checked', true);
+            $("#single_qty_"+quantity_arr[0]['ID']).val(1); 
+            checktoadd(quantity_arr[0]['ID'],quantity_arr[0]['price']
+          ,quantity_arr[0]['food_type_name'] || '',3);
+          }
+          else{
+            var prsntSingleQty = $("#single_qty_"+quantity_arr[0]['ID']).val();
+            plusorminus(quantity_arr[0]['ID'],quantity_arr[0]['price'],'inc');
+
+            plusorminusagain(quantity_arr[0]['ID'],quantity_arr[0]['price'],'inc');
+            //$('#check_id_'+quantity_arr[0]['ID']).prop('checked', false);
+            //$("#single_qty_"+quantity_arr[0]['ID']).val(0);
+          }
+
+        }
+        
+    
+    
+
+  }
+  })();
+          
+  
+
+
+var checktoadd = (function() {
+  var arr = [];
+  
+
+  return function (id,price,foodtypename,decision){
+    
+    
+    var quant_id = $("#quant_id_"+id).val();
+    var quant_price = parseFloat(price) * parseInt(quant_id);
+    $("#added_price_"+id).html(quant_price);
+    if(!$('input:checkbox[id="check_id_'+id+'"]').is(':checked')){
+      $("#added_price_"+id).html('0');
+    }
+    var tableid = '<?php echo $tableid; ?>';
+    totalPrice();
+    
+     if(!$('input:checkbox[id="check_id_'+id+'"]').is(':checked') || decision == '2'){
+    $("#row_id_"+id).remove();
+      var index = itemaddarr.indexOf(id);
+      if (index > -1) {
+        itemaddarr.splice(index, 1);
+    }      var item_count =parseInt($("#item-count").html())  - 1
+     }else{
+      itemaddarr.push(id);
+      $("#appenditems").append('<tr id="row_id_'+id+'" class="itemrowclass">\
+                    <td>'+  $("#modal_title_header").html()+' '+ foodtypename  +'\
+                    <input type="hidden" name="itemid[]" class="itemid" id="item_id_'+id+'" value="'+id+'">\
+                    <input type="hidden" name="priceind[]" id="priceind_'+id+'" value="'+price+'">\
+                    <input type="hidden" name="pricetot[]" id="pricetot_'+id+'" value="'+quant_price+'">\
+                    <input type="hidden" name="qtyitem[]" id="qtyind_'+id+'" value="'+quant_id+'">\
+      </td>\
+                    <td>'+price+'</td>\
+                    <td>\
+                      <div class="number-input">\
+                        <button onclick="this.parentNode.querySelector(\'input[type=number]\').stepDown();plusorminusagain(\''+id+'\',\''+price+'\')" ></button>\
+                        <input class="quantity" min="0" name="quantity" id="real_quant_'+id+'" value="'+quant_id+'" type="number">\
+                        <input type="hidden" class="tableid" name="tableid" value="'+tableid+'">\
+                        <button onclick="this.parentNode.querySelector(\'input[type=number]\').stepUp();plusorminusagain(\''+id+'\',\''+price+'\')" class="plus"></button>\
+                      </div>\
+                    </td>\
+                    <td><span class="realitemtotalprice" id="realitemtotalprice_'+id+'">'+quant_price+'</td>\
+                    <td><i class="fa fa-trash" style="cursor:pointer" onclick="checktoadd(\''+id+'\',\''+price+'\',\''+foodtypename+'\',\'2\')"></i></td>\
+                                      </tr>\
+                  ');
+                  var item_count =       parseInt($("#item-count").html()) + 1;
+
+     }
+     $('#item-count').html(item_count);
+     totlrealprice();   
+  }
+})();
+
+function totalPrice(){
+  var price = $('.added_price');
+  var prices = new Array();
+  var totalprice = 0;
+  for(var i=0;i<price.length;i++){
+    prices.push(price[i].innerHTML);
+    totalprice = parseFloat(totalprice) + parseFloat(price[i].innerHTML); 
+  }
+  $("#product_total").html(totalprice);
+}
+function totlrealprice()
+{
+  var realprices = $('.realitemtotalprice');
+  var itid = $('.itemid');
+  var totalprice = 0;
+  //var itid = $('.itemid').map((_,el) => el.value).get();
+  var merchantfoodTaxJsn =   '<?= json_encode($MerchantfoodTaxArr); ?>';
+  var merchantfoodTaxArr = JSON.parse(merchantfoodTaxJsn);
+  var prodvsfcidJsn =   '<?= json_encode($prodvsfcidarr); ?>';
+  var prodvsfcidarr = JSON.parse(prodvsfcidJsn);
+  var calFoodTax   = 0;
+  var taxamt = 0;
+  var foodTaxArr = [];
+  var priceTotArr = [];
+  
+
+  
+    for(var i=0;i<realprices.length;i++){
+      priceTotArr.push(realprices[i].innerHTML); 
+      totalprice = parseFloat(totalprice) + parseFloat(realprices[i].innerHTML); 
+    }
+    $('#itemtable tr').each(function() {
+      if(this.id != ''){
+
+        foodTaxArr = (merchantfoodTaxArr[prodvsfcidarr[this.id]]) || [];
+
+        if(foodTaxArr.length > 0){
+              for(var f =0;f< foodTaxArr.length ; f++){
+                  foodTaxValue = parseFloat(foodTaxArr[f]['tax_value']);
+                  calFoodTax = calFoodTax + (parseFloat($("#realitemtotalprice_"+this.id).html()) * parseFloat(foodTaxValue/100));
+                 }
+                    taxamt = parseFloat(( calFoodTax).toFixed(2)); 
+        }
+      }
+    });
+    $(".ttl-sub-amt").html(totalprice);
+    $(".ttl-tax").html(taxamt); 
+ 
+    var ttl_discount = $("#ttl_discount").val();
+    var ttl_discount_type = $("#ttl_discount_type").val();
+    var calDiscountAmount = 0;
+    
+    var actualTotalAmt = totalprice + taxamt;
+    if(ttl_discount_type && ttl_discount > 0){
+      if(ttl_discount_type == '1'){
+	        			$(".ttl-discount").html(parseFloat(ttl_discount).toFixed(2));
+			
+            var calDiscountAmount = parseFloat(ttl_discount);
+        } else if(ttl_discount_type == '2'){
+            var calDiscountAmount = (parseFloat(actualTotalAmt) * parseFloat(ttl_discount)) / 100 ;
+            $(".ttl-discount").html(parseFloat(calDiscountAmount).toFixed(2));
+
+        }
+    }
+
+    totalprice = parseFloat(totalprice + taxamt - calDiscountAmount).toFixed(2); 
+
+
+    $("#ttl_payble").html(totalprice);
+   
+   }
+
+function plusorminus(id,price,typeinc = '')
+{
+  var quant_id = $("#quant_id_"+id).val();
+  if(quant_id < 1){
+    $("#quant_id_"+id).val(1);
+    swal(
+				'Warning!',
+				'Please Add Atleast one quantity',  
+				'warning'
+			);
+		return false;
+  }
+  if(typeinc == 'inc'){
+    $("#quant_id_"+id).val(parseInt(quant_id) + 1);
+    var quant_id = parseInt(quant_id) + 1;
+  }
+
+  var itemPrice = parseInt(quant_id) * parseFloat(price);
+  $("#added_price_"+id).html(itemPrice);
+  $("#real_quant_"+id).val(quant_id);
+  $("#realitemtotalprice_"+id).html(itemPrice);
+  totalPrice();
+  totlrealprice();
+
+}
+
+function plusorminusagain(id,price)
+{
+  var quant_id = $("#real_quant_"+id).val();
+  if(quant_id < 1){
+    $("#real_quant_"+id).val(1);
+    swal(
+				'Warning!',
+				'Please Add Atleast one quantity',  
+				'warning'
+			);
+		return false;
+  }
+  var itemPrice = parseInt(quant_id) * parseFloat(price);
+  $("#realitemtotalprice_"+id).html(itemPrice);
+  totalPrice();
+  totlrealprice();
+         
+  $("#qtyind_"+id).val(quant_id);
+  $("#pricetot_"+id).val(itemPrice);
+  $("#priceind_"+id).val(price);
+
+
+}
+
+function saveorder()
+{
+
+              $("#ttl_tax").val($('.ttl-tax').html());
+              $("#ttl_discount").val($('.ttl-discount').html());
+              $("#ttl_cpn_amt").val($('.ttl-cpn-amt').html());
+              $("#ttl_sub_amt").val($('.ttl-sub-amt').html());
+              $("#ttl_amt").val($('#ttl_payble').html());
+  
+  $("#submitorder").val(1);
+  $("#mainorderdiv").submit();
+  
+}
+
+function validatesubmitorder()
+{
+  var checksubmit = $("#submitorder").val();
+  if(checksubmit != 1){
+    return false;
+  }
+}
+function changetable(id,name,current_order_id)
+{
+
+  var form=document.createElement('form');
+        form.setAttribute('method','post');
+        form.setAttribute('action','newpos');
+        //form.setAttribute('target','_blank');
+
+    var hiddenField = document.createElement("input");
+    hiddenField.setAttribute("name", "tableid");
+    hiddenField.setAttribute("type", "hidden");
+    hiddenField.setAttribute("value", id);
+    form.appendChild(hiddenField);
+
+    var hiddenField = document.createElement("input");
+    hiddenField.setAttribute("name", "tableName");
+    hiddenField.setAttribute("type", "hidden");
+    hiddenField.setAttribute("value", name);
+    form.appendChild(hiddenField);
+
+    var hiddenField = document.createElement("input");
+    hiddenField.setAttribute("name", "current_order_id");
+    hiddenField.setAttribute("type", "hidden");
+    hiddenField.setAttribute("value", current_order_id);
+    form.appendChild(hiddenField);
+
+    document.body.appendChild(form);
+    form.submit();
+}
+function statusPopUp(popuptype,orderId){
+    if(popuptype == '0'){
+        swal(
+				'Warning!',
+				'Please Make The Order',
+				'warning'
+			);
+		return false;
+    }else {
+      
+        	$('#updateorderstatuschange').modal('show');
+            $("#curr_Order_id").val(orderId);
+    }
+    	 
+}
+$("#closeOrderStatus").click(function(){
+var orderorigin = $("#orderorigin").val();
+var orderpaymethod = $("#orderpaymethod").val();
+var curr_order_id = $("#curr_Order_id").val();
+    var request = $.ajax({
+  url: "updateorderstatus",
+  type: "POST",
+  data: {id : curr_order_id,orderorigin:orderorigin,orderpaymethod:orderpaymethod},
+}).done(function(msg) {
+	  swal(
+				'Success!',
+				'Order Status Updated Successfully',
+				'success'
+			);
+		var res = JSON.parse(msg);
+		window.location.replace("newpos?tableid="+res['table_id']+"&tableName="+res['table_name']+"&current_order_id=0");
+});		
+});
+
+function bckot(id){
+
+if(id == ''){
+  swal(
+				'Warning!',
+				'Please Place An Order',
+				'warning'
+			);
+		return false; 
+}
+
+var form=document.createElement('form');
+        form.setAttribute('method','post');
+        form.setAttribute('action','tablekot');
+        form.setAttribute('target','_blank');
+
+    var hiddenField = document.createElement("input");
+    hiddenField.setAttribute("name", "id");
+    hiddenField.setAttribute("type", "hidden");
+    hiddenField.setAttribute("value", id);
+    form.appendChild(hiddenField);
+
+    document.body.appendChild(form);
+    form.submit();    
+
+
+}
+function toggleIcon(e) {
+    $(e.target)
+            .prev('.panel-heading')
+            .find(".more-less")
+            .toggleClass('fa-plus fa-minus');
+    }
+    $('.panel-group').on('hidden.bs.collapse', toggleIcon);
+    $('.panel-group').on('shown.bs.collapse', toggleIcon);
+
+    $("#runningorder").click(function(){
+      location.reload();
+    });
+</script>

@@ -1,0 +1,310 @@
+Message-ID: <d315b410b375be9ad2140306dcdc73c1@superpilot.in>
+Date: Fri, 19 Nov 2021 00:11:30 +0530
+Subject: Database errors at example.com
+From: log@example.com
+To: admin@example.com, developer@example.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+2021-11-19 00:11:30
+[103.99.8.131][1][6adf9c1b5ce800eb300e479df7ac6f87][e=
+rror][yii\db\Exception]
+PDOException: SQLSTATE[42S22]: Column not found: =
+1054 Unknown column
+'re_date' in 'where clause' in
+/home/superqcp/publi=
+c_html/dev/tutors/vendor/yiisoft/yii2/db/Command.php:1302
+Stack trace:
+=
+#0
+/home/superqcp/public_html/dev/tutors/vendor/yiisoft/yii2/db/Command.p=
+hp(1302):
+PDOStatement->execute()
+#1
+/home/superqcp/public_html/dev/t=
+utors/vendor/yiisoft/yii2/db/Command.php(1168):
+yii\db\Command->internalE=
+xecute('SELECT * FROM c...')
+#2
+/home/superqcp/public_html/dev/tutors/v=
+endor/yiisoft/yii2/db/Command.php(424):
+yii\db\Command->queryInternal('fe=
+tch', NULL)
+#3
+/home/superqcp/public_html/dev/tutors/controllers/Mercha=
+ntController.php(4642):
+yii\db\Command->queryOne()
+#4 [internal functio=
+n]:
+app\controllers\MerchantController->actionAddsettlement()
+#5
+/hom=
+e/superqcp/public_html/dev/tutors/vendor/yiisoft/yii2/base/InlineAction.php=
+(57):
+call_user_func_array(Array, Array)
+#6
+/home/superqcp/public_htm=
+l/dev/tutors/vendor/yiisoft/yii2/base/Controller.php(181):
+yii\base\Inlin=
+eAction->runWithParams(Array)
+#7
+/home/superqcp/public_html/dev/tutors/=
+vendor/yiisoft/yii2/base/Module.php(534):
+yii\base\Controller->runAction(=
+'addsettlement', Array)
+#8
+/home/superqcp/public_html/dev/tutors/vendor=
+/yiisoft/yii2/web/Application.php(104):
+yii\base\Module->runAction('merch=
+ant/addset...', Array)
+#9
+/home/superqcp/public_html/dev/tutors/vendor/=
+yiisoft/yii2/base/Application.php(392):
+yii\web\Application->handleReques=
+t(Object(yii\web\Request))
+#10 /home/superqcp/public_html/dev/tutors/web/=
+index.php(12):
+yii\base\Application->run()
+#11 {main}
+
+Next yii\db\=
+Exception: SQLSTATE[42S22]: Column not found: 1054 Unknown
+column 're_dat=
+e' in 'where clause'
+The SQL being executed was: SELECT * FROM counter_se=
+ttlement WHERE
+(date(re_date)=3D'2021-11-18') AND (pilot_id=3D'71') in
+=
+/home/superqcp/public_html/dev/tutors/vendor/yiisoft/yii2/db/Schema.php:678=
+
+Stack trace:
+#0
+/home/superqcp/public_html/dev/tutors/vendor/yiisoft=
+/yii2/db/Command.php(1307):
+yii\db\Schema->convertException(Object(PDOExc=
+eption), 'SELECT * FROM
+c...')
+#1
+/home/superqcp/public_html/dev/tuto=
+rs/vendor/yiisoft/yii2/db/Command.php(1168):
+yii\db\Command->internalExec=
+ute('SELECT * FROM c...')
+#2
+/home/superqcp/public_html/dev/tutors/vend=
+or/yiisoft/yii2/db/Command.php(424):
+yii\db\Command->queryInternal('fetch=
+', NULL)
+#3
+/home/superqcp/public_html/dev/tutors/controllers/MerchantC=
+ontroller.php(4642):
+yii\db\Command->queryOne()
+#4 [internal function]:=
+
+app\controllers\MerchantController->actionAddsettlement()
+#5
+/home/s=
+uperqcp/public_html/dev/tutors/vendor/yiisoft/yii2/base/InlineAction.php(57=
+):
+call_user_func_array(Array, Array)
+#6
+/home/superqcp/public_html/d=
+ev/tutors/vendor/yiisoft/yii2/base/Controller.php(181):
+yii\base\InlineAc=
+tion->runWithParams(Array)
+#7
+/home/superqcp/public_html/dev/tutors/ven=
+dor/yiisoft/yii2/base/Module.php(534):
+yii\base\Controller->runAction('ad=
+dsettlement', Array)
+#8
+/home/superqcp/public_html/dev/tutors/vendor/yi=
+isoft/yii2/web/Application.php(104):
+yii\base\Module->runAction('merchant=
+/addset...', Array)
+#9
+/home/superqcp/public_html/dev/tutors/vendor/yii=
+soft/yii2/base/Application.php(392):
+yii\web\Application->handleRequest(O=
+bject(yii\web\Request))
+#10 /home/superqcp/public_html/dev/tutors/web/ind=
+ex.php(12):
+yii\base\Application->run()
+#11 {main}
+Additional Informa=
+tion:
+Array
+(
+    [0] =3D> 42S22
+    [1] =3D> 1054
+    [2] =3D> U=
+nknown column 're_date' in 'where clause'
+)
+
+2021-11-19 00:11:30
+[1=
+03.99.8.131][1][6adf9c1b5ce800eb300e479df7ac6f87][info][application]
+$_GE=
+T =3D []
+
+$_POST =3D [
+    'order_date' =3D> '2021-11-18'
+    'clos=
+ed_by' =3D> '71'
+    'total_amount' =3D> '54'
+]
+
+$_FILES =3D []
+=
+
+$_COOKIE =3D [
+    '_csrf' =3D>
+'4933f2aa37adb705adfb0bb0ce345117999=
+5885723ce67b925a879f660f99f75a:2:{i:0;s:5:\"_csrf\";i:1;s:32:\"X17LDUKF96-8=
+s_IubqWB6AXLHs1fjBES\";}'
+    'PHPSESSID' =3D> '6adf9c1b5ce800eb300e479df=
+7ac6f87'
+    '_identity' =3D>
+'c3b889cd877b5726118837083d533a3873e3aa72=
+44d8bea834f1b0300e8e943ca:2:{i:0;s:9:\"_identity\";i:1;s:16:\"[1,null,25920=
+00]\";}'
+]
+
+$_SESSION =3D [
+    '__flash' =3D> []
+    '__id' =3D>=
+ 1
+    '__authKey' =3D> null
+]
+
+$_SERVER =3D [
+    'CONTENT_LENGT=
+H' =3D> '50'
+    'CONTENT_TYPE' =3D> 'application/x-www-form-urlencoded;=
+
+charset=3DUTF-8'
+    'CONTEXT_DOCUMENT_ROOT' =3D> '/home/superqcp/publ=
+ic_html'
+    'CONTEXT_PREFIX' =3D> ''
+    'DOCUMENT_ROOT' =3D> '/home/s=
+uperqcp/public_html'
+    'GATEWAY_INTERFACE' =3D> 'CGI/1.1'
+    'H2PUSH=
+' =3D> 'on'
+    'H2_PUSH' =3D> 'on'
+    'H2_PUSHED' =3D> ''
+    'H2_P=
+USHED_ON' =3D> ''
+    'H2_STREAM_ID' =3D> '15'
+    'H2_STREAM_TAG' =3D>=
+ '150-15'
+    'HTTP2' =3D> 'on'
+    'HTTPS' =3D> 'on'
+    'HTTP_ACCEP=
+T' =3D> '*/*'
+    'HTTP_ACCEPT_ENCODING' =3D> 'gzip, deflate, br'
+    '=
+HTTP_ACCEPT_LANGUAGE' =3D> 'en-US,en;q=3D0.5'
+    'HTTP_COOKIE' =3D>
+'_=
+csrf=3D4933f2aa37adb705adfb0bb0ce3451179995885723ce67b925a879f660f99f75a%3A=
+2%3A%7Bi%3A0%3Bs%3A5%3A%22_csrf%22%3Bi%3A1%3Bs%3A32%3A%22X17LDUKF96-8s_Iubq=
+WB6AXLHs1fjBES%22%3B%7D;
+PHPSESSID=3D6adf9c1b5ce800eb300e479df7ac6f87;
+=
+_identity=3Dc3b889cd877b5726118837083d533a3873e3aa7244d8bea834f1b0300e8e943=
+ca%3A2%3A%7Bi%3A0%3Bs%3A9%3A%22_identity%22%3Bi%3A1%3Bs%3A16%3A%22%5B1%2Cnu=
+ll%2C2592000%5D%22%3B%7D'
+    'HTTP_HOST' =3D> 'superpilot.in'
+    'HTT=
+P_ORIGIN' =3D> 'https://superpilot.in'
+    'HTTP_REFERER' =3D>
+'https:/=
+/superpilot.in/dev/tutors/web/merchant/counter-settlement'
+    'HTTP_SEC_=
+FETCH_DEST' =3D> 'empty'
+    'HTTP_SEC_FETCH_MODE' =3D> 'cors'
+    'HTT=
+P_SEC_FETCH_SITE' =3D> 'same-origin'
+    'HTTP_TE' =3D> 'trailers'
+    =
+'HTTP_USER_AGENT' =3D> 'Mozilla/5.0 (Windows NT 10.0; Win64; x64;
+rv:94.0=
+) Gecko/20100101 Firefox/94.0'
+    'HTTP_X_CSRF_TOKEN' =3D>
+'6B0amLuwF8=
+Y8tptoboU-Ii-06RNbGjh1Bm9UdDaztY2wLC3U_-VcgAWAtlAd2ndXTcW-UW1bYDlOHGUSXPHw3=
+g=3D=3D'
+    'HTTP_X_HTTPS' =3D> '1'
+    'HTTP_X_REQUESTED_WITH' =3D> '=
+XMLHttpRequest'
+    'PATH' =3D> '/bin:/usr/bin'
+    'PHP_INI_SCAN_DIR' =
+=3D>
+'/opt/cpanel/ea-php73/root/etc:/opt/cpanel/ea-php73/root/etc/php.d:.=
+'
+    'QUERY_STRING' =3D> ''
+    'REDIRECT_H2PUSH' =3D> 'on'
+    'RED=
+IRECT_H2_PUSH' =3D> 'on'
+    'REDIRECT_H2_PUSHED' =3D> ''
+    'REDIRECT=
+_H2_PUSHED_ON' =3D> ''
+    'REDIRECT_H2_STREAM_ID' =3D> '15'
+    'REDIR=
+ECT_H2_STREAM_TAG' =3D> '150-15'
+    'REDIRECT_HTTP2' =3D> 'on'
+    'RE=
+DIRECT_HTTPS' =3D> 'on'
+    'REDIRECT_SCRIPT_URI' =3D>
+'https://superpi=
+lot.in/dev/tutors/web/merchant/addsettlement'
+    'REDIRECT_SCRIPT_URL' =
+=3D> '/dev/tutors/web/merchant/addsettlement'
+    'REDIRECT_SSL_TLS_SNI' =
+=3D> 'superpilot.in'
+    'REDIRECT_STATUS' =3D> '200'
+    'REDIRECT_UNI=
+QUE_ID' =3D> 'YZaeWtAkX2ix76bqhk4A9QAAlgg'
+    'REDIRECT_URL' =3D> '/dev/=
+tutors/web/merchant/addsettlement'
+    'REMOTE_ADDR' =3D> '103.99.8.131'=
+
+    'REMOTE_PORT' =3D> '50352'
+    'REQUEST_METHOD' =3D> 'POST'
+    =
+'REQUEST_SCHEME' =3D> 'https'
+    'REQUEST_URI' =3D> '/dev/tutors/web/mer=
+chant/addsettlement'
+    'SCRIPT_FILENAME' =3D>
+'/home/superqcp/public_=
+html/dev/tutors/web/index.php'
+    'SCRIPT_NAME' =3D> '/dev/tutors/web/in=
+dex.php'
+    'SCRIPT_URI' =3D>
+'https://superpilot.in/dev/tutors/web/me=
+rchant/addsettlement'
+    'SCRIPT_URL' =3D> '/dev/tutors/web/merchant/add=
+settlement'
+    'SERVER_ADDR' =3D> '116.206.105.109'
+    'SERVER_ADMIN'=
+ =3D> 'webmaster@superpilot.in'
+    'SERVER_NAME' =3D> 'superpilot.in'
+=
+    'SERVER_PORT' =3D> '443'
+    'SERVER_PROTOCOL' =3D> 'HTTP/2.0'
+    =
+'SERVER_SIGNATURE' =3D> ''
+    'SERVER_SOFTWARE' =3D> 'Apache'
+    'SSL=
+_TLS_SNI' =3D> 'superpilot.in'
+    'UNIQUE_ID' =3D> 'YZaeWtAkX2ix76bqhk4A=
+9QAAlgg'
+    'PHP_SELF' =3D> '/dev/tutors/web/index.php'
+    'REQUEST_T=
+IME_FLOAT' =3D> 1637260890.5807
+    'REQUEST_TIME' =3D> 1637260890
+    =
+'argv' =3D> []
+    'argc' =3D> 0
+]
