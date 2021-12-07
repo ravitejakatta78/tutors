@@ -1534,7 +1534,7 @@ $_REQUEST['CHECKSUMHASH'] = 'bGyUGQxHiDoQIbaCV/y9pgZw06duXI/Q0ubsAMr8vscSuBj+OrE
 		//$orderDet->ordercompany = $orderorigin;
 		$orderDet->closed_by = $orderDet['serviceboy_id'];
 		$orderDet->save();
-				return ['tableid'=>$tableUpdate['ID'],'tableName'=>$tableUpdate['name'],'current_order_id'=>0  ];
+				return ['tableid'=>$tableUpdate['ID'],'tableName'=>$tableUpdate['name'],'current_order_id'=>0,'ordertype' => $orderDet['ordertype']  ];
 	        }
 	    }
 	    
