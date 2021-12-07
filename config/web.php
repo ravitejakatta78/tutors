@@ -35,6 +35,9 @@ $config = [
 		'merchant' => [
 			 'class' => 'app\components\MerchantComponent',
 		],
+        'order' => [
+            'class' => 'app\components\OrderComponent',
+       ],
 		        // other default components here..
         'jwt' => [
             'class' => \sizeg\jwt\Jwt::class,
