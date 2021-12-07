@@ -1520,7 +1520,11 @@ $_REQUEST['CHECKSUMHASH'] = 'bGyUGQxHiDoQIbaCV/y9pgZw06duXI/Q0ubsAMr8vscSuBj+OrE
 	            $orderid = str_replace('ORDS0000','',$_REQUEST['ORDERID']);
 	            $orderDet = \app\models\Orders::findOne($orderid);
 	            $tableUpdate = \app\models\Tablename::findOne($orderDet['tablename']);
-				$encrypttableid = \app\helpers\Utility::encrypt($tableUpdate['ID'],$orderDet['user_id']);
+				$encrypttableid = null;
+				if(!empty($orderDet['user_id'])){
+					$encrypttableid = \app\helpers\Utility::encrypt($tableUpdate['ID'],$orderDet['user_id']);
+				}
+				
 	    if(!empty($tableUpdate))
 		{
 			$table_status = null;
