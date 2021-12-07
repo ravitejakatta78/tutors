@@ -1520,6 +1520,7 @@ $_REQUEST['CHECKSUMHASH'] = 'bGyUGQxHiDoQIbaCV/y9pgZw06duXI/Q0ubsAMr8vscSuBj+OrE
 	            $orderid = str_replace('ORDS0000','',$_REQUEST['ORDERID']);
 	            $orderDet = \app\models\Orders::findOne($orderid);
 	            $tableUpdate = \app\models\Tablename::findOne($orderDet['tablename']);
+				$encrypttableid = \app\helpers\Utility::encrypt($tableUpdate['ID'],$orderDet['user_id']);
 	    if(!empty($tableUpdate))
 		{
 			$table_status = null;
@@ -1534,7 +1535,8 @@ $_REQUEST['CHECKSUMHASH'] = 'bGyUGQxHiDoQIbaCV/y9pgZw06duXI/Q0ubsAMr8vscSuBj+OrE
 		//$orderDet->ordercompany = $orderorigin;
 		$orderDet->closed_by = $orderDet['serviceboy_id'];
 		$orderDet->save();
-				return ['tableid'=>$tableUpdate['ID'],'tableName'=>$tableUpdate['name'],'current_order_id'=>0,'ordertype' => $orderDet['ordertype']  ];
+				return ['tableid'=>$tableUpdate['ID'],'tableName'=>$tableUpdate['name'],'current_order_id'=>0
+				,'ordertype' => $orderDet['ordertype'],'encrypttableid' => $encrypttableid  ];
 	        }
 	    }
 	    
