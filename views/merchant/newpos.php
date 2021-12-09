@@ -273,7 +273,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
             <div class="col-md-12">
               <div class="row">
                 <div class="ttl-payble" onclick="saveorder()" style="cursor:pointer">
-                  Place Order :₹ <span id="ttl_payble"> <?php echo $ttl_amt =  round($prevFullSingleOrderDet['totalamount'],2) ?? 0; ?></span>
+                  Place Order :₹ <span id="ttl_payble"> <?php echo $ttl_amt =  round(@$prevFullSingleOrderDet['totalamount'],2) ?? 0; ?></span>
                 </div>
                 <div class="buts mt-2 text-center col-md-12">
                 <?php if(!empty($prevFullSingleOrderDet) && @$prevFullSingleOrderDet['orderprocess'] == 0){ ?>
@@ -664,8 +664,8 @@ foreach($secTableIndexArr as $sec_id => $tableDetails ) {
 					<div class="col-md-8">
             <select id="discounttype" name="discounttype" >
           <option value="">Discount Type</option>
-                    <option value="1" <?php if($prevFullSingleOrderDet['discount_type'] == '1') { echo 'selected';}?>>Overall</option>
-                     <option value="2" <?php if($prevFullSingleOrderDet['discount_type'] == '2') { echo 'selected'; } ?>>Percentage</option>
+                    <option value="1" <?php if(@$prevFullSingleOrderDet['discount_type'] == '1') { echo 'selected';}?>>Overall</option>
+                     <option value="2" <?php if(@$prevFullSingleOrderDet['discount_type'] == '2') { echo 'selected'; } ?>>Percentage</option>
         </select>
         <span id="discounttype_err" style="color:red;display:none" >Please Select Discount Type</span>
                     </div>

@@ -237,7 +237,7 @@ class MerchantComponent extends Component{
 						    $model->reg_date = date('Y-m-d H:i:s');
 						    $model->discount_type = $arr['discount_mode'];
 						    $model->discount_number = $arr['merchant_discount'] ??  0;
-						    $model->preparedate = date('Y-m-d H:i:s');
+						    //$model->preparedate = date('Y-m-d H:i:s');
 						  //  echo "<pre>";
 						  //  print_r($model);exit;
 						  

@@ -4174,7 +4174,7 @@ if(!empty($user_mobile)){
 			$arr['merchant_discount'] = $ttl_discount ?? 0;
 			$arr['tableid'] = $tableid;		
 			$arr['pilotid'] = $pilotid ?? '';
-			$arr['user_id'] = (string)$user_id ?? '';
+			$arr['user_id'] = !empty($user_id) ? (string)$user_id : '';
 		$cur_order_id = Yii::$app->merchant->saveorder($arr);
 		$order_status = 'Order created successfully';
 		}
