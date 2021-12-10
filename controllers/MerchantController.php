@@ -32,6 +32,7 @@ use \app\models\InventaryUpdationRequest;
 use \app\models\MerchantLoyalty;
 use \app\models\RoomProfileTitles;
 use yii\db\Query;
+use \app\models\Users;
 use \yii\helpers\ArrayHelper;
 
 
@@ -1281,25 +1282,27 @@ if(!empty($_POST['ckcDel'])){
 		{
 		    
 		    if(isset($orderData['selectedpilot'])){
-		        $sqlTableStatusUpdate .= ' update orders set serviceboy_id = \''.$orderData['selectedpilot'].'\' where ID = \''.$orderData['order_id'].'\'';
+		        $sqlTableStatusUpdate = ' update orders set serviceboy_id = \''.$orderData['selectedpilot'].'\' where ID = \''.$orderData['order_id'].'\'';
 		        $TableStatusUpdate = Yii::$app->db->createCommand($sqlTableStatusUpdate)->execute();
+				
 		    }
 			
 
 
 
 		
-		$selectedpilot = $orderData['selectedpilot'];
+			$selectedpilot = $orderData['selectedpilot'];
 		    	if(!empty($selectedpilot)){
-								$sqlserviceboyarray = "select * from serviceboy where ID = '".$selectedpilot."'";
-								$serviceboyarray = Yii::$app->db->createCommand($sqlserviceboyarray)->queryOne();
-							$stitle = 'New order.';
-							$smessage = 'New order received please check the app for information.';
-							$simage = '';
-							
-						//	\app\helpers\Utility::sendFCM($serviceboyarray['push_id'],$stitle,$smessage,$simage);	
-							}
-		    
+						$serviceboyarray = Serviceboy::findOne($selectedpilot);
+						$stitle = 'New order.';
+						$smessage = 'New order received please check the app for information.';
+						$simage = '';
+						if(!empty($order_det['user_id'])){
+							$userdetails = Users::findOne($order_det['user_id']);
+						}
+						$notificationdet = ['type' => 'NEW_ORDER','orderamount' => $order_det['totalamount'],'username' => !empty(@$userdetails['name']) ? $userdetails['name'] : null];
+						Utility::sendNewFCM($serviceboyarray['push_id'],$stitle,$smessage,$simage,'6',null,$order_det['ID'],$notificationdet);
+				}
 		}
 		
 	$product_popup = $_POST['product_popup'];
@@ -4177,6 +4180,18 @@ if(!empty($user_mobile)){
 			$arr['user_id'] = !empty($user_id) ? (string)$user_id : '';
 		$cur_order_id = Yii::$app->merchant->saveorder($arr);
 		$order_status = 'Order created successfully';
+		if(!empty($pilotid)){
+			$serviceboyarray = Serviceboy::findOne($pilotid);
+			$stitle = 'New order.';
+			$smessage = 'New order received please check the app for information.';
+			$simage = '';
+			$order_det = Orders::findOne($cur_order_id);
+			if(!empty($order_det['user_id'])){
+				$userdetails = Users::findOne($order_det['user_id']);
+			}
+			$notificationdet = ['type' => 'NEW_ORDER','orderamount' => $order_det['totalamount'],'username' => !empty(@$userdetails['name']) ? $userdetails['name'] : null];
+			Utility::sendNewFCM($serviceboyarray['push_id'],$stitle,$smessage,$simage,'6',null,$order_det['ID'],$notificationdet);
+	}
 		}
 		Yii::$app->getSession()->setFlash('success', [
 			'title' => 'Order',
