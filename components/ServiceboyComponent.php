@@ -691,7 +691,7 @@ class ServiceboyComponent extends Component{
 						$orderarray['tablename'] = Utility::table_details($orderlist['tablename'],"name"); 
 						$orderarray['logo'] = !empty($merchantdetails['logo']) ? MERCHANT_LOGO.$merchantdetails['logo'] : '';
 						$orderarray['coverpic'] = !empty($merchantdetails['coverpic']) ? MERCHANT_LOGO.$merchantdetails['coverpic'] : '';
-						$orderarray['amount'] =  sprintf("%.2f", (!empty($orderlist['tax']) ? $orderlist['amount'] : 0));; 
+						$orderarray['amount'] =  sprintf("%.2f", (!empty($orderlist['amount']) ? $orderlist['amount'] : 0));; 
 						$orderarray['tax'] = sprintf("%.2f", (!empty($orderlist['tax']) ?  $orderlist['tax'] : 0));
 						$orderarray['tips'] = sprintf("%.2f", (!empty($orderlist['tips']) ?  $orderlist['tips'] : 0));
 						$orderarray['subscription'] = sprintf("%.2f", (!empty($orderlist['subscription']) ?   $orderlist['subscription'] : 0));

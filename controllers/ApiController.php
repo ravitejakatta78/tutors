@@ -1436,7 +1436,9 @@ public function reordercashpilot($val){
 		if(!empty($usersid)){
 			$val['header_user_id'] = $usersid;
 			$tablesections = Yii::$app->merchant->tablesections($val);
-			$payload = array('status'=>'1','message'=>'List Of Sections','tablesections' => $tablesections);
+            $serviceboydet = \app\models\Serviceboy::findOne($val['header_user_id']);
+
+			$payload = array('status'=>'1','message'=>'List Of Sections','loginstatus' => $serviceboydet['loginstatus'],'tablesections' => $tablesections);
 		}else{
 			$payload = array('status'=>'0','message'=>'Invalid users details');
 		}
