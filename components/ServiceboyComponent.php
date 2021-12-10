@@ -426,6 +426,7 @@ class ServiceboyComponent extends Component{
 				  
 				  $customerdetails['todayorders'] =  $todayorders ?: '0';
 				  $customerdetails['totalpoints'] =  $totalpoints ?: '0';
+				  $customerdetails['loginstatus'] =  $row['loginstatus'];
 				  
 					$payload = array("status"=>'1',"users"=>$customerdetails);
 				  }  else {
