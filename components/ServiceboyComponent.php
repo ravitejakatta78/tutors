@@ -498,7 +498,9 @@ class ServiceboyComponent extends Component{
 		$sqlserviceboydetails = 'select * from serviceboy where ID = \''.$val['header_user_id'].'\'';
 		$serviceboydetails = Yii::$app->db->createCommand($sqlserviceboydetails)->queryOne();			
 	$date = date('Y-m-d');
-					$sqlorderlistarray = 'select * from orders where merchant_id = \''.$serviceboydetails['merchant_id'].'\' and date(reg_date) = \''.$date.'\'   and orderprocess = \'0\'' ;
+					$sqlorderlistarray = 'select * from orders o where merchant_id = \''.$serviceboydetails['merchant_id'].'\' 
+					and date(reg_date) = \''.$date.'\'   and orderprocess = \'0\' AND NOT EXISTS (SELECT * FROM order_rejections ore
+                    WHERE ore.order_id = o.ID and ore.rejected_by = \''.$val['header_user_id'].'\')' ;
 					$orderlistarray = Yii::$app->db->createCommand($sqlorderlistarray)->queryAll();
 					if(!empty($orderlistarray)){
 					$orderarray = $totalordersarray = array();
