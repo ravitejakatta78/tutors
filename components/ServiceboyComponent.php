@@ -797,7 +797,8 @@ class ServiceboyComponent extends Component{
 						
 								$payload = array('status'=>'1','message'=>'Order has been accepted');
 						}else{
-						$payload = array('status'=>'1','message'=>'Request already accepted');
+						$smessage = $orderlist['order_id'].' is accepted by '.Utility::serviceboy_details($orderlist['serviceboy_id'],'name');
+						$payload = array('status'=>'1','message'=>$smessage);
 						}
 					}else{
 					$payload = array('status'=>'0','message'=>'Order not found!!');
