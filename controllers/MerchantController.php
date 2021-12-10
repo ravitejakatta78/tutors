@@ -4629,7 +4629,7 @@ $catModel = \app\models\AllocatedRooms::findOne($resUpdate['room_alocated']);
 	public function actionSetorderpreparetime()
 	{
 	    $orderid = $_POST['orderid'];
-	    $preptime = $_POST['preptime'] * 60;
+	    $preptime = $_POST['preptime'];
 	    $model = Orders::findOne($orderid);
         $model->preparetime = $preptime;
 		$model->mod_date = date('Y-m-d H:i:s');
