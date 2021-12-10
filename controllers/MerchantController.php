@@ -2568,8 +2568,8 @@ if ($model->load(Yii::$app->request->post()) ) {
 	}
   public function actionTesting()
   {
-    /*$id = 'e1UxqnjJTLK3eQcFN2ygwf:APA91bGPqvSsX8YPUFjIEdG8NUn1MbaWRax41vTnlQixoyUA8h6gkLuP6VignxEVJT1cCVIVAWeMQZQaqOwjQ0-040l4lYo3hdyJjpv_PqdEap24bD42uO9QmPmZ1gJwU9lrkIPJVYdD';
-	  \app\helpers\Utility::sendNewFCM($id,'Hi',"First Notification");*/
+    $id = 'e1UxqnjJTLK3eQcFN2ygwf:APA91bGPqvSsX8YPUFjIEdG8NUn1MbaWRax41vTnlQixoyUA8h6gkLuP6VignxEVJT1cCVIVAWeMQZQaqOwjQ0-040l4lYo3hdyJjpv_PqdEap24bD42uO9QmPmZ1gJwU9lrkIPJVYdD';
+	  \app\helpers\Utility::sendNewFCM($id,'Hi',"First Notification");
   }
     public function actionTableorderproductdeliver()
 	{
