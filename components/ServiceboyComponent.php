@@ -392,7 +392,7 @@ class ServiceboyComponent extends Component{
 			  and serviceboy_id = '".$row['ID']."'";
 			  $restotalorders = Yii::$app->db->createCommand($sqltotalorders)->queryOne();
 			  $totalorders = $restotalorders['count'];
-			  $sqltodayorders = "SELECT sum(case when orderprocess != '4' then 1 else 0 end) rununing_orders
+			  $sqltodayorders = "SELECT sum(case when (orderprocess != '4' and orderprocess != '3') then 1 else 0 end) rununing_orders
 			  ,sum(case when orderprocess = '4' then 1 else 0 end) completed_orders,
 			  count(*) as count,sum(case when  (paymenttype = 'cash' or paymenttype = '1') then totalamount else 0 end) OfflinePay
 			  ,sum( case when (paymenttype != 'cash' and paymenttype != '1') then totalamount else 0 end) OnlinePay,sum(tips) tips
