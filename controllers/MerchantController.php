@@ -289,8 +289,6 @@ else{
     }
     public function actionFoodCategeries(){
 		extract($_POST);
-
-		
 	$allcategeries = FoodCategeries::allcategeries();
 	$merchantId = Yii::$app->user->identity->merchant_id;
             $model = new MerchantTax;
@@ -359,7 +357,7 @@ else{
     {
 	extract($_POST);
 	$merchantId = Yii::$app->user->identity->merchant_id;
-	$foodCategoryUpdate = \app\models\FoodCategeries::findOne($_POST['update_food_id']);
+	$foodCategoryUpdate = FoodCategeries::findOne($_POST['update_food_id']);
 	$oldUpselling = $foodCategoryUpdate['upselling'];  
 	$foodCateQtys =  FoodCategoryTypes::find()->where(['food_cat_id'=>$foodCategoryUpdate['ID']])->asArray()->all();
 
@@ -3791,7 +3789,7 @@ order by reg_date,purchase_number';
         //echo '<pre>';print_r($_POST);
         extract($_POST);
 
-	$foodCategoryUpdate = \app\models\FoodCategeries::findOne($_POST['food_category_id']);
+	$foodCategoryUpdate = FoodCategeries::findOne($_POST['food_category_id']);
 	$foodCatetax =  MerchantFoodCategoryTax::find()->where(['food_category_id'=>$foodCategoryUpdate['ID']])->asArray()->all();
         //$catTypeArray = array_filter($categorytypes);
 	if(!empty($tax_id[0]))
@@ -4040,7 +4038,7 @@ order by reg_date,purchase_number';
 		//echo "<pre>";print_r($prodvsfcidarr);exit;
 		
 		$resfc = FoodSections::find()
-		->where(['fs_status'=>'1','merchant_id'=>$app->user->identity->merchant_id])
+		->where(['fs_status'=>'1','merchant_id'=>Yii::$app->user->identity->merchant_id])
 		->asArray()->All();
 
 		$resServiceBoy = Serviceboy::find()

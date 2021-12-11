@@ -1415,7 +1415,7 @@ var orderorigin = $("#orderorigin").val();
 var orderpaymethod = $("#orderpaymethod").val();
 var curr_order_id = $("#curr_Order_id").val();
 var orderpaymethodname = $("#orderpaymethod option:selected").text();
-if(orderpaymethodname == 'Online'){
+/*if(orderpaymethodname == 'Online'){
 var curr_order_id = "ORDS0000"+$("#curr_Order_id").val();    
         var form=document.createElement('form');
         form.setAttribute('method','post');
@@ -1455,8 +1455,8 @@ var curr_order_id = "ORDS0000"+$("#curr_Order_id").val();
     document.body.appendChild(form);
     form.submit();    
     
-}
-else{
+}*/
+//else{
     var request = $.ajax({
   url: "updateorderstatus",
   type: "POST",
@@ -1472,7 +1472,7 @@ else{
 });
 
     
-}
+//}
 
 
 
