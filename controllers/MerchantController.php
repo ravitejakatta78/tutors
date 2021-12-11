@@ -11,8 +11,10 @@ use \app\models\Tablename;
 use \app\models\Sections;
 use \app\models\RoomReservations;
 use \app\models\RoomTitleImages;
+use \app\models\RoomGuestIdentitiy;
 use \app\models\Userinformation;
 use \app\models\Serviceboy;
+use \app\models\Merchant;
 use \app\models\MerchantCoupon;
 use \app\models\CounterSettlement;
 use app\helpers\Utility;
@@ -26,11 +28,23 @@ use \app\models\IngredientPurchase;
 use \app\models\IngredientPurchaseDetail;
 use \app\models\MerchantVendor;
 use \app\models\MerchantEmployee;
+use \app\models\MerchantPermissions;
+use \app\models\MerchantTax;
+use \app\models\MerchantLoyaltyDetails;
 use \app\models\EmployeeRole;
+use \app\models\EmployeeAttendance;
 use \app\models\MerchantNotifications;
 use \app\models\InventaryUpdationRequest;
 use \app\models\MerchantLoyalty;
 use \app\models\RoomProfileTitles;
+use \app\models\FoodSections;
+use \app\models\SectionItemPriceList;
+use \app\models\FoodCategoryTypes;
+use \app\models\MerchantFoodCategoryTax;
+use \app\models\OrderProducts;
+use \app\models\IngredientStockRegister;
+use \app\models\TableReservations;
+use \app\models\AllocatedRooms;
 use yii\db\Query;
 use \app\models\Users;
 use \yii\helpers\ArrayHelper;
@@ -57,7 +71,7 @@ class MerchantController extends GoController
 	$model = new Product;
 	if ($model->load(Yii::$app->request->post()) ) {
 		$productArr = Yii::$app->request->post('Product');
-		$model->merchant_id = (string)Yii::$app->user->identity->merchant_id;
+		$model->merchant_id = (string)$merchantId;
 		$model->unique_id = !empty($productArr['unique_id']) ? $productArr['unique_id'] : Utility::get_uniqueid('product','PR');
 		$model->slug = $productArr['title'];
 		$model->price = '0';
@@ -81,8 +95,8 @@ class MerchantController extends GoController
 			{
 							$itemsectionprice = is_numeric($prices[$i]) ? $prices[$i] : 0; 
 							$itemsectionsaleprice = is_numeric($sale_prices[$i]) ? $sale_prices[$i] : 0; 
-				$modelsectionitem = new \app\models\SectionItemPriceList;
-				$modelsectionitem->merchant_id = Yii::$app->user->identity->merchant_id;
+				$modelsectionitem = new SectionItemPriceList;
+				$modelsectionitem->merchant_id = $merchantId;
 				$modelsectionitem->item_id = $model->ID;
 				$modelsectionitem->section_id = $sectionid[$i];
 				$modelsectionitem->section_item_price = $itemsectionprice;
@@ -114,19 +128,19 @@ class MerchantController extends GoController
 		//	echo "<pre>";print_r($model->getErrors());exit;
 		}
 	}
-				$sqlSections = 'SELECT * from sections where merchant_id = \''.Yii::$app->user->identity->merchant_id.'\'';
-		$sections = Yii::$app->db->createCommand($sqlSections)->queryAll();
-        return $this->render('productlist',['productModel'=>$productModel,'model'=>$model,'sections'=>$sections]);
+	  $sections = Sections::find()->where(['merchant_id' => $merchantId])->asArray()->all();
+      return $this->render('productlist',['productModel'=>$productModel,'model'=>$model,'sections'=>$sections]);
     }
 	public function actionEditproductpopup()
 	{
 		extract($_POST);
+		$merchantId = Yii::$app->user->identity->merchant_id;
 		$productModel = Product::findOne($id);
-		$sqlSections = 'SELECT * from sections where merchant_id = \''.Yii::$app->user->identity->merchant_id.'\'';
-		$sections = Yii::$app->db->createCommand($sqlSections)->queryAll();
+		$sections = Sections::find()->where(['merchant_id' => $merchantId])->asArray()->all();
+		
 		
 		$sqlSectionItemsPrice = 'select concat(section_id , \'-\', item_id) section_item_id,section_item_price,section_item_sale_price from section_item_price_list 
-		where merchant_id = \''.Yii::$app->user->identity->merchant_id.'\'';
+		where merchant_id = \''.$merchantId.'\'';
 		$resSectionItemsPrice = Yii::$app->db->createCommand($sqlSectionItemsPrice)->queryAll();
 		
 		$itemSectionPricesArr = (array_column($resSectionItemsPrice,'section_item_price','section_item_id'));
@@ -172,7 +186,7 @@ class MerchantController extends GoController
 	}
 	else if($tablename == 'vendor')
 	{
-		$details = \app\models\MerchantVendor::findOne($tableid);
+		$details = MerchantVendor::findOne($tableid);
 	if($details['status']=='1'){
 				$status ='0';
 		}else{
@@ -279,21 +293,21 @@ else{
 		
 	$allcategeries = FoodCategeries::allcategeries();
 	$merchantId = Yii::$app->user->identity->merchant_id;
-            $model = new \app\models\MerchantTax;
+            $model = new MerchantTax;
 
 	$sqlcategorytypes = 'select * from food_categeries fc left join food_category_types fct on fc.id = fct.food_cat_id 
-	and fc.merchant_id = \''.Yii::$app->user->identity->merchant_id.'\'';
+	and fc.merchant_id = \''.$merchantId.'\'';
 	$rescategorytypes = Yii::$app->db->createCommand($sqlcategorytypes)->queryAll();
+	$foodSections = FoodSections::find()->where(['merchant_id' => $merchantId])->asArray()->all();
 	
-	$sqlFoodSection = 'select * from food_sections where merchant_id = \''.Yii::$app->user->identity->merchant_id.'\'';
-	$foodSections = Yii::$app->db->createCommand($sqlFoodSection)->queryAll();
+	
 	$foodcatgerymodel = new FoodCategeries;
 	if (!empty($food_category)){
 		$foodcatgerymodel['food_category'] = $food_category; 
 		$foodcatgerymodel['food_section_id'] = $food_section; 
 		$foodcatgerymodel['upselling'] = $upselling; 
 
-		$foodcatgerymodel['merchant_id'] = (string)Yii::$app->user->identity->merchant_id;
+		$foodcatgerymodel['merchant_id'] = (string)$merchantId;
 		$foodcatgerymodel['reg_date'] = date('Y-m-d H:i:s A');
 		$foodcatgerymodel->save();
 		$food_cat_id =  $foodcatgerymodel->getPrimaryKey();		
@@ -305,7 +319,7 @@ else{
 	    {
 			for($i=0;$i<count($catTypeArray);$i++)
 			{
-				$data[] = [$food_cat_id,$catTypeArray[$i],(string)Yii::$app->user->identity->merchant_id,date('Y-m-d H:i:s A')];
+				$data[] = [$food_cat_id,$catTypeArray[$i],(string)$merchantId,date('Y-m-d H:i:s A')];
 			}
 			Yii::$app->db
 			->createCommand()
@@ -329,14 +343,15 @@ else{
     }
     public function actionEditcategorypopup()
     {
+	$merchantid = Yii::$app->user->identity->merchant_id; 	
 	extract($_POST);
 	$categeryModel = FoodCategeries::findOne($id);
 	$sqlcategorytypes = 'select fc.ID,fc.food_category,fct.food_type_name,fct.ID fcid,food_section_id,fc.upselling  from food_categeries fc left join food_category_types fct on fc.id = fct.food_cat_id 
 	where fc.merchant_id = \''.Yii::$app->user->identity->merchant_id.'\' and fc.ID = \''.$id.'\'';
 	$categorytypes = Yii::$app->db->createCommand($sqlcategorytypes)->queryAll();
-	
-		$sqlFoodSection = 'select * from food_sections where merchant_id = \''.Yii::$app->user->identity->merchant_id.'\'';
-	$foodSections = Yii::$app->db->createCommand($sqlFoodSection)->queryAll();
+
+	$foodSections = FoodSections::find()->where(['merchant_id' => $merchantid])->asArray()->all();
+		
 	
 	return $this->renderAjax('updatecategery', ['categorytypes' => $categorytypes,'id'=>$id,'foodSections'=>$foodSections]);		
     }
@@ -346,7 +361,7 @@ else{
 	$merchantId = Yii::$app->user->identity->merchant_id;
 	$foodCategoryUpdate = \app\models\FoodCategeries::findOne($_POST['update_food_id']);
 	$oldUpselling = $foodCategoryUpdate['upselling'];  
-	$foodCateQtys =  \app\models\FoodCategoryTypes::find()->where(['food_cat_id'=>$foodCategoryUpdate['ID']])->asArray()->all();
+	$foodCateQtys =  FoodCategoryTypes::find()->where(['food_cat_id'=>$foodCategoryUpdate['ID']])->asArray()->all();
 
 	if( (trim($foodCategoryUpdate['food_category']) != trim($_POST['update_food_category'])) 
 	||  (trim($foodCategoryUpdate['food_section_id']) != trim($_POST['update_food_section'])) 
@@ -379,7 +394,7 @@ else{
 			{
 				if($_POST['categorytypes_'.$foodCateQtys[$i]['ID']] != $foodCateQtys[$i]['food_type_name'] )
 				{
-						$foodcategorytypes = \app\models\FoodCategoryTypes::findOne($foodCateQtys[$i]['ID']);
+						$foodcategorytypes = FoodCategoryTypes::findOne($foodCateQtys[$i]['ID']);
 						$foodcategorytypes->merchant_id = (string)Yii::$app->user->identity->merchant_id;
 						$foodcategorytypes->food_type_name = $_POST['categorytypes_'.$foodCateQtys[$i]['ID']];
 						$foodcategorytypes->save();
@@ -418,7 +433,7 @@ else{
 			return ActiveForm::validate($model);
 		}
 		$tableDet = Tablename::find()->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])->asArray()->all();
-		$merchantdetails = \app\models\Merchant::findOne(Yii::$app->user->identity->merchant_id);
+		$merchantdetails = Merchant::findOne(Yii::$app->user->identity->merchant_id);
 		
 		$tableArr = Yii::$app->request->post('Tablename');
 		$merchant_id = (string)Yii::$app->user->identity->merchant_id;
@@ -448,13 +463,6 @@ else{
 			return $this->redirect('managetable');
 	    }
 
-		
-		
-
-
-		
-		
-	
 		return $this->render('managetable',['model'=>$model,'tableDet'=>$tableDet,'merchantdetails'=>$merchantdetails]);
 	}
 	public function actionEdittablepopup()
@@ -492,7 +500,7 @@ else{
 	public function actionQuantitylist($id = '')
     {				
 		extract($_REQUEST);
-        $foodCatTypes = \app\models\FoodCategoryTypes::find()
+        $foodCatTypes = FoodCategoryTypes::find()
 				->where(['food_cat_id' => $id])
 				->andWhere(['merchant_id'=>Yii::$app->user->identity->merchant_id])
 				->all();
@@ -510,8 +518,8 @@ else{
     }
 	public function actionUpdateproduct()
 	{
-		extract($_POST);
-		
+ 		extract($_POST);
+		$merchantid = Yii::$app->user->identity->merchant_id;		
 		$model = new Product;
 		if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
 			Yii::$app->response->format = Response::FORMAT_JSON;
@@ -544,10 +552,10 @@ else{
 				$itemsectionprice = is_numeric($updateprices[$i]) ? $updateprices[$i] : 0; 
 				$itemsectionsaleprice = is_numeric($updatesaleprices[$i]) ? $updatesaleprices[$i] : 0; 
 				
-				$sqlsectioitem = 'select * from section_item_price_list 
-				where merchant_id = \''.Yii::$app->user->identity->merchant_id.'\' 
-				and section_id = \''.$updatesectionid[$i].'\' and  item_id =\''.$_POST['Product']['ID'].'\'';
-				$ressectioitem = Yii::$app->db->createCommand($sqlsectioitem)->queryOne();
+				
+				$ressectioitem = SectionItemPriceList::find()->where(['merchant_id'=>$merchantid
+				,'section_id' => $updatesectionid[$i],'item_id' => $_POST['Product']['ID']])->asArray()->one();   
+
 				
 				if(!empty($ressectioitem)){
 				$sqlUpdate = 'update section_item_price_list set section_item_price = \''.$itemsectionprice.'\',
@@ -556,7 +564,7 @@ else{
 				$resUpdate = Yii::$app->db->createCommand($sqlUpdate)->execute();
 				}
 				else{
-				$modelsectionitem = new \app\models\SectionItemPriceList;
+				$modelsectionitem = new SectionItemPriceList;
 				$modelsectionitem->merchant_id = Yii::$app->user->identity->merchant_id;
 				$modelsectionitem->item_id = $_POST['Product']['ID'];
 				$modelsectionitem->section_id = $updatesectionid[$i];
@@ -568,7 +576,7 @@ else{
 				$modelsectionitem->updated_on = date('Y-m-d H:i:s');
 				if($modelsectionitem->save()){
 				}else{
-				echo "<pre>";	print_r($modelsectionitem->getErrors());exit;
+				//echo "<pre>";	print_r($modelsectionitem->getErrors());exit;
 				}
 				}
 
@@ -590,8 +598,12 @@ else{
             
 		if(empty($tableid)){
 		    if(!empty($sectionId)){
-		        $sqlSelectOneTable = 'select * from tablename where section_id = \''.$sectionId.'\' and status = \'1\' order by ID limit 1';
-		        $selectOneTable = Yii::$app->db->createCommand($sqlSelectOneTable)->queryOne();
+				$selectOneTable = Tablename::find()
+								->where(['section_id'=>$sectionId,'status'=>'1'])
+								->orderBy([
+									'ID'=>SORT_ASC
+								])
+								->asArray()->one() ;
 		        
 		        $tableid = $selectOneTable['ID'];
 		        $tableName = $selectOneTable['name'];
@@ -620,9 +632,8 @@ else{
 		$sqlcategorytypes = 'select * from food_categeries fc left join food_category_types fct on fc.id = fct.food_cat_id 
 	and fc.merchant_id = \''.Yii::$app->user->identity->merchant_id.'\'';
 	$rescategorytypes = Yii::$app->db->createCommand($sqlcategorytypes)->queryAll();
-		//echo "<pre>";print_r($_POST);exit;
-		//$productDetails = Product::find()->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])->asArray()->all();
-		$sqlproductDetails = 'select P.ID,P.title,P.food_category_quantity,P.price,P.image,fc.food_category 
+
+	$sqlproductDetails = 'select P.ID,P.title,P.food_category_quantity,P.price,P.image,fc.food_category 
 		,case when food_type_name is not null then concat(title ,\' (\' , food_type_name , \')\') else title end  title_quantity
 		,fc.ID food_category_id
 		from product P 
@@ -648,7 +659,7 @@ else{
 		
 		
 
-		$food_cat_qty_arr = \app\models\FoodCategoryTypes::find()->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])->asArray()->All();
+		$food_cat_qty_arr = FoodCategoryTypes::find()->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])->asArray()->All();
 		$food_cat_qty_det = array_column($food_cat_qty_arr,'food_type_name','ID');
 		$prevOrderDetails = [];
 		$prevFullSingleOrderDet = [];
@@ -685,12 +696,13 @@ else{
 		$sqlTableDetails .= ' and section_id = \''.$sectionId.'\'';
 		}
 		$tableDetails = Yii::$app->db->createCommand($sqlTableDetails)->queryAll();
-		$sqlServiceBoy = 'select * from serviceboy where merchant_id = \''.Yii::$app->user->identity->merchant_id.'\' and loginstatus = \'1\'';
-		$resServiceBoy = Yii::$app->db->createCommand($sqlServiceBoy)->queryAll();
-		$discountTypes = Utility::discountTypes();
+		$resServiceBoy = Serviceboy::find()->
+		where(['merchant_id'=>Yii::$app->user->identity->merchant_id,'loginstatus'=>'1'])->asArray()->All();
 		
-		$sqlMerchantfoodTax = 'select food_category_id,tax_type,tax_value,merchant_tax_id from merchant_food_category_tax where merchant_id = \''.Yii::$app->user->identity->merchant_id.'\'';
-		$resMerchantfoodTax = Yii::$app->db->createCommand($sqlMerchantfoodTax)->queryAll();
+
+		$discountTypes = Utility::discountTypes();
+		$resMerchantfoodTax = MerchantFoodCategoryTax::find()->
+		where(['merchant_id'=>Yii::$app->user->identity->merchant_id])->asArray()->All();
 		
 	    	$MerchantfoodTaxArr = \yii\helpers\ArrayHelper::index($resMerchantfoodTax, null, 'food_category_id');
 
@@ -711,13 +723,11 @@ else{
 		$orderDet = Orders::findOne($id);
 		$tableDet = Tablename::findOne($orderDet['tablename']);
 
-// 		$orderProdDet = \app\models\OrderProducts::find()->where(['order_id'=>$orderDet['ID']])->asArray()->all();
-	   $orderDet = \app\models\Orders::findOne($orderDet['ID']);
+	   $orderDet = Orders::findOne($orderDet['ID']);
 		$sqlOrderProdDet = 'select order_id, merchant_id, product_id, sum(count) as count, (price) as price
 		                 from order_products where order_id=\''.$orderDet['ID'].'\' group by product_id, order_id,price';
 	    $orderProdDet =  Yii::$app->db->createCommand($sqlOrderProdDet)->queryAll();
 	    
-		//return $this->render('tablebill',['tableDet'=>$tableDet,'orderDet'=>$orderDet,'orderProdDet'=>$orderProdDet]);
 		return $this->renderpartial('testprint',['tableDet'=>$tableDet,'orderDet'=>$orderDet,'orderProdDet'=>$orderProdDet,'orderDet'=>$orderDet]);
 	}
 	public function actionTablekot()
@@ -726,15 +736,13 @@ else{
 		$orderDet = Orders::findOne($id);
 		$tableDet = Tablename::findOne($orderDet['tablename']);
 
-    $sqlLatestKot = 'select max(CAST(reorder AS UNSIGNED)) as latestreorder from order_products where order_id = \''.$orderDet['ID'].'\'';
-    $resLatestKot = Yii::$app->db->createCommand($sqlLatestKot)->queryOne();
-    $latestreorder = $resLatestKot['latestreorder'];
+		$sqlLatestKot = 'select max(CAST(reorder AS UNSIGNED)) as latestreorder from order_products where order_id = \''.$orderDet['ID'].'\'';
+		$resLatestKot = Yii::$app->db->createCommand($sqlLatestKot)->queryOne();
+
+		$latestreorder = $resLatestKot['latestreorder'];
     
-    $sqlorderProdDet = 'select * from order_products where order_id = \''.$orderDet['ID'].'\' and reorder = \''.$latestreorder.'\' ';
-    $orderProdDet = Yii::$app->db->createCommand($sqlorderProdDet)->queryAll();
-    
-	//	$orderProdDet = \app\models\OrderProducts::find()->where(['order_id'=>$orderDet['ID']])->asArray()->all();
-		//return $this->render('tablebill',['tableDet'=>$tableDet,'orderDet'=>$orderDet,'orderProdDet'=>$orderProdDet]);
+		$orderProdDet = OrderProducts::find()->where(['order_id'=>$orderDet['ID'],'reorder'=>$latestreorder])->asArray()->all();
+
 		return $this->renderpartial('testprintkot',['tableDet'=>$tableDet,'orderDet'=>$orderDet,'orderProdDet'=>$orderProdDet]);
 	}
 	
@@ -764,32 +772,7 @@ else{
 			])
 		->asArray()->all();
 		$model = new MerchantEmployee;
-		/*$model->scenario = 'passwordscenario';
-		if ($model->load(Yii::$app->request->post()) ) {
-			$serviceBoyArr = Yii::$app->request->post('Serviceboy');
-			$model->merchant_id = (string)Yii::$app->user->identity->merchant_id;
-			$model->unique_id = Utility::get_uniqueid('product','SBOY');
-			$model->status = '1';
-			$model->password = password_hash($serviceBoyArr['password'], PASSWORD_DEFAULT);
-			$model->reg_date = date('Y-m-d H:i:s');
-			$model->loginstatus = '0';
-			$model->loginaccess = '0';
-			if($model->validate()){
-				$model->save();
-	Yii::$app->getSession()->setFlash('success', [
-        'title' => 'Pilot',
-		'text' => 'Pilot Created Successfully',
-        'type' => 'success',
-        'timer' => 3000,
-        'showConfirmButton' => false
-    ]);
-				return $this->redirect('pilot');
-			}
-			else
-			{
-//				echo "<pre>";print_r($model->getErrors());exit;
-			}
-		}*/
+		
 		$empRole = EmployeeRole::find()->where(['merchant_id'=>Yii::$app->user->identity->merchant_id,'ID'=>'2'])->asArray()->all();
 		$empRoleIdNameArr = array_column($empRole,'role_name','ID'); 
 		$sqlcategorytypes = 'select * from sections where merchant_id = \''.Yii::$app->user->identity->merchant_id.'\'';
@@ -883,8 +866,8 @@ else{
 		,case when concat(title , " ",food_type_name) is null then title else concat(title , " ",food_type_name) end   titlewithqty
 		from product P 
 		left join food_categeries fc on fc.ID = P.foodtype  
-		left join food_category_types fct on fct.ID =  P.food_category_quantity and fct.merchant_id =  \''.Yii::$app->user->identity->merchant_id.'\'
-		where P.merchant_id = \''.Yii::$app->user->identity->merchant_id.'\' and status=\'1\' ';
+		left join food_category_types fct on fct.ID =  P.food_category_quantity and fct.merchant_id =  \''.$merchantId.'\'
+		where P.merchant_id = \''.$merchantId.'\' and status=\'1\' ';
 		$product = Yii::$app->db->createCommand($sqlproductDetails)->queryAll();
 		$model = new MerchantCoupon;
 		$model->scenario = 'uniquescenario';
@@ -903,7 +886,7 @@ if(!empty($_POST['ckcDel'])){
 		$MerchantCouponArr = Yii::$app->request->post('MerchantCoupon');
 			
 			
-			$model->merchant_id = (string)Yii::$app->user->identity->merchant_id;
+			$model->merchant_id = (string)$merchantId;
 			$model->status = 'Active';
 			if(!empty($productString)){
 			$model->product = $productString;	
@@ -999,7 +982,7 @@ if(!empty($_POST['ckcDel'])){
 		
 		if ($model->load(Yii::$app->request->post()) ) {
 			$MerchantGalleryArr = Yii::$app->request->post('MerchantGallery');
-			$model->merchant_id = (string)Yii::$app->user->identity->merchant_id;
+			$model->merchant_id = (string)$merchantId;
 			$model->reg_date = date('Y-m-d H:i:s');
 			$image = UploadedFile::getInstance($model, 'image');
 			if($image){
@@ -1066,7 +1049,7 @@ if(!empty($_POST['ckcDel'])){
 		return $this->render('orders',['orderModel'=>$orderModel,'model'=>$model,'sdate'=>$sdate,'edate'=>$edate]);
 	}
 	public function userCreation($customer_mobile,$customer_name){
-		$modelUser = new \app\models\Users;
+		$modelUser = new Users;
 		$sqlprevuser = 'select MAX(ID) as id from users';
 		$prevuser = Yii::$app->db->createCommand($sqlprevuser)->queryOne();
 		$newid = $prevuser['id']+1;
@@ -1081,7 +1064,7 @@ if(!empty($_POST['ckcDel'])){
 			$modelUser->save();	
 			}
 			else{
-			print_r($modelUser->getErrors());exit;	
+			//print_r($modelUser->getErrors());exit;	
 			}
 			
 			return $modelUser['ID']; 
@@ -1092,7 +1075,7 @@ if(!empty($_POST['ckcDel'])){
 	$transaction = $connection->beginTransaction();
     try {
 		extract($_POST);
-	//	echo '<pre>';print_r($_POST);exit;
+
 		$tablecheck = $tableid;
 		if($tableid == 'PARCEL'){
 			$tableid = 'PARCEL'.Utility::get_parcel_uniqueid();
@@ -1121,7 +1104,7 @@ if(!empty($_POST['ckcDel'])){
 		}
 
 		if(!empty($customer_mobile)){
-			$userDet = \app\models\Users::find()->where(['mobile'=>$customer_mobile])->asArray()->One();
+			$userDet = Users::find()->where(['mobile'=>$customer_mobile])->asArray()->One();
 			if(empty($userDet)){
 				$userId = $this->userCreation($customer_mobile,$customer_name);	
 			}
@@ -1480,14 +1463,12 @@ $re_Order =     (int)$reorderCount['max_reorder'] + 1;
 		$orderUpdate->save();
 		
 		if($pilotassign != ''){
-					$sqlserviceboyarray = "select * from serviceboy where ID = '".$pilotassign."'";
-					$serviceboyarray = Yii::$app->db->createCommand($sqlserviceboyarray)->queryOne();
-							$stitle = 'New order.';
-							$smessage = 'New order received please check the app for information.';
-							$simage = '';
-							
-							\app\helpers\Utility::sendFCM($serviceboyarray['push_id'],$stitle,$smessage,$simage);	
-							
+			$serviceboyarray = Serviceboy::findOne($pilotassign);
+			$stitle = 'New order.';
+			$smessage = 'New order received please check the app for information.';
+			$simage = '';
+			
+			Utility::sendFCM($serviceboyarray['push_id'],$stitle,$smessage,$simage);	
 		}
 		
 		$tableUpdate = Tablename::findOne($tableId);
@@ -1579,7 +1560,7 @@ else{
 		 return  stripslashes(json_encode($res, JSON_UNESCAPED_SLASHES));
 	}
 	public function actionUpdatemerchatprofile(){
-		$model =  \app\models\Merchant::findOne(Yii::$app->user->identity->merchant_id);
+		$model =  Merchant::findOne(Yii::$app->user->identity->merchant_id);
 		$oldLogo = $model['logo'];
 		$oldQrLogo = $model['qrlogo'];
 		$oldCoverpic = $model['coverpic'];
@@ -1648,7 +1629,7 @@ if($model->validate()){
 	}
 	public function actionRemoveimage(){
 		extract($_POST);
-		$model =  \app\models\Merchant::findOne($id);
+		$model =  Merchant::findOne($id);
 		$removableImage = $model[$col];
 		if(!empty($removableImage)){
 					$imagePath =  '../../'.Url::to(['/uploads/merchantimages/'. $removableImage]);
@@ -1662,7 +1643,7 @@ if($model->validate()){
 	}
 	public function actionChangepassword()
 	{
-		$model =  \app\models\Merchant::findOne(Yii::$app->user->identity->merchant_id);
+		$model =  Merchant::findOne(Yii::$app->user->identity->merchant_id);
 		$model->scenario = 'chagepassword';
 		
 			if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
@@ -1697,7 +1678,7 @@ if($model->validate()){
 
 		if ($model->load(Yii::$app->request->post()) ) {
 			$ingredientsArr = Yii::$app->request->post('Ingredients');
-			$model->merchant_id = (string)Yii::$app->user->identity->merchant_id;
+			$model->merchant_id = (string)$merchantId;
 			$model->status = '1';
 			$model->reg_date = date('Y-m-d H:i:s');
 			$image = UploadedFile::getInstance($model, 'photo');
@@ -1769,7 +1750,7 @@ if($model->validate()){
         'showConfirmButton' => false
     ]);
 		}else{
-			echo "<pre>";print_r($ingredientsUpdate->getErrors());exit;
+			//echo "<pre>";print_r($ingredientsUpdate->getErrors());exit;
 		}
 			return $this->redirect('ingredients');
 	
@@ -1937,7 +1918,7 @@ if($model->validate()){
 			$purchaseNumber = 'PN'.date('dmy').($currentSeq['seq_number']+1);
 			$updateSqlSeq = 'update sequence_master set seq_number = \''.($currentSeq['seq_number']+1).'\' where ID = \''.$currentSeq['ID'].'\''  ;
 			$resupdateSqlSeq = Yii::$app->db->createCommand($updateSqlSeq)->execute();
-			$merchantVendorDet = \app\models\MerchantVendor::find()->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])->asArray()->all();
+			$merchantVendorDet = MerchantVendor::find()->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])->asArray()->all();
 			$merchantNameIDArr = array_column($merchantVendorDet,'store_name','ID');
 					$model = new IngredientPurchase;
 					$model->purchase_number = $purchaseNumber;
@@ -2009,9 +1990,9 @@ Yii::$app->getSession()->setFlash('success', [
 	}
 	public function stockInsertUpdate($ingredientId,$ingredientName,$quantity,$qty_units)
 	{
-		$sqlStock = 'select * from ingredient_stock_register where created_on = \''.date('Y-m-d').'\' 
-		and merchant_id = \''.Yii::$app->user->identity->merchant_id.'\' and ingredient_id = \''.$ingredientId.'\'';
-		$resStock = Yii::$app->db->createCommand($sqlStock)->queryAll();
+		$resStock = IngredientStockRegister::find()->where(['created_on' => date('Y-m-d')
+		,'merchant_id' => Yii::$app->user->identity->merchant_id,'ingredient_id' => $ingredientId])->asArray()->All(); 
+
 		if($qty_units == '1' || $qty_units == '2')
 		{
 			$quantity = $quantity * 1000;
@@ -2042,7 +2023,7 @@ Yii::$app->getSession()->setFlash('success', [
     public function actionVendorlist()
 	{
 		$vendorModel = MerchantVendor::find()->where(['merchant_id'=>Yii::$app->user->identity->merchant_id,'status'=>'1'])->asArray()->all();
-		$model = new \app\models\MerchantVendor;
+		$model = new MerchantVendor;
 
 if ($model->load(Yii::$app->request->post()) ) {
 			$model->merchant_id = (string)Yii::$app->user->identity->merchant_id;
@@ -2140,7 +2121,7 @@ if ($model->load(Yii::$app->request->post()) ) {
 								if ( $serviceModel->validate() ) {
 							$serviceModel->save();
 								}else{
-								    echo "<pre>";print_r($serviceModel->getErrors());exit;
+								    //echo "<pre>";print_r($serviceModel->getErrors());exit;
 								}
 				}
 				Yii::$app->getSession()->setFlash('success'
@@ -2160,13 +2141,15 @@ if ($model->load(Yii::$app->request->post()) ) {
 			}
 			else
 			{
-				echo "<pre>";print_r($model->getErrors());exit;
+				//echo "<pre>";print_r($model->getErrors());exit;
 			}
 		}
 			$empRole = EmployeeRole::find()->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])->asArray()->all();
 			$empRoleIdNameArr = array_column($empRole,'role_name','ID'); 
-			$sqlcategorytypes = 'select * from sections where merchant_id = \''.Yii::$app->user->identity->merchant_id.'\'';
-			$categorytypes = Yii::$app->db->createCommand($sqlcategorytypes)->queryAll();
+		
+			$categorytypes = Sections::find()->where(['merchant_id' => Yii::$app->user->identity->merchant_id])
+			->asArray->All();
+
 // 			echo "<pre>";
 // 			print_r($categorytypes);exit;
 		
@@ -2347,16 +2330,15 @@ if ($model->load(Yii::$app->request->post()) ) {
 		->andWhere(['<>','emp_role',0])
 		->orderBy(['ID'=>SORT_DESC])
 		->asArray()->all();
-		
-		//echo "<pre>";print_r($empModel);exit;
+
 		$empRole = EmployeeRole::find()->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])
 		->andWhere(['<>','role_name','OWNER'])
 		->asArray()->all();
 
 		$empRoleIdNameArr = array_column($empRole,'role_name','ID');
-		//		echo "<pre>";print_r($empRoleIdNameArr);exit;
-		$sql = 'select *  from employee_attendance where  created_on = \''.date('Y-m-d').'\'';
-		$res = Yii::$app->db->createCommand($sql)->queryAll();
+		
+		$res = EmployeeAttendance::find()->where(['created_on'=>date('Y-m-d')])->asArray->All(); 
+		
 		return $this->render('empattendance',['empModel'=>$empModel,'empRoleIdNameArr'=>$empRoleIdNameArr,'res'=>$res]);					
 	}
     public function actionSaveempattendance()
@@ -2476,9 +2458,10 @@ if ($model->load(Yii::$app->request->post()) ) {
 		if(count($resPermissionCheck) == 0)
 		{
 
-		$sqlPermissionIds = 'select ID from merchant_permissions 
-		where display_id = \''.$main_pernission_id.'\'';
-		$resPermissionIds = Yii::$app->db->createCommand($sqlPermissionIds)->queryAll();
+		$resPermissionIds = MerchantPermissions::find()->select('ID')
+		->where(['display_id'=>$main_pernission_id])
+		->asArray()
+		->All();
 		
 			for($i=0;$i<count($resPermissionIds);$i++)
 			{
@@ -2560,7 +2543,6 @@ if ($model->load(Yii::$app->request->post()) ) {
 		asort($tabletimeres);
 		$tableorderidres = array_column($res,'table_order_id','tableid');
 		$resindex =  \yii\helpers\ArrayHelper::index($res, null, 'tableid');
-		//$tableprodcount = array_count_values(array_column($res,'tableid'));
 
 		return $this->render('viewkds1',['tableres'=>$tableres,'tableorderidres'=>$tableorderidres
 		,'tabletimeres'=>$tabletimeres,'resindex'=>$resindex,'tableorderidres'=>$tableorderidres
@@ -2862,14 +2844,14 @@ $runningPie = [];
 	}
 	public function actionDeleteproduct(){
 		extract($_POST);
-		$Productdetails = \app\models\Product::findOne($id);
+		$Productdetails = Product::findOne($id);
 		$sqlpricesdelete = 'delete from section_item_price_list where item_id = \''.$id.'\' and merchant_id = \''.Yii::$app->user->identity->merchant_id.'\'';
 		$respricesdelete = Yii::$app->db->createCommand($sqlpricesdelete)->execute();
 		$Productdetails->delete();
 	}
 	public function actionDeletetable(){
 		extract($_POST);
-		$Tablenamedetails = \app\models\Tablename::findOne($id);
+		$Tablenamedetails = Tablename::findOne($id);
 		$Tablenamedetails->delete();
 	}
 	public function actionDeletecoupon(){
@@ -2879,23 +2861,21 @@ $runningPie = [];
 	}
 	public function actionDeleteemployee(){
 		extract($_POST);
-		$MerchantEmployeedetails = \app\models\MerchantEmployee::findOne($id);
+		$MerchantEmployeedetails = MerchantEmployee::findOne($id);
 		$MerchantEmployeedetails->emp_status = '17';
 		$MerchantEmployeedetails->save();
 	}
 	public function actionDeletevendor(){
 		extract($_POST);
-		$MerchantEmployeedetails = \app\models\MerchantVendor::findOne($id);
+		$MerchantEmployeedetails = MerchantVendor::findOne($id);
 		$MerchantEmployeedetails->status = '17';
 		$MerchantEmployeedetails->save();
 	}
 	public function actionTablereservation(){
-		
-		$sqltablereservation = 'select * from table_reservations where merchant_id = \''.Yii::$app->user->identity->merchant_id.'\' 
-		and status =\'0\'';	
-		
-		
-		$restablereservation = Yii::$app->db->createCommand($sqltablereservation)->queryAll();
+
+		$restablereservation =TableReservations::find()
+		->where(['merchant_id'=>Yii::$app->user->identity->merchant_id,'status'=>'0'])
+		->asArray()->All();
 		return $this->render('tablereservation',['restablereservation'=>$restablereservation]);
 	}
 	public function actionReservationhistory(){
@@ -2910,23 +2890,23 @@ $runningPie = [];
 	}
 	public function actionReservationstatus(){
 	extract($_POST);
-	$sqltabledatata = 'select * from table_reservations where ID = \''.$checked.'\'';
-	$tabledatata = Yii::$app->db->createCommand($sqltabledatata)->queryOne();
+
+	$tabledatata = TableReservations::findOne($checked);
 	if(!empty($tabledatata['user_id'])){
-			$pushid = \app\helpers\Utility::user_details($tabledatata['user_id'],'push_id');
+			$pushid = Utility::user_details($tabledatata['user_id'],'push_id');
 			if($pushid){ 
 				 switch($changestatus){
 					 case '1':
 					 $title = "Reservation Approved.";
-					 $message = "Hi ".\app\helpers\Utility::user_details($tabledatata['user_id'],'name').", Your table reservation has been approved.";
+					 $message = "Hi ".Utility::user_details($tabledatata['user_id'],'name').", Your table reservation has been approved.";
 					 $image = "";
-					$result = \app\helpers\Utility::sendFCM($pushid,$title,$message,$image); 
+					$result = Utility::sendFCM($pushid,$title,$message,$image); 
 					 break;
 					 case '2':
 					 $title = "Reservation Declined.";
-					 $message = "Hi ".\app\helpers\Utility::user_details($tabledatata['user_id'],'name').", Sorry your table reservation has been Declined.";
+					 $message = "Hi ".Utility::user_details($tabledatata['user_id'],'name').", Sorry your table reservation has been Declined.";
 					 $image = "";
-					$result = 	\app\helpers\Utility::sendFCM($pushid,$title,$message,$image); 
+					$result = 	Utility::sendFCM($pushid,$title,$message,$image); 
 					 break;
 				 }
 			}
@@ -2940,8 +2920,10 @@ $runningPie = [];
 		,o.totalamount,current_order_id,o.ordertype,o.serviceboy_id from tablename tn left join orders o on tn.current_order_id = o.id 
 		where tn.merchant_id = \''.Yii::$app->user->identity->merchant_id.'\' and  orderprocess in(\'1\',\'2\') ';
 		$tableDetails = Yii::$app->db->createCommand($sqlTableDetails)->queryAll();
-				$sqlServiceBoy = 'select * from serviceboy where merchant_id = \''.Yii::$app->user->identity->merchant_id.'\' and loginstatus = \'1\'';
-		$resServiceBoy = Yii::$app->db->createCommand($sqlServiceBoy)->queryAll();
+				
+		$resServiceBoy = Serviceboy::find()
+		->where(['merchant_id'=>Yii::$app->user->identity->merchant_id,'loginstatus'=>'1'])
+		->asArray()->All();
 		$sqlParcelDetails = 'select * from  orders o 
 		where o.merchant_id = \''.Yii::$app->user->identity->merchant_id.'\' 
 		and tablename like \'%PARCEL%\'and date(reg_date) = \''.date('Y-m-d').'\' and orderprocess not in (\'3\',\'4\')';
@@ -3024,8 +3006,8 @@ $runningPie = [];
 	    echo "sad".$_POST['STATUS'];exit;
 	    if(isset($_POST['STATUS'])){
 	        if($_POST['STATUS'] == 'TXN_SUCCESS'){
-	            $orderDet = \app\models\Orders::findOne($_POST['ORDERID']);
-	            $tableUpdate = \app\models\Tablename::findOne($orderDet['tablename']);
+	            $orderDet = Orders::findOne($_POST['ORDERID']);
+	            $tableUpdate = Tablename::findOne($orderDet['tablename']);
 	            $merchant_pay_types_det = \app\models\MerchantPaytypes::find()->where(['merchant_id'=>Yii::$app->user->identity->merchant_id,'paymenttype' => 2])->One();
 	    if(!empty($tableUpdate))
 		{
@@ -3066,9 +3048,8 @@ $runningPie = [];
 public function actionQrdownload()
 	{
 		extract($_POST);
-		$sql = 'select * from tablename where merchant_id = \''.Yii::$app->user->identity->merchant_id.'\' and ID = \''.$tableid.'\'';
-		$res = Yii::$app->db->createCommand($sql)->queryOne();
 		
+		$res = Tablename::findOne($tableid) ;
 		if(empty($res['qr_path'])){
 			$qrtext = $this->encrypt($tableid,$userid);
 			$sqlQrUpdate = 'update tablename set qr_path = \''.$qrtext.'\' where merchant_id = \''.Yii::$app->user->identity->merchant_id.'\'
@@ -3186,7 +3167,7 @@ echo $resp;
 	public function actionMenuqr()
 	{
 		$merchant_id = Yii::$app->user->identity->merchant_id;
-        $merchantdetails = \app\models\Merchant::findOne($merchant_id);
+        $merchantdetails = Merchant::findOne($merchant_id);
         $food_sections = Sections::find()->where(['merchant_id' => $merchant_id])->asArray()->all();
 	    return $this->render('menuqr',['merchantdetails' => $merchantdetails,'food_sections' => $food_sections]);
 	}
@@ -3214,8 +3195,10 @@ echo $resp;
 			echo "<pre>";print_r($model->getErrors());exit;
 		}
 	}
-		$sqlcategorytypes = 'select * from sections where merchant_id = \''.Yii::$app->user->identity->merchant_id.'\'';
-	$categorytypes = Yii::$app->db->createCommand($sqlcategorytypes)->queryAll();
+		
+	$categorytypes = Sections::find()
+	->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])
+	->asArray()->All();
 // 		echo '<pre>';
 // 	print_r($categorytypes);exit;
 		return $this->render('sections',['model'=>$model,'categorytypes'=>$categorytypes]);
@@ -3253,7 +3236,7 @@ echo $resp;
 	}
 	public function actionDeletesection(){
 		extract($_POST);
-		$Tablenamedetails = \app\models\Sections::findOne($id);
+		$Tablenamedetails = Sections::findOne($id);
 		$Tablenamedetails->delete();
 	}
 	public function actionTesttime(){
@@ -3277,7 +3260,7 @@ echo $resp;
 		return $this->render('raiserequest',['sdate'=>$sdate,'edate'=>$edate,'ingredIdNameArr'=>json_encode($ingredIdNameArr),'resPurchaseDetail'=>$resPurchaseDetail,'vendorModel'=>$vendorModel]);
 	}
 	public function actionFoodsections(){
-	    $model = new \app\models\FoodSections;
+	    $model = new FoodSections;
 		if ($model->load(Yii::$app->request->post()) ) {
 		    $model->merchant_id = (string)Yii::$app->user->identity->merchant_id;
 		    $model->fs_status  = 1;
@@ -3299,26 +3282,26 @@ echo $resp;
 			echo "<pre>";print_r($model->getErrors());exit;
 		}
 	}
-		$sqlfoodsections = 'select * from food_sections where merchant_id = \''.Yii::$app->user->identity->merchant_id.'\'';
-    	$foodsections = Yii::$app->db->createCommand($sqlfoodsections)->queryAll();
-
+		
+		$foodsections = FoodSections::find()
+		->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])->asArray()->All();
 		return $this->render('foodsections',['model'=>$model,'foodsections'=>$foodsections]);
 	}
 		public function actionEditfcpopup()
 	{
 		extract($_POST);
-		$sectionModel = \app\models\FoodSections::findOne($id);
+		$sectionModel = FoodSections::findOne($id);
 		return $this->renderAjax('editfoodsection', ['model' => $sectionModel,'id'=>$id]);		
 	}
 	public function actionEditfoodsection()
 	{
-		$model = new \app\models\FoodSections;
+		$model = new FoodSections;
 		if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
 			Yii::$app->response->format = Response::FORMAT_JSON;
 			return ActiveForm::validate($model);
 		}
 		$sectionNameArr = Yii::$app->request->post('FoodSections');
-		$sectionNameUpdate = \app\models\FoodSections::findOne($_POST['FoodSections']['ID']);
+		$sectionNameUpdate = FoodSections::findOne($_POST['FoodSections']['ID']);
 		
 		$sectionNameUpdate->attributes = \Yii::$app->request->post('FoodSections');
 		
@@ -3342,7 +3325,7 @@ echo $resp;
     public function actionTestsms(){
      $message = "Hi 1234 is OTP for your Registration.";
      $mobilenumber = '9014306522';
-						\app\helpers\Utility::otp_sms($mobilenumber,$message);   
+	Utility::otp_sms($mobilenumber,$message);   
     }
     public function actionRoomreservation(){
 		extract($_POST);
@@ -3405,7 +3388,7 @@ echo $resp;
 		extract($_POST);
 		$roomModel = RoomReservations::findOne($id);
 		$roomnames = [];
-		$roomnames = \app\models\AllocatedRooms::find()->where(['category_id' => $id])->asArray()->all();
+		$roomnames = AllocatedRooms::find()->where(['category_id' => $id])->asArray()->all();
 		return $this->renderAjax('editroompopup', ['model' => $roomModel,'id'=>$id,'roomnames' => $roomnames]);		
     
 	}
@@ -3422,7 +3405,7 @@ echo $resp;
 		$roomArr = Yii::$app->request->post('RoomReservations');
 		
 		$roomUpdate = RoomReservations::findOne($_POST['ID']);
-		$oldRoomNames =  \app\models\AllocatedRooms::find()->where(['category_id'=>$_POST['ID']])->asArray()->all();
+		$oldRoomNames = AllocatedRooms::find()->where(['category_id'=>$_POST['ID']])->asArray()->all();
 
 		$oldRoomImage = $roomUpdate['category_pic'];
 		
@@ -3450,7 +3433,7 @@ echo $resp;
 					{
 						if($_POST['roomnames_'.$oldRoomNames[$i]['ID']] != $oldRoomNames[$i]['room_name'] )
 						{
-								$foodcategorytypes = \app\models\AllocatedRooms::findOne($oldRoomNames[$i]['ID']);
+								$foodcategorytypes = AllocatedRooms::findOne($oldRoomNames[$i]['ID']);
 								$foodcategorytypes->merchant_id = (string)Yii::$app->user->identity->merchant_id;
 								$foodcategorytypes->room_name = $_POST['roomnames_'.$oldRoomNames[$i]['ID']];
 								$foodcategorytypes->updated_by = Yii::$app->user->identity->emp_name;
@@ -3561,7 +3544,7 @@ echo $resp;
 		$daterowSpanArr = [];
 		$purchase_number_rowSpanArr = [];
 		$merchant_id = Yii::$app->user->identity->merchant_id;
-$merchantDet = \app\models\Merchant::findOne($merchant_id);
+$merchantDet = Merchant::findOne($merchant_id);
 $storename = $merchantDet['storename'];
 		if($type == '1' || '2')
 		{
@@ -3656,7 +3639,7 @@ order by reg_date,purchase_number';
 		$model->arrived_time = date('Y-m-d H:i:s A');
 		if($model->validate()){
 			$this->roomavailblityupdate($userDet['room_category'],1,1);
-			$catModel = \app\models\AllocatedRooms::findOne($userDet['room_alocated']);
+			$catModel = AllocatedRooms::findOne($userDet['room_alocated']);
 			$catModel->status = 2;
 			$catModel->save();
 			Yii::$app->getSession()->setFlash('success', [
@@ -3721,7 +3704,7 @@ order by reg_date,purchase_number';
 		,'model'=>$model,'sdate' => $sdate ,'edate' => $edate, 'reservationstatus' => $reservationstatus]);
     }
             public function actionTaxes(){
-            $model = new \app\models\MerchantTax;
+            $model = new MerchantTax;
 		if ($model->load(Yii::$app->request->post()) ) {
 		    $model->merchant_id = (string)Yii::$app->user->identity->merchant_id;
 		    $model->created_on = date('Y-m-d H:i:s A');
@@ -3756,18 +3739,18 @@ order by reg_date,purchase_number';
         }
         public function actionEdittaxpopup(){
             extract($_POST);
-            $taxModel = \app\models\MerchantTax::findOne($id);
+            $taxModel = MerchantTax::findOne($id);
             return $this->renderAjax('edittax', ['model' => $taxModel,'id'=>$id]);		
         }
         public function actionEdittax()
 	{
-		$model = new \app\models\MerchantTax;
+		$model = new MerchantTax;
 		if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
 			Yii::$app->response->format = Response::FORMAT_JSON;
 			return ActiveForm::validate($model);
 		}
 		$taxNameArr = Yii::$app->request->post('MerchantTax');
-		$taxNameUpdate = \app\models\MerchantTax::findOne($_POST['MerchantTax']['ID']);
+		$taxNameUpdate = MerchantTax::findOne($_POST['MerchantTax']['ID']);
 		
 		$taxNameUpdate->attributes = \Yii::$app->request->post('MerchantTax');
                 //echo '<pre>';print_r($taxNameUpdate->attributes);exit;
@@ -3793,7 +3776,7 @@ order by reg_date,purchase_number';
     {
 	extract($_POST);
         //echo '<pre>';print_r($_POST);exit;
-        $merchantTax =  \app\models\MerchantTax::find()->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])->asArray()->all();
+        $merchantTax =  MerchantTax::find()->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])->asArray()->all();
 	$categeryModel = FoodCategeries::findOne($id);
         
         $sqlCategoryTax = 'select mfct.*,mt.tax_name from merchant_food_category_tax mfct
@@ -3809,7 +3792,7 @@ order by reg_date,purchase_number';
         extract($_POST);
 
 	$foodCategoryUpdate = \app\models\FoodCategeries::findOne($_POST['food_category_id']);
-	$foodCatetax =  \app\models\MerchantFoodCategoryTax::find()->where(['food_category_id'=>$foodCategoryUpdate['ID']])->asArray()->all();
+	$foodCatetax =  MerchantFoodCategoryTax::find()->where(['food_category_id'=>$foodCategoryUpdate['ID']])->asArray()->all();
         //$catTypeArray = array_filter($categorytypes);
 	if(!empty($tax_id[0]))
 	{
@@ -3857,8 +3840,10 @@ order by reg_date,purchase_number';
 	return json_encode($vendorDetails);
 	}
 	public function actionLoyalty(){
-	    $sqlLoyaltyDet = 'select * from merchant_loyalty where merchant_id = \''.Yii::$app->user->identity->merchant_id.'\'';
-	    $loyaltyDet = Yii::$app->db->createCommand($sqlLoyaltyDet)->queryAll();
+
+		$loyaltyDet = MerchantLoyalty::find()
+		->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])->asArray()->All();
+
 	    $model = new MerchantLoyalty;
 	    	if ($model->load(Yii::$app->request->post()) ) {
 	    	   $model->merchant_id = Yii::$app->user->identity->merchant_id;
@@ -3943,8 +3928,8 @@ order by reg_date,purchase_number';
 	}
 	public function actionWeeklystock(){
 	    
-	    $sql ='select * from inventary_updation_request where merchant_id=\''.Yii::$app->user->identity->merchant_id.'\'';
-	    $inventoryUpdateReq = Yii::$app->db->createCommand($sql)->queryAll();
+		$inventoryUpdateReq = InventaryUpdationRequest::find()->
+		where(['merchant_id'=>Yii::$app->user->identity->merchant_id])->asArray()->All();
 	  //  echo 'heeloooo<pre>';
 	  //  print_r($inventoryUpdateReq);exit;
 	    $this->render('weeklystock',array('inventoryUpdateReq'=>$inventoryUpdateReq));
@@ -3953,8 +3938,9 @@ order by reg_date,purchase_number';
 	public function actionMerchantloyaltydetails(){
 	    //exit('asdfasdffafs');
 	    extract($_POST);
-	    $sql = 'select * from merchant_loyalty_details where loyalty_id=\''.$id.'\'';
-		$loyaltyDet = Yii::$app->db->createCommand($sql)->queryAll();
+	    
+		$loyaltyDet = MerchantLoyaltyDetails::find()
+		->where(['loyalty_id'=>$id])->asArray()->All();
 		return $this->renderAjax('merchantloyaltydetails', ['loyaltyDet' => $loyaltyDet]);	
 	}
     public function actionNewpos()
@@ -3962,10 +3948,9 @@ order by reg_date,purchase_number';
 		extract($_REQUEST);
 		$merchant_id = Yii::$app->user->identity->merchant_id;
 		if(empty($tableid)){
-		        $sqlSelectOneTable = 'select * from tablename where   status = \'1\' 
-				and merchant_id = \''.$merchant_id.'\' order by ID limit 1';
-		        $selectOneTable = Yii::$app->db->createCommand($sqlSelectOneTable)->queryOne();
-
+		        
+				$selectOneTable = Tablename::find()
+				->where(['status'=>'1', 'merchant_id'=>$merchant_id])->limit(1)->asArray()->One();
 		        $tableid = $selectOneTable['ID'];
 		        $tableName = $selectOneTable['name'];
 		        $table_section_id = $selectOneTable['section_id'];
@@ -4016,7 +4001,7 @@ order by reg_date,purchase_number';
 		
 		$tableDetails = Yii::$app->db->createCommand($sqlTableDetails)->queryAll();
 		
-		$food_cat_qty_arr = \app\models\FoodCategoryTypes::find()->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])->asArray()->All();
+		$food_cat_qty_arr = FoodCategoryTypes::find()->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])->asArray()->All();
 		$food_cat_qty_det = array_column($food_cat_qty_arr,'food_type_name','ID');
 		$prevOrderDetails = [];
 		$prevFullSingleOrderDet = [];
@@ -4043,19 +4028,24 @@ order by reg_date,purchase_number';
 		  
 		}
 
-		$sqlMerchantfoodTax = 'select food_category_id,tax_type,tax_value,merchant_tax_id
-		 from merchant_food_category_tax where merchant_id = \''.Yii::$app->user->identity->merchant_id.'\'';
-		$resMerchantfoodTax = Yii::$app->db->createCommand($sqlMerchantfoodTax)->queryAll();
+		$resMerchantfoodTax = MerchantFoodCategoryTax::find()
+		->select('food_category_id','tax_type','tax_value','merchant_tax_id')
+		->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])
+		->asArray()->All();
+		
 		
 	    $MerchantfoodTaxArr = \yii\helpers\ArrayHelper::index($resMerchantfoodTax, null, 'food_category_id');
 		//echo "<pre>";print_r($MerchantfoodTaxArr);exit;
 		$prodvsfcidarr = array_column($productDetails,'food_category_id','ID');
 		//echo "<pre>";print_r($prodvsfcidarr);exit;
-		$sqlfc = 'select * from food_sections where fs_status = \'1\' and merchant_id = \''.Yii::$app->user->identity->merchant_id.'\'';
-		$resfc = Yii::$app->db->createCommand($sqlfc)->queryAll();
-		$sqlServiceBoy = 'select * from serviceboy where 
-		merchant_id = \''.Yii::$app->user->identity->merchant_id.'\' and loginstatus = \'1\'';
-		$resServiceBoy = Yii::$app->db->createCommand($sqlServiceBoy)->queryAll();
+		
+		$resfc = FoodSections::find()
+		->where(['fs_status'=>'1','merchant_id'=>$app->user->identity->merchant_id])
+		->asArray()->All();
+
+		$resServiceBoy = Serviceboy::find()
+		->where(['merchant_id'=>Yii::$app->user->identity->merchant_id,'loginstatus'=>'1'])
+		->asArray()->All();
 		//echo "<pre>";print_r($resServiceBoy);exit;
 		
 		$sqlRunning = 'select o.order_id,s.name pilot_name,u.name username,o.tablename,o.ID
@@ -4092,14 +4082,15 @@ order by reg_date,purchase_number';
 		//echo "<pre>";print_r($_REQUEST);exit;
 		$arr =  $_REQUEST;
 if(!empty($user_mobile)){
-	$sqlalreadyid = "SELECT * FROM users WHERE mobile = '".$user_mobile."'";
-	$alreadyid = Yii::$app->db->createCommand($sqlalreadyid)->queryOne();
+	
+	$alreadyid = Users::find()->where(['mobile'=>$user_mobile])->asArray()->One();
+
 	if(empty($alreadyid)){
 		$user_id = Yii::$app->merchant->userCreation($user_mobile,$user_name);
 	}
 	else{
 		if(!empty($user_name) &&  $user_name != $alreadyid['name'] ){
-			$umodel = \app\models\Users::findOne($alreadyid['ID']);
+			$umodel = Users::findOne($alreadyid['ID']);
 			$umodel->name = $user_name;
 			$umodel->save();
 		}
@@ -4360,7 +4351,7 @@ if(!empty($user_mobile)){
 	{
 		extract($_REQUEST);
         $roomreservationDet = \app\models\RoomReservations::findOne($id);
-		$allocatedRooms = \app\models\AllocatedRooms::find()->where(['category_id' => $id, 'status' => '1'])->asArray()->all();		
+		$allocatedRooms = AllocatedRooms::find()->where(['category_id' => $id, 'status' => '1'])->asArray()->all();		
 		if (!empty($roomreservationDet)) {
 			if (!empty($allocatedRooms)) {
 				$str =  "<option value=''>Select</option>"; 
@@ -4383,9 +4374,9 @@ if(!empty($user_mobile)){
 	{
 		extract($_POST);
 		$model = Userinformation::findOne($id);
-		$roomguests = \app\models\RoomGuestIdentitiy::find()->where(['reservation_id' => $id])->asArray()->all();
+		$roomguests = RoomGuestIdentitiy::find()->where(['reservation_id' => $id])->asArray()->all();
 		return $this->renderAjax('updateroomres', ['model' => $model,'id'=>$id, 'roomguests' => $roomguests]);		
-    
+		
 	}
 	public function actionUpdateroomres()
 	{
@@ -4404,7 +4395,7 @@ if(!empty($user_mobile)){
 		$resUpdate->booking_time = date('Y-m-d '.$roomArr['booking_time'].':i:s A');
 		if($resUpdate->validate()){
 			
-			$oldGuests =  \app\models\RoomGuestIdentitiy::find()->where(['reservation_id'=>$roomArr['ID']])->asArray()->all();
+			$oldGuests =  RoomGuestIdentitiy::find()->where(['reservation_id'=>$roomArr['ID']])->asArray()->all();
 
 			if(count($oldGuests) > 0)
 			{
@@ -4414,7 +4405,7 @@ if(!empty($user_mobile)){
 						($_POST['guestidname_'.$oldGuests[$i]['ID']] != $oldGuests[$i]['guest_id_name'])
 						)
 						{
-								$foodcategorytypes = \app\models\RoomGuestIdentitiy::findOne($oldGuests[$i]['ID']);
+								$foodcategorytypes = RoomGuestIdentitiy::findOne($oldGuests[$i]['ID']);
 								$foodcategorytypes->merchant_id = (string)Yii::$app->user->identity->merchant_id;
 								$foodcategorytypes->guest_name = $_POST['guestname_'.$oldGuests[$i]['ID']];
 								$foodcategorytypes->guest_id_name = $_POST['guestidname_'.$oldGuests[$i]['ID']];
@@ -4427,7 +4418,7 @@ if(!empty($user_mobile)){
 			
 			$resUpdate->save();
 			$this->roomavailblityupdate($resUpdate['room_category'],1,2);
-$catModel = \app\models\AllocatedRooms::findOne($resUpdate['room_alocated']);
+$catModel = AllocatedRooms::findOne($resUpdate['room_alocated']);
 			$catModel->status = 1;
 			$catModel->save();
 		}
@@ -4472,7 +4463,7 @@ $catModel = \app\models\AllocatedRooms::findOne($resUpdate['room_alocated']);
 		if(!empty($categorylist))
 		{
 			$category_id = $_REQUEST['category_id'] ?? $categorylist[0]['ID'];
-			$rooms = \app\models\AllocatedRooms::find()->where(['category_id' => $category_id ])
+			$rooms = AllocatedRooms::find()->where(['category_id' => $category_id ])
 			->asArray()->all();
 		}
 
@@ -4599,8 +4590,9 @@ $catModel = \app\models\AllocatedRooms::findOne($resUpdate['room_alocated']);
                         {
                             $sectionNames = array_column($dataArr,2);
                             $sectionCat = array_column($dataArr,2,1);
-							$sqlFoodSection = 'select * from food_sections where merchant_id = \''.Yii::$app->user->identity->merchant_id.'\'';
-							$foodSections = Yii::$app->db->createCommand($sqlFoodSection)->queryAll();
+							
+							$foodSections = FoodSections::find()
+							->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])->asArray()->All();
 							
 							if(count($foodSections)+count(array_unique($sectionNames)) <= 3 ){
 								$fs_params = ['merchant_id'=>$merchant_id,'food_sections' => array_values(array_unique($sectionNames))];    
