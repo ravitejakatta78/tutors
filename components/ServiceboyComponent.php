@@ -4,6 +4,7 @@ use yii;
 use yii\base\Component;
 use \app\helpers\Utility;
 use app\models\Product;
+use app\models\Merchant;
 
  date_default_timezone_set("asia/kolkata");
 
@@ -27,20 +28,27 @@ class ServiceboyComponent extends Component{
 			$sqlrow = "SELECT * FROM serviceboy WHERE mobile = '$mymailid'";
 		  }
 		    $row = Yii::$app->db->createCommand($sqlrow)->queryOne();
-		  if(!empty($row['ID'])){
+			if(!empty($row['ID'])){
 			  if(password_verify($mypassword,$row['password'])){
 				if($row['status']=='1'){
 				if($row['loginaccess']=='0'){
-					  
-					$jwt = base64_encode($row['ID']);	 
 
-						
-							$userwherearray['ID'] = $row['ID']; 
+					$merchant_details = Merchant::findOne($row['merchant_id']);
+					if(date('Y-m-d') < $merchant_details['subscription_date']){
+						$jwt = base64_encode($row['ID']);	 
+						$userwherearray['ID'] = $row['ID']; 
 						$userarray['loginaccess'] = '1';
 
 						$sqlUpdate = 'update serviceboy set loginaccess = \''.$userarray['loginaccess'].'\',loginstatus=\'1\' where ID = \''.$userwherearray['ID'].'\'';
 						$result = Yii::$app->db->createCommand($sqlUpdate)->execute();
-						 $payload = array("status" => '1',"text" =>"","usersid" => $row['ID'],"merchant_id" => $row['merchant_id']);
+						$payload = array("status" => '1',"text" =>"","usersid" => $row['ID'],"merchant_id" => $row['merchant_id']);
+
+					}
+					else{
+						$payload = array("status" => '0',"text" =>"Merchant Subscription Over");
+					}
+
+
 				} else {
 						
 					$payload = array("status"=>'0',"text"=>"Account already logged in other device.");
