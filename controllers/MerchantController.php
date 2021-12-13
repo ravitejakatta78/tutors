@@ -4027,13 +4027,13 @@ order by reg_date,purchase_number';
 		}
 
 		$resMerchantfoodTax = MerchantFoodCategoryTax::find()
-		->select('food_category_id','tax_type','tax_value','merchant_tax_id')
+		->select('food_category_id,tax_type,tax_value,merchant_tax_id')
 		->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])
 		->asArray()->All();
-		
+
 		
 	    $MerchantfoodTaxArr = \yii\helpers\ArrayHelper::index($resMerchantfoodTax, null, 'food_category_id');
-		//echo "<pre>";print_r($MerchantfoodTaxArr);exit;
+
 		$prodvsfcidarr = array_column($productDetails,'food_category_id','ID');
 		//echo "<pre>";print_r($prodvsfcidarr);exit;
 		

@@ -40,7 +40,7 @@ class Utility{
 	$foodCatFullDet = Yii::$app->db->createCommand($sqlfoodCatFullDet)->queryOne();
 	
 	
-	return $foodCatFullDet['food_type_name'];
+	return @$foodCatFullDet['food_type_name'] ?? '';
     }
 	public static function status_details($status){ 
 
