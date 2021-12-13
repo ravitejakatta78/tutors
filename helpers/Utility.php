@@ -482,7 +482,7 @@ if(!empty($notificationdet)){
         "title" => $title,
         "body" => $message,
         "order_id" => $orderid,
-        "table" => "05",
+        "table" => !empty($notificationdet['tablename']) ? $notificationdet['tablename'] : "",
         "payment_mode" => "Online",
         "amount" => !empty($notificationdet['orderamount']) ? $notificationdet['orderamount'] : 0,
        "user_name" => !empty($notificationdet['username'])  ? $notificationdet['username'] : '',

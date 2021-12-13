@@ -1759,7 +1759,8 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 												$smessage = 'New order received please check the app for information.';
 												$simage = '';
 												
-												$notificationdet = ['type' => 'NEW_ORDER','orderamount' => $orderamount,'username' => $userdetails['name']];
+												$notificationdet = ['type' => 'NEW_ORDER','orderamount' => $orderamount
+												,'username' => $userdetails['name'],'tablename' => $tabel_Det['name']];
 												foreach($serviceboyarray as $serviceboy){
 												    Yii::trace("======order distibution to service boy=======".$serviceboy['name']."========email========".$serviceboy['email']."=========pushid=======".$serviceboy['push_id']);
 													\app\helpers\Utility::sendNewFCM($serviceboy['push_id'],$stitle,$smessage,$simage,'6',null,$orderdetails['ID'],$notificationdet);
