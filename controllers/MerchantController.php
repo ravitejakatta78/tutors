@@ -663,7 +663,7 @@ else{
 		$prevFullSingleOrderDet = [];
 		if(!empty($current_order_id))
 		{
-			$prevFullSingleOrderDet = \app\models\Orders::findOne($current_order_id);
+			$prevFullSingleOrderDet = Orders::findOne($current_order_id);
 			//$prevOrderDetails = \app\models\OrderProducts::find()->where(['order_id'=>$current_order_id])
 			//->andWhere(['not in','count',['0']])
 			//->asArray()->all();
@@ -2978,8 +2978,8 @@ $runningPie = [];
 	public function actionUpdateorderstatus()
 	{
 		extract($_POST);
-		$orderDet = \app\models\Orders::findOne($id);
-		$tableUpdate = \app\models\Tablename::findOne($orderDet['tablename']);
+		$orderDet = Orders::findOne($id);
+		$tableUpdate = Tablename::findOne($orderDet['tablename']);
 		if(!empty($tableUpdate))
 		{
 			$table_status = null;
@@ -4008,7 +4008,7 @@ order by reg_date,purchase_number';
 		if(!empty($current_order_id) && $current_order_id > 0 )
 		{
 
-			$prevFullSingleOrderDet = \app\models\Orders::findOne($current_order_id);
+			$prevFullSingleOrderDet = Orders::findOne($current_order_id);
 			if(!empty($prevFullSingleOrderDet['user_id'])){
 				$userDet = \app\models\Users::findOne($prevFullSingleOrderDet['user_id']);
 			}
@@ -4047,10 +4047,11 @@ order by reg_date,purchase_number';
 		//echo "<pre>";print_r($resServiceBoy);exit;
 		
 		$sqlRunning = 'select o.order_id,s.name pilot_name,u.name username,o.tablename,o.ID
-		,orderprocess,o.totalamount,tb.name table_name,preparetime,preparedate from orders o 
+		,orderprocess,o.totalamount,tb.name table_name,preparetime,preparedate,sec.section_name from orders o 
 		left join serviceboy s on o.serviceboy_id = s.ID
 		left join users u on o.user_id = u.ID
 		left join tablename tb on tb.ID = o.tablename
+		left join sections sec on sec.ID = tb.section_id 
 		where orderprocess not in (\'3\',\'4\') and o.merchant_id = \''.Yii::$app->user->identity->merchant_id.'\' order by ID desc';
 		$runningOrders = Yii::$app->db->createCommand($sqlRunning)->queryAll();
 

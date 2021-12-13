@@ -84,7 +84,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
                           <h4 class="panel-title">
                             <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse<?= ($r+1) ?>" aria-expanded="true" aria-controls="collapseOne">
                               <i class="more-less fa fa-plus" id="<?= ($r+1); ?>"></i>
-                              <?php echo   $runningOrders[$r]['table_name'] ?? $runningOrders[$r]['order_id']; ?> 
+                              <?php echo   ($runningOrders[$r]['table_name'] ?? $runningOrders[$r]['order_id']).' ('.$runningOrders[$r]['section_name'].' )'; ?> 
                             </a>
                           </h4>
                         </div>
