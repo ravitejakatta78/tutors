@@ -422,7 +422,7 @@ foreach($secTableIndexArr as $sec_id => $tableDetails ) {
          <div class="col-sm-4 filtersearch3" id="nopadding" style="cursor:pointer">
            <!-- normal -->
            <div class="ih-item circle effect10 top_to_bottom"  >
-             <a onclick="changetable('<?= $tableDetails[$tn]['ID']?>','<?= $tableDetails[$tn]['name']?>','<?= $tableDetails[$tn]['current_order_id']?>')">
+             <a onclick="changetable('<?= $tableDetails[$tn]['ID']?>','<?= $tableDetails[$tn]['name']?>','<?= ($merchant_det['table_occupy_status'] == 1) ? $tableDetails[$tn]['current_order_id'] : '0'; ?>')">
                <div class="img" width="20px" height="20px">
                  <?php 
                      $table_status = ($tableDetails[$i]['table_status'] ?? 5);

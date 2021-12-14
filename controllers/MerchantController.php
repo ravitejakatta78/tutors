@@ -1210,7 +1210,7 @@ if(!empty($_POST['ckcDel'])){
 						}
 							$title = 'Order has been placed!!';
 							if($userId != ''){
-								$userDet = \app\models\Users::find()->where(['mobile'=>$customer_mobile])->asArray()->One();
+								$userDet = Users::find()->where(['mobile'=>$customer_mobile])->asArray()->One();
 								$message = "Hi ".$userDet['name'].", Your order has been placed. ".$newid." is your line Please Wait for your turn Thank you.";
 										$image = '';
 										Yii::$app->merchant->send_sms($userDet['mobile'],$message); 
@@ -3912,7 +3912,7 @@ order by reg_date,purchase_number';
             for($m=0;$m<count($mainUserIdArr);$m++)
 			{
 				$data[] = [(string)Yii::$app->user->identity->merchant_id,$id,$mainUserIdArr[$m],date('Y-m-d H:i:s A')];
-					$userdetails = \app\models\Users::findOne($mainUserIdArr[$m]);
+					$userdetails = Users::findOne($mainUserIdArr[$m]);
 													 Yii::$app->merchant->send_sms($userdetails['mobile'],$loyaltyMainDet['message']); 
 
 			}
@@ -4010,7 +4010,7 @@ order by reg_date,purchase_number';
 
 			$prevFullSingleOrderDet = Orders::findOne($current_order_id);
 			if(!empty($prevFullSingleOrderDet['user_id'])){
-				$userDet = \app\models\Users::findOne($prevFullSingleOrderDet['user_id']);
+				$userDet = Users::findOne($prevFullSingleOrderDet['user_id']);
 			}
 			$sqlPrevOrderDetails = 'select op.user_id,op.order_id,op.merchant_id,op.product_id
 			,sum(op.count) count,(op.price) price
