@@ -1,4 +1,5 @@
 <?php
+
 use yii\helpers\Html;
 use aryelds\sweetalert\SweetAlert;
 $actionId = Yii::$app->controller->action->id;
@@ -1202,7 +1203,11 @@ function totlrealprice(dynamictip = '')
     var cal_tip = parseFloat(((totalprice * merchant_tip_percent)/100).toFixed(2));    
     }
     else{
-    var cal_tip = $("#ttl-tip-amt").val()   ; 
+    var cal_tip = $("#ttl-tip-amt").val()   ;
+     
+    }
+    if(cal_tip == ''){
+      cal_tip = 0.00;
     }
     
     $("#ttl-tip-amt").val(cal_tip);

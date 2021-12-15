@@ -1,9 +1,11 @@
 
 <?php
+
 use app\helpers\Utility;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 $actionId = Yii::$app->controller->action->id;
+$merchant_det = \app\models\Merchant::findOne(Yii::$app->user->identity->merchant_id);
 ?>
 <style>
 .placeorder{background:#FD8B02;border:1px solid #FD8B02;color:#fff;border-radius:24px;}
@@ -79,7 +81,7 @@ if($se % 2 == 0){
 				
 				<div class="col-sm-1" id="nopadding">
                   <!-- normal -->
-                  <div class="ih-item circle effect10 top_to_bottom"   onclick="placeOrder('<?= $tableDetails[$i]['ID']?>','<?= $tableDetails[$i]['name']?>','<?= $tableDetails[$i]['current_order_id']?>')"><a href="#">
+                  <div class="ih-item circle effect10 top_to_bottom"   onclick="placeOrder('<?= $tableDetails[$i]['ID']?>','<?= $tableDetails[$i]['name']?>','<?= ($merchant_det['table_occupy_status'] == 1) ? $tableDetails[$i]['current_order_id'] : '0'; ?>')"><a href="#">
                       <div class="img" width="20px" height="20px">
 					  <?php 
 					  $table_status = ($tableDetails[$i]['table_status'] ?? 5);
