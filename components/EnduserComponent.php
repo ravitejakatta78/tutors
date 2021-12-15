@@ -1,34 +1,36 @@
 <?php
+
 namespace app\components;
 use yii;
 use yii\base\Component;
-use \app\helpers\Utility;
-use \app\helpers\MyConst;
-use \app\models\Merchant;
-use \app\models\Users;
-use \app\models\Orders;
-use \app\models\Feedback;
-use \app\models\Serviceboy;
-use \app\models\CoinsTransactions;
-use \app\models\MerchantCoupon;
-use \app\models\MerchantPaytypes;
-use \app\models\Tablename;
-use \app\models\FoodCategeries;
-use \app\models\Product;
-use \app\models\SectionItemPriceList;
-use \app\models\MerchantFoodCategoryTax;
-use \app\models\OrderProducts;
-use \app\models\ServiceboyNotifications;
-use \app\models\OrderTransactions;
-use \app\models\TableReservations;
-use \app\models\MerchantGallery;
-use \app\models\Contest;
-use \app\models\SequenceMaster;
-use \app\models\AllocatedRooms;
-use \app\models\Userinformation;
- date_default_timezone_set("asia/kolkata");
+use app\helpers\Utility;
+use app\helpers\MyConst;
+use app\models\Merchant;
+use app\models\Users;
+use app\models\Orders;
+use app\models\Feedback;
+use app\models\Serviceboy;
+use app\models\CoinsTransactions;
+use app\models\MerchantCoupon;
+use app\models\MerchantPaytypes;
+use app\models\Tablename;
+use app\models\FoodCategeries;
+use app\models\Product;
+use app\models\SectionItemPriceList;
+use app\models\MerchantFoodCategoryTax;
+use app\models\OrderProducts;
+use app\models\ServiceboyNotifications;
+use app\models\OrderTransactions;
+use app\models\TableReservations;
+use app\models\MerchantGallery;
+use app\models\Contest;
+use app\models\SequenceMaster;
+use app\models\AllocatedRooms;
+use app\models\Userinformation;
 
-class EnduserComponent extends Component{
+date_default_timezone_set("asia/kolkata");
+
+class EnduserComponent extends Component {
 
     public function init(){
      date_default_timezone_set("asia/kolkata");
@@ -36,7 +38,7 @@ class EnduserComponent extends Component{
     }
 
     public function display($content=null){
-        if($content!=null){
+        if($content!=null){ 
             $this->content= $content;
         }
         echo Html::encode($this->content);
@@ -79,13 +81,10 @@ class EnduserComponent extends Component{
 		//	$userarray['refered_code'] = $val['refered_code'];
 		//	$userarray['latitude'] = $val['latitude'];
 	//		$userarray['longitude'] = $val['longitude'];
-			/*$sqlrow = "SELECT * FROM users WHERE mobile = '".$userarray['mobile']."' and status = '1'";
-			$row = Yii::$app->db->createCommand($sqlrow)->queryOne();*/
+
 			$row = Users::find()
 			->where(['mobile' => $userarray['mobile'], 'status' => '1'])->asArray()->One();
 			if(empty($row['ID'])){
-				/*$sqlrow = "SELECT * FROM users WHERE mobile = '".$userarray['mobile']."' and status = '1'";
-				$row = Yii::$app->db->createCommand($sqlrow)->queryOne();*/
 				$row = Users::find()
 				->where(['mobile' => $userarray['mobile'], 'status' => '1'])->asArray()->One();
 				if(empty($row['ID'])){  
@@ -93,8 +92,8 @@ class EnduserComponent extends Component{
 					$alreadyid = Yii::$app->db->createCommand($sqlalreadyid)->queryOne();*/
 					$alreadyid = Users::find()->where(['mobile' => $userarray['mobile']])->asArray()->One();
 					if(empty($alreadyid)){
-						//$result = insertQuery($userarray,'users');
-						$result = new \app\models\Users;
+
+						$result = new Users;
 						$result->attributes =  $userarray;
 						$result->reg_date = date('Y-m-d h:i:s');
 						$result->mod_date = date('Y-m-d h:i:s');
@@ -132,10 +131,8 @@ class EnduserComponent extends Component{
 	public function registerotp($val)
 	{
 		if(!empty($val['usersid'])){
-		  $usersid =  trim($val['usersid']);
-				/*$sqluserdetails = "select ID,otp from users where ID = '".$usersid."'";
-				$userdetails = Yii::$app->db->createCommand($sqluserdetails)->queryOne();*/
-				$userdetails = Users::findOne($usersid);
+		    $usersid =  trim($val['usersid']);
+			$userdetails = Users::findOne($usersid);
 			if(!empty($userdetails['ID'])){ 
 						$otp = $val['otp'];
 						if($userdetails['otp']==$otp){ 
@@ -159,10 +156,8 @@ class EnduserComponent extends Component{
 	}
 	public function resendotp($val) {
 		if(!empty($val['usersid'])){
-		  $usersid =  trim($val['usersid']);
-				/*$sqluserdetails = "select * from users where ID = '".$usersid."'";
-				$userdetails = Yii::$app->db->createCommand($sqluserdetails)->queryOne();*/
-				$userdetails = Users::findOne($usersid);
+		    $usersid =  trim($val['usersid']);
+			$userdetails = Users::findOne($usersid);
 			if(!empty($userdetails['ID'])){ 
 							$message = "Hi ".$userdetails['name']." ".$userdetails['otp']." is your otp for verification.";
 							Utility::otp_sms($userdetails['mobile'],$message);
@@ -247,9 +242,7 @@ class EnduserComponent extends Component{
 	{
 	    Yii::trace('=====forgetpasswordotp===val=='.json_encode($val));
 		if(!empty($val['usersid'])){
-		  $usersid =  trim($val['usersid']);
-				/*$sqluserdetails = "select ID,otp from users where ID = '".$usersid."'";
-				$userdetails = Yii::$app->db->createCommand($sqluserdetails)->queryOne();*/
+		        $usersid =  trim($val['usersid']);
 				$userdetails = Users::findOne($usersid);
 				if(!empty($userdetails['ID'])){ 
 					$otp = $val['otp'];
@@ -275,26 +268,20 @@ class EnduserComponent extends Component{
         Yii::trace("===updatepassword val =====".json_encode($val));
 		  if(!empty($val['usersid'])&&!empty($val['password'])){
 		  $customer_id =  trim($val['usersid']);
-		  /*$sqlrow = "SELECT * FROM users WHERE ID = '".$customer_id."'";
-		  $row = Yii::$app->db->createCommand($sqlrow)->queryOne();*/
 		  $row = Users::findOne($customer_id);
 		  if(!empty($row['ID'])){
 		$userarray = $userwherearray = array();
 				$userwherearray['ID'] = $row['ID']; 
 				$userarray['password'] = password_hash(trim($_REQUEST['password']), PASSWORD_DEFAULT);
-				//$result = updateQuery($userarray,'users',$userwherearray);
 				$sqlUpdate = 'update users set password = \''.$userarray['password'].'\' where ID = \''.$userwherearray['ID'].'\'';
 				$result = Yii::$app->db->createCommand($sqlUpdate)->execute();
 				if($result){
-					
 					$payload = array("status"=>'1',"text"=>"Password updated");
-					}else{
-					
+				}else{
 					$payload = array("status"=>'0',"text"=>"Technical issue araised");
 				}
-	  }else{
-					
-			$payload = array("status"=>'0',"text"=>"Invalid users");
+	  }else {
+		  	$payload = array("status"=>'0',"text"=>"Invalid users");
 	  }
 	  }else{
 					
@@ -307,15 +294,12 @@ class EnduserComponent extends Component{
 		if(!empty($val['usersid'])&&!empty($val['password'])&&!empty($val['oldpassword'])){
 		  $oldpassword =  trim($val['oldpassword']);
 		  $customer_id =  trim($val['usersid']);
-		  /*$sqlrow = "SELECT * FROM users WHERE ID = '".$customer_id."'";
-		  $row = Yii::$app->db->createCommand($sqlrow)->queryOne();*/
 		  $row = Users::findOne($customer_id);
 		  if(!empty($row['ID'])){
 		  if(!empty($row['password'])&&!empty($oldpassword)&&password_verify($oldpassword,$row['password'])){
 		$userarray = $userwherearray = array();
 				$userwherearray['ID'] = $row['ID']; 
 				$userarray['password'] = password_hash(trim($_REQUEST['password']), PASSWORD_DEFAULT);
-				//$result = updateQuery($userarray,'users',$userwherearray);
 				$sqlUpdate = 'update users set password = \''.$userarray['password'].'\' where ID = \''.$userwherearray['ID'].'\'';
 				$result = Yii::$app->db->createCommand($sqlUpdate)->execute();
 				if($result){
@@ -351,8 +335,8 @@ class EnduserComponent extends Component{
 						$userarray['rating'] =  trim($val['rating']);
 						$userarray['message'] =  !empty($val['message']) ? trim($val['message']) : ''; 
 						$userarray['reg_date'] = date('Y-m-d h:i:s');
-						//$result = insertQuery($userarray,'feedback');  
-						$result = new \app\models\Feedback;
+  
+						$result = new Feedback;
 						$result->attributes = $userarray;
 						$result->save();		        
 		    }
@@ -378,9 +362,6 @@ class EnduserComponent extends Component{
 	{
 		  if(!empty($val['header_user_id'])){ 
 						$merchant_id = trim($val['merchantid']);
-					  /*$sqlrow = "SELECT * FROM feedback WHERE user_id = '".$val['header_user_id']."' 
-					  and merchant_id = '".$merchant_id."'";
-					  $row = Yii::$app->db->createCommand($sqlrow)->queryOne();*/
 					  $row = Feedback::find()
 					  ->where(['user_id'=>$val['header_user_id'], 'merchant_id' => $merchant_id])
 					  ->asArray()->One();
@@ -399,17 +380,12 @@ class EnduserComponent extends Component{
 	public function setalert($val)
 	{
 		  if(!empty($val['header_user_id'])){ 
-						$orderid = trim($val['orderid']);
-					  /*$sqlrow = "SELECT * FROM orders WHERE user_id = '".$val['header_user_id']."' and ID = '".$orderid."'";
-					  $row = Yii::$app->db->createCommand($sqlrow)->queryOne();*/
-					  $row = Orders::find()
-					  ->where(['user_id' => $val['header_user_id'], 'ID' => $orderid])->asArray()->One();
+                      $orderid = trim($val['orderid']);
+					  $row = Orders::findOne($orderid);
 					  if(!empty($row['ID'])){
 							$sqlUpdate = "update orders set orderalert = '1' where ID = '".$row['ID']."'";
 							$resUpdate = Yii::$app->db->createCommand($sqlUpdate)->execute();
-							  /*$sqlserviceboy = "SELECT * FROM serviceboy WHERE ID = '".$row['serviceboy_id']."'";
-							  $serviceboy =  Yii::$app->db->createCommand($sqlserviceboy)->queryOne();*/
-							  $serviceboy = Serviceboy::findOne($row['serviceboy_id']);
+					        $serviceboy = Serviceboy::findOne($row['serviceboy_id']);
 							if(!empty($serviceboy['push_id'])){
 							$amessage = "Hey ".ucwords($serviceboy['name']).", Alert from ".Utility::table_details($row['tablename'],'name');	
 							$title = 'Alert!!!!';
@@ -423,7 +399,7 @@ class EnduserComponent extends Component{
 							$notificaitonarary['title'] = 'Alert from Customer';
 							$notificaitonarary['message'] = 'Alert from '.Utility::user_details($row['user_id'],'name')." with table ".Utility::table_details($row['tablename'],'name');
 							$notificaitonarary['seen'] = '0';
-							//insertQuery($notificaitonarary,'serviceboy_notifications');
+						
 							$model = new ServiceboyNotifications;
 							$model->attributes = $notificaitonarary;
 							$model->reg_date = date('Y-m-d h:i:s');
@@ -443,10 +419,7 @@ class EnduserComponent extends Component{
 	{
 		  if(!empty($val['header_user_id'])){ 
 						$orderid = trim($val['orderid']);
-					  /*$sqlrow = "SELECT * FROM orders WHERE user_id = '".$val['header_user_id']."' and ID = '".$orderid."'";
-					  $row = Yii::$app->db->createCommand($sqlrow)->queryOne();*/
-					  $row = Orders::find()
-					  ->where(['user_id' => $val['header_user_id'], 'ID' => $orderid])->asArray()->One();
+					  $row = Orders::findOne($orderid);
 					  if(!empty($row['ID'])){
 							$sqlupdate = "update orders set orderprocess = '4',orderprocessstatus = '0' where ID = '".$row['ID']."'";
 							$resUpdate = Yii::$app->db->createCommand($sqlupdate)->execute();
@@ -464,7 +437,6 @@ class EnduserComponent extends Component{
 							$userwherearray = $userarray = array();
 							$userarray['password'] = password_hash(trim($val['password']),PASSWORD_DEFAULT);
 							$userwherearray['ID'] = $val['header_user_id'];
-								//$result = updateQuery($userarray,'users',$userwherearray);
 								$sqlRes = 'update users set password = \''.$userarray['password'].'\' where ID = \''.$userwherearray['ID'].'\'';
 								$result = Yii::$app->db->createCommand($sqlRes)->execute();
 								if($result){ 
@@ -488,7 +460,6 @@ class EnduserComponent extends Component{
 						$userwherearray = $userarray = array();
 						$userarray['push_id'] =  $val['pushid'];
 						$userwherearray['ID'] = $userdetails['ID'];
-						//	$result = updateQuery($userarray,'users',$userwherearray);
 							$sqlRes = 'update users set push_id = \''.$userarray['push_id'].'\' where ID = \''.$userwherearray['ID'].'\'';
 								$result = Yii::$app->db->createCommand($sqlRes)->execute();
 							if($result){ 
@@ -520,8 +491,6 @@ class EnduserComponent extends Component{
 						$sqlrow = "SELECT * FROM users WHERE mobile = '".$userarray['mobile']."' and ID <> '".$val['header_user_id']."'";
 						$row = Yii::$app->db->createCommand($sqlrow)->queryOne();
 							if(empty($row['ID'])){  
-							
-						//	$result = updateQuery($userarray,'users',$userwherearray); 
 						$sqlRes = 'update users set name = \''.$userarray['name'].'\',email=\''.$userarray['email'].'\',mobile=\''.$userarray['mobile'].'\' 
 						,date_of_birth = \''.$userarray['date_of_birth'].'\'
 						where ID = \''.$userwherearray['ID'].'\'';
@@ -552,8 +521,6 @@ class EnduserComponent extends Component{
 	public function users($usersid)
 	{
 			  if(!empty($usersid)){ 
-					  /*$sqlrow = "SELECT * FROM users WHERE ID = '".$usersid."'";
-					  $row = Yii::$app->db->createCommand($sqlrow)->queryOne();*/
 					  $row = Users::findOne($usersid);
 					  if(!empty($row['ID'])){
 						  $customerdetails = array();
@@ -716,8 +683,6 @@ class EnduserComponent extends Component{
 	{
 		if(!empty($val['merchantid'])){
 						$merchantid = $val['merchantid'];
-					/*$sqlmerchantsdata = 'select * from merchant where status = \'1\' and ID = \''.$merchantid.'\'';
-					$merchantsdata = Yii::$app->db->createCommand($sqlmerchantsdata)->queryOne();*/
 					$merchantsdata = Merchant::find()
 					->where(['status' => '1', 'ID' => $merchantid])->asArray()->One();
 					 if(!empty($merchantsdata)){
@@ -761,10 +726,6 @@ class EnduserComponent extends Component{
 
 						if(!empty($rewards)){ 
 								if($rewards['status']=='1'){
-									 /*$sqlcoinstransactionsarray = "SELECT * FROM coins_transactions 
-									 WHERE user_id = '".$val['header_user_id']."' 
-									 and reward_id = '".$rewards['ID']."'";
-									 $coinstransactionsarray = Yii::$app->db->createCommand($sqlcoinstransactionsarray)->queryOne();*/
 									 $coinstransactionsarray  = CoinsTransactions::find()
 									 ->where(['user_id' => $val['header_user_id'], 'reward_id' => $rewards['ID']])
 									 ->asArray()->One();
@@ -783,7 +744,7 @@ class EnduserComponent extends Component{
 											$coinstransactions['coins'] = $rewards['coins'];
 											$coinstransactions['type'] = 'Debit';
 											$coinstransactions['reason'] = $rewards['coins']." coins debited from your wallet for the redemeption of copoun.";
-											//$result = insertQuery($coinstransactions,"coins_transactions");
+
 											$result = new CoinsTransactions;
 											$result->attributes = $coinstransactions;
 											if($result->save()){
@@ -822,9 +783,6 @@ class EnduserComponent extends Component{
 	}
 	public function coinstransactionslist($val){
 		 if(!empty($val['header_user_id'])){ 
-					  /*$sqlcoinstransactionsarray = "SELECT * FROM coins_transactions 
-					  WHERE user_id = '".$val['header_user_id']."' order by ID desc";
-					  $coinstransactionsarray = Yii::$app->db->createCommand($sqlcoinstransactionsarray)->queryAll();*/
 					  $coinstransactionsarray = CoinsTransactions::find()
 					  ->where(['user_id' => $val['header_user_id']])
 					  ->orderBy([
@@ -868,8 +826,6 @@ class EnduserComponent extends Component{
 	public function coinstransactions($val)
 	{
 		 if(!empty($val['header_user_id'])){ 
-					  /*$sqlcoinstransactionsarray = "SELECT * FROM coins_transactions WHERE user_id = '".$val['header_user_id']."'";
-					  $coinstransactionsarray = Yii::$app->db->createCommand($sqlcoinstransactionsarray)->queryAll();*/
 					  $coinstransactionsarray = CoinsTransactions::find()
 					  ->where(['user_id'=>$val['header_user_id']])->asArray()->All();
 					  $coinsarray = $coinstotalarray =  array();
@@ -934,7 +890,8 @@ class EnduserComponent extends Component{
 						  $coinsarray['id'] = $rewards['ID'];
 						  $coinsarray['title'] = $rewards['title']; 
 						  $coinsarray['validityto'] = $rewards['validity']; 
-						  $coinsarray['soldout'] = $rewards['soldout']; 
+						  $coinsarray['soldout'] = $rewards['soldout'];
+						  $coinsarray['coins'] = $rewards['coins']; 
 						  if($rewards['validity']=='1'){
 						  $validityto = strtotime($rewards['validityto']);
 							$coinsarray['validityto'] = date('d M Y',$validityto);
@@ -1057,8 +1014,6 @@ class EnduserComponent extends Component{
 	        $grandamt = $val['amount'];
 			$merchantid = trim($val['merchant_id']); 
 			$merchant_details = Merchant::findOne($merchantid);
-			/*$sqlcoupon = 'SELECT  * from merchant_coupon where code = \''.$coupancode.'\' and merchant_id = \''.$merchantid.'\' ';
-		    $coupandetails = Yii::$app->db->createCommand($sqlcoupon)->queryOne();*/
 			$coupandetails = MerchantCoupon::find()
 			->where(['code'=>$coupancode, 'merchant_id'=>$merchantid])->asArray()->One();
 		    if(!empty($coupandetails)){
@@ -1116,9 +1071,7 @@ class EnduserComponent extends Component{
 						$savingamt = 0; 
 					$coupancode = trim($val['coupon']);
 					$merchantdetails = trim($val['merchant_id']); 
-						/*$sqlmerchant_details = 'select * from merchant where ID = \''.$merchantdetails.'\'';
-						$resmerchant_details = Yii::$app->db->createCommand($sqlmerchant_details)->queryOne();*/
-						$resmerchant_details = Merchant::findOne($merchantdetails);
+					$resmerchant_details = Merchant::findOne($merchantdetails);
 					$grandamt = $val['amount'];
 					$subpercenttage = floor((1/100)*$grandamt);
 					$taxpercenttage =  ($resmerchant_details['tax']/100)*$grandamt;
@@ -1129,10 +1082,8 @@ class EnduserComponent extends Component{
 						$subpercenttage = 0;
 					}
 					$userarray = array();
-							$customer_id = $val['header_user_id']; 
-					  /*$sqlrow1 = "SELECT * FROM users WHERE ID = '".$customer_id."'";
-					  $rowuser = Yii::$app->db->createCommand($sqlrow1)->queryOne();*/
-					  $rowuser  = Users::findOne($customer_id);
+ 					$customer_id = $val['header_user_id']; 
+                	$rowuser  = Users::findOne($customer_id);
 
 					  $userarray['name'] = $rowuser['name'];
 					  $userarray['email'] = $rowuser['email'];
@@ -1153,11 +1104,9 @@ class EnduserComponent extends Component{
 					$compleamt = $grandamt+$taxsamount;
 					$userarray['totalamt'] = number_format($compleamt, 2, '.', '');
 					$userarray['savingamt'] = 0.00;
-					/*$sqlpaymentarraytypes = "select paymenttype,paymentgateway,merchantid,merchantkey from merchant_paytypes
-					 where merchant_id = '".$merchantdetails."'";
-					$paymentarraytypes = Yii::$app->db->createCommand($sqlpaymentarraytypes)->queryAll();*/
+
 					$paymentarraytypes = MerchantPaytypes::find()
-					->select('paymenttype','paymentgateway','merchantid','merchantkey')
+					->select('paymenttype,paymentgateway,merchantid,merchantkey')
 					->where(['merchant_id' => $merchantdetails])->asArray()->All();
 					$paypaymentarray =$totalpaymentarray = array();
 					$paygatewayarray = array('0'=>'Cash On Delivery','1'=>'Paytm','2'=>'PhonePay','3'=>'online');
@@ -1364,9 +1313,7 @@ public function qrcodenew($val)
 									    exit;
 								    }    
 								}
-								
-								/*$sqlmerchantdetails = 'select * from merchant where ID =  \''.$merchantid.'\' and status = \'1\'';
-								$merchantdetails = Yii::$app->db->createCommand($sqlmerchantdetails)->queryOne();*/
+
 								$merchantdetails = Merchant::find()
 								->where(['ID'=>$merchantid, 'status'=>'1'])->asArray()->One();
 							if(!empty($merchantdetails)){
@@ -1377,9 +1324,6 @@ public function qrcodenew($val)
 									//return $payload;
 									 //   exit;
 									}
-									/*$sqltabledetails = 'select * from tablename 
-									where merchant_id = \''.$merchantdetails['ID'].'\' and ID = \''.$tableid.'\' and status = \'1\'';
-									$tabledetails = Yii::$app->db->createCommand($sqltabledetails)->queryOne();*/
 									$tabledetails = Tablename::find()
 									->where(['merchant_id'=>$merchantdetails['ID'], 'ID'=>$tableid, 'status'=>'1'])
 									->asArray()->One();
@@ -1405,14 +1349,10 @@ public function qrcodenew($val)
 		$fsNameArr = array_column($productDetails,'food_section_name','food_section_id');
 		$titleNameArr = array_column($productDetails,'title_quantity','ID');
 		
-		/*$sqlfoodCategories = 'select * from food_categeries where merchant_id = \''.$tabledetails['merchant_id'].'\'';
-		$foodCategories = Yii::$app->db->createCommand($sqlfoodCategories)->queryAll();*/
 		$foodCategories = FoodCategeries::find()
 		->where(['merchant_id'=>$tabledetails['merchant_id']])->asArray()->All();
 		
-		/*$sqlProducts = 'select * from product where merchant_id = \''.$tabledetails['merchant_id'].'\'';
-		$resproducts = Yii::$app->db->createCommand($sqlProducts)->queryAll();*/
-		$resproducts = Product::find()->where(['merchant_id'=>$tabledetails['merchant_id']])->aaArray()->All();
+		$resproducts = Product::find()->where(['merchant_id'=>$tabledetails['merchant_id']])->asArray()->All();
 		
 		$productsIndexArr = \yii\helpers\ArrayHelper::index($resproducts, 'ID');
 		
@@ -1442,10 +1382,6 @@ $getproducts = array();
 		            //print_r($prodIDArr); 
 		            $prodArr = array();
 					for($fp=0;$fp<count($prodIDArr);$fp++){
-					/*$sqlSectionPrice = 'select * from section_item_price_list 
-					        where merchant_id= \''.$merchantdetails['ID'].'\' and item_id = \''.$prodIDArr[$fp].'\' 
-					        and section_id = \''.$tabledetails['section_id'].'\'';
-					        $resSectionPrice = Yii::$app->db->createCommand($sqlSectionPrice)->queryOne();*/
 							$resSectionPrice = SectionItemPriceList::find()
 							->where(['merchant_id'=>$merchantdetails['ID'], 'item_id'=>$prodIDArr[$fp], 'section_id'=>$tabledetails['section_id']])
 							->asArray()->One();	
@@ -1552,9 +1488,9 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 						if ( strstr( $val['enckey'], 'superpilot' ) ) {
                             $pos = explode('?',$val['enckey']);
                             parse_str($pos[1], $outputencarray);
-                            $enckey = \app\helpers\Utility::decrypt($outputencarray['enckey']);
+                            $enckey = Utility::decrypt($outputencarray['enckey']);
                         } else {
-						    $enckey = \app\helpers\Utility::decrypt(trim($val['enckey']));
+						    $enckey = Utility::decrypt(trim($val['enckey']));
                         }
 						
 
@@ -1572,10 +1508,8 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 								$tableid = $merchantexplode[1];
 								
 								$tabel_Det = Tablename::findOne($tableid);
-								/*$sqlmerchantdetails = 'select * from merchant where ID =  \''.$merchantid.'\' and status = \'1\'';
-								$merchantdetails = Yii::$app->db->createCommand($sqlmerchantdetails)->queryOne();*/
 								$merchantdetails = Merchant::find()
-								->where(['ID'=>$merchantid, 'status'=>'1'])->aaArray()->One();
+								->where(['ID'=>$merchantid, 'status'=>'1'])->asArray()->One();
 								if(($tabel_Det['current_order_id'] != 0 || $tabel_Det['current_order_id'] != null) && $merchantdetails['table_occupy_status'] == 1)
 								{
 								    $currentOrder = Orders::findOne($tabel_Det['current_order_id']);
@@ -1596,9 +1530,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 									//return $payload;
 									 //   exit;
 									}
-									/*$sqltabledetails = 'select * from tablename where 
-									merchant_id = \''.$merchantdetails['ID'].'\' and ID = \''.$tableid.'\' and status = \'1\'';
-									$tabledetails = Yii::$app->db->createCommand($sqltabledetails)->queryOne();*/
+
 									$tabledetails = Tablename::find()
 									->where(['merchant_id'=>$merchantdetails['ID'], 'ID'=>$tableid, 'status'=>'1'])
 									->asArray()->One();
@@ -1638,10 +1570,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 										$singleproducts['saleprice'] = $merchantproduct['section_item_sale_price'];
 										$singleproducts['availabilty'] = $merchantproduct['availabilty']; 
 										$singleproducts['image'] = !empty($merchantproduct['image']) ? MERCHANT_PRODUCT_URL.$merchantproduct['image'] : '';
-										
-										/*$sqltax = 'select tax_type,tax_value from merchant_food_category_tax 
-										where merchant_id = \''.$merchantid.'\' and food_category_id = \''.$merchantproduct['foodtype'].'\'';
-										$restax = Yii::$app->db->createCommand($sqltax)->queryAll();*/
+
 										$restax = MerchantFoodCategoryTax::find()
 										->select('tax_type','tax_value')
 										->where(['merchant_id'=>$merchantid, 'food_category_id'=>$merchantproduct['foodtype']])
@@ -1702,8 +1631,6 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 	public function qrusers($val)
 	{
 		$customer_id = $val['header_user_id']; 
-					  /*$sqlrow = "SELECT * FROM users WHERE ID = '".$customer_id."'";
-					  $row = Yii::$app->db->createCommand($sqlrow)->queryOne();*/
 					  $row = Users::findOne($customer_id);
 					  if(!empty($row['ID'])){
 						  $customerdetails =  $row;
@@ -1716,9 +1643,6 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 		return $payload;
 	}
 	public function cash($val){
-	    	    		 Yii::debug('===cash parameters==='.json_encode($val));
-				/*$sqlusers = 'select * from users where ID = \''.$val['header_user_id'].'\'';
-		$userdetails = Yii::$app->db->createCommand($sqlusers)->queryOne();*/
 		$userdetails = Users::findOne($val['header_user_id']);
 		if(!empty($val['merchantid'])&&!empty($val['table'])&&!empty($val['productid'])&&!empty($val['count'])&&!empty($val['price'])){
 		    
@@ -1777,11 +1701,8 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 		
 							//$result = insertQuery($userarray,"orders");
 							if($result->save()){
-								
-									/*$sqlorderdetails = 'select * from orders where ID = \''.$result->ID.'\'';
-									$orderdetails = Yii::$app->db->createCommand($sqlorderdetails)->queryOne();*/
-									$orderdetails = Orders::findOne($result->ID);
-									$orderamount = !empty($userarray['totalamount']) ? number_format(trim($userarray['totalamount']),2, '.', ',') : 0; 
+								$orderdetails = Orders::findOne($result->ID);
+								$orderamount = !empty($userarray['totalamount']) ? number_format(trim($userarray['totalamount']),2, '.', ',') : 0; 
 							$transactionscount = array(); 
 							$transactionscount['order_id'] = $orderdetails['ID'];
 							$transactionscount['user_id'] = $userdetails['ID'];
@@ -1795,8 +1716,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 							$transactionscount['paymenttype'] = 'cash';
 							$transactionscount['reorder'] = '0';
 							$transactionscount['paidstatus'] = '0';
-							
-							//$result = insertQuery($transactionscount,"order_transactions");
+
 							$ordertransmodel = new \app\models\OrderTransactions;
 							$ordertransmodel->attributes = $transactionscount;
 							$ordertransmodel->couponamount = (string)$transactionscount['couponamount'];
@@ -1818,7 +1738,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 										$productscount['price'] = trim($productpricearray[$i]);
 										$productscount['inc'] = (string)$x;
 										$productscount['reorder'] = '0';
-										//$result = insertQuery($productscount,"order_products");
+
 										$orderProdModel = new \app\models\OrderProducts;
 										$orderProdModel->attributes = $productscount;
 										$orderProdModel->reg_date = date('Y-m-d h:i:s');
@@ -1853,8 +1773,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 												$notificationdet = ['type' => 'NEW_ORDER','orderamount' => $orderamount
 												,'username' => $userdetails['name'],'tablename' => $tabel_Det['name']];
 												foreach($serviceboyarray as $serviceboy){
-												    Yii::trace("======order distibution to service boy=======".$serviceboy['name']."========email========".$serviceboy['email']."=========pushid=======".$serviceboy['push_id']);
-													\app\helpers\Utility::sendNewFCM($serviceboy['push_id'],$stitle,$smessage,$simage,'6',null,$orderdetails['ID'],$notificationdet);
+												    Utility::sendNewFCM($serviceboy['push_id'],$stitle,$smessage,$simage,'6',null,$orderdetails['ID'],$notificationdet);
 													$orderpushmodel = new \app\models\OrderPushPilot;
 													$orderpushmodel->merchant_id = $merchantid;
 													$orderpushmodel->order_id = $orderdetails['ID'];
@@ -1873,13 +1792,13 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 											$notificaitonarary['message'] = 'New Order request from '.$userdetails['name']." with order id ".$orderdetails['order_id'];
 											$notificaitonarary['ordertype'] = 'new';
 											$notificaitonarary['seen'] = '0';
-											//$result = insertQuery($notificaitonarary,'serviceboy_notifications'); 
+											
 											$serviceBoyNotiModel = new  ServiceboyNotifications;
 											$serviceBoyNotiModel->attributes = $notificaitonarary;
 											$serviceBoyNotiModel->reg_date = date('Y-m-d h:i:s');
 											$serviceBoyNotiModel->mod_date = date('Y-m-d h:i:s');
 											$serviceBoyNotiModel->save();
-											    Yii::debug('===cash table==='.json_encode($table));
+											
 											$tableUpdate = Tablename::findOne($table);
 						                    $tableUpdate->table_status = '1';
 						                    $tableUpdate->current_order_id = $orderdetails['ID'];
@@ -1904,18 +1823,12 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 		return $payload;
 	}
 	public function reordercash($val){
-	    	    		 Yii::debug('===reordercash parameters==='.json_encode($val));
-		/*$sqlusers = 'select * from users where ID = \''.$val['header_user_id'].'\'';
-		$userdetails = Yii::$app->db->createCommand($sqlusers)->queryOne();*/
 		$userdetails = Users::findOne($val['header_user_id']);
 		if(!empty($val['merchantid'])&&!empty($val['table'])&&!empty($val['productid'])&&!empty($val['count'])&&!empty($val['price'])){ 
 						$userwherearray = $userarray = array();
 						if(!empty($val['orderid'])){
 						$orderid = !empty($val['orderid']) ? trim($val['orderid']) : ''; 
 						$couponcode = !empty($val['coupon']) ? trim($val['coupon']) : '';
-						 //$orderdetails = selectQuery("orders","ID = '".$orderid."'");
-							/*$sqlorderdetails = 'select * from orders where ID = \''.$orderid.'\'';
-							$orderdetails = Yii::$app->db->createCommand($sqlorderdetails)->queryOne();*/
 							$orderdetails = Orders::findOne($orderid);
 						$orderamount = trim($val['totalamount']);
 							$totalamount = number_format($orderdetails['totalamount']+$orderamount, 2, '.', ',');
@@ -1945,9 +1858,6 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 							$result = \app\models\Orders::findOne($orderid);
 							$result->attributes = $userarray;
 							if($result->save()){
-									/*$sqlcoinsdata = "select * from coins_transactions
-									 where user_id = '".$orderdetails['user_id']."' and order_id = '".$orderdetails['order_id']."'";
-									$coinsdata = Yii::$app->db->createCommand($sqlcoinsdata)->queryOne();*/
 									$coinsdata = CoinsTransactions::find()
 									->where(['user_id'=>$orderdetails['user_id'], 'order_id'=>$orderdetails['order_id']])
 									->asArray()->One();
@@ -1969,7 +1879,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 								$transactionscount['paymenttype'] = 'cash';
 								$transactionscount['reorder'] = '1';
 								$transactionscount['paidstatus'] = '0';
-								//$result = insertQuery($transactionscount,"order_transactions");
+
 								$orderTransModel = new \app\models\OrderTransactions;
 								$orderTransModel->attributes = $transactionscount;
 								$orderTransModel->couponamount = (string)$transactionscount['couponamount'];
@@ -1994,8 +1904,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 										$productscount['price'] = trim($productpricearray[$i]);
 										$productscount['reorder'] = '1';
 										$productscount['inc'] = (string)$x;
-										
-										//$result = insertQuery($productscount,"order_products");
+
 										$orderProdModel = new OrderProducts;
 										$orderProdModel->attributes = $productscount;
 										$orderProdModel->reg_date = date('Y-m-d h:i:s');
@@ -2024,7 +1933,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 											$notificaitonarary['message'] = 'Reorder Order request from '.$userdetails['name']." with order id ".$orderdetails['order_id'];
 											$notificaitonarary['seen'] = '0';
 											$notificaitonarary['ordertype'] = 'reorder';
-											//insertQuery($notificaitonarary,'serviceboy_notifications');
+
 											$serviceBoyNotiModel = new  ServiceboyNotifications;
 											$serviceBoyNotiModel->attributes = $notificaitonarary;
 											$serviceBoyNotiModel->reg_date = date('Y-m-d h:i:s');
@@ -2050,8 +1959,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 	}
 	public function prepaid($val)
 	{
-		/*$sqlusers = 'select * from users where ID = \''.$val['header_user_id'].'\'';
-		$userdetails = Yii::$app->db->createCommand($sqlusers)->queryOne();*/
+
 		$userdetails = Users::findOne($val['header_user_id']);
 		if(!empty($val['merchantid'])&&!empty($val['table'])&&!empty($val['productid'])&&!empty($val['count'])&&!empty($val['price'])){ 
 						$userwherearray = $userarray = array();
@@ -2091,9 +1999,6 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 							$result->couponamount = (string)$userarray['couponamount'];
 							
 							if($result->save()){
-							//		$orderdetails = selectQuery("orders","order_id = '".$userarray['order_id']."'");
-							/*$sqlorderdetails = 'select * from orders where ID = \''.$result->ID.'\'';
-							$orderdetails = Yii::$app->db->createCommand($sqlorderdetails)->queryOne();*/
 							$orderdetails = Orders::findOne($result->ID);
 
 							$transactionscount = array(); 
@@ -2109,7 +2014,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 							$transactionscount['paymenttype'] = 'paytm';
 							$transactionscount['reorder'] = '0';
 							$transactionscount['paidstatus'] = '1';
-							//$result = insertQuery($transactionscount,"order_transactions");
+
 							$ordertransmodel = new OrderTransactions;
 							$ordertransmodel->attributes = $transactionscount;
 							$ordertransmodel->couponamount = (string)$transactionscount['couponamount'];
@@ -2191,16 +2096,11 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 	}
 	public function reorderprepaid($val)
 	{
-			/*$sqlusers = 'select * from users where ID = \''.$val['header_user_id'].'\'';
-		$userdetails = Yii::$app->db->createCommand($sqlusers)->queryOne();*/
 		$userdetails = Users::findOne($val['header_user_id']);
 				if(!empty($val['merchantid'])&&!empty($val['table'])&&!empty($val['productid'])&&!empty($val['count'])&&!empty($val['price'])){ 
 						$userwherearray = $userarray = array();
 						if(!empty($val['orderid'])){
 						$orderid = !empty($val['orderid']) ? trim($val['orderid']) : ''; 
-						 //$orderdetails = selectQuery("orders","ID = '".$orderid."'");
-						/*$sqlorderdetails = 'select * from orders where ID = \''.$orderid.'\'';
-						$orderdetails = Yii::$app->db->createCommand($sqlorderdetails)->queryOne();*/
 						$orderdetails = Orders::findOne($orderid);
 						$orderamount = trim($val['totalamount']);
 							$totalamount = number_format($orderdetails['totalamount']+$orderamount, 2, '.', ',');
@@ -2226,9 +2126,6 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 							$result = Orders::findOne($orderid);
 							$result->attributes = $userarray;
 							if($result->save()){
-									/*$sqlcoinsdata = "select * from coins_transactions 
-									where user_id = '".$orderdetails['user_id']."' and order_id = '".$orderdetails['order_id']."'";
-									$coinsdata = Yii::$app->db->createCommand($sqlcoinsdata)->queryOne();*/
 									$coinsdata = CoinsTransactions::find()
 									->where(['user_id'=>$orderdetails['user_id'], 'order_id'=>$orderdetails['order_id']])
 									->asArray()->One();
@@ -2328,8 +2225,6 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 		return $payload;
 	}
 	public function orderlist($val){
-	    
-	    	    Yii::debug('===orderlist parameters==='.json_encode($val));
 		$sqlorderlistarray = "select * from orders where user_id = '".$val['header_user_id']."' and status = '1' ";
 		if(!empty($val['orderprocess']) || $val['orderprocess'] == 0){
 		     $orderproces_string =  str_replace(",","','",$val['orderprocess']);
@@ -2340,14 +2235,8 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 					if(!empty($orderlistarray)){
 					$orderarray = $totalordersarray = array();
 					foreach($orderlistarray as $orderlist){
-						/*$sqlmerchantdetails = "select * from merchant where ID = '".$orderlist['merchant_id']."'";
-						$merchantdetails = Yii::$app->db->createCommand($sqlmerchantdetails)->queryOne();*/
 						$merchantdetails = Merchant::findOne($orderlist['merchant_id']);
 						
-							/*$sqlfeedbackrating = "select  rating from feedback 
-							where merchant_id =  '".$orderlist['merchant_id']."' and order_id = '".$orderlist['ID']."' and 
-							user_id = '".$val['header_user_id']."'";
-							$feedbackrating = Yii::$app->db->createCommand($sqlfeedbackrating)->queryOne();*/
 							$feedbackrating = Feedback::find()
 							->select('rating')
 							->where(['merchant_id'=>$orderlist['merchant_id'], 'order_id'=>$orderlist['ID'], 'user_id'=>$val['header_user_id']])
@@ -2406,10 +2295,6 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 						$orderarray['paidstatus'] =  $orderlist['paidstatus']=='1' ? 'Paid' : 'Unpaid';
 						$orderarray['feedbackstatus'] =  'false'; 
 						$orderarray['showaddmore'] = '1';
-						//$feedbackstatus = selectQuery("feedback","order_id = '".$orderlist['ID']."' and merchant_id = '".$orderlist['merchant_id']."' and user_id = '".$userdetails['ID']."'");
-						/*$sqlfeedbackstatus = 'select * from feedback where order_id = \''.$orderlist['ID'].'\' and 
-						merchant_id = \''.$orderlist['merchant_id'].'\' and user_id = \''.$val['header_user_id'].'\'';
-						$feedbackstatus = Yii::$app->db->createCommand($sqlfeedbackstatus)->queryAll();*/
 						$feedbackstatus = Feedback::find()
 						->where(['order_id'=>$orderlist['ID'], 'merchant_id'=>$orderlist['merchant_id'], 'user_id'=>$val['header_user_id']])
 						->asArray()->All();
@@ -2454,13 +2339,8 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 	public function order($val){
 					$date = date('Y-m-d');
 					$orderid = $val['orderid'];
-					//$orderlist = selectQuery("orders","ID = '".$orderid."'");
-					/*$sqlorderlist = 'select * from orders where ID = \''.$orderid.'\'';
-					$orderlist = Yii::$app->db->createCommand($sqlorderlist)->queryOne();*/
 					$orderlist = Orders::findOne($orderid);
 					if(!empty($orderlist)){
-						/*$sqlmerchantdetails = "select * from merchant where ID = '".$orderlist['merchant_id']."'";
-						$merchantdetails = Yii::$app->db->createCommand($sqlmerchantdetails)->queryOne();*/
 						$merchantdetails = Merchant::findOne($orderlist['merchant_id']);
 					
 					$orderarray = $totalordersarray = array(); 
@@ -2502,10 +2382,6 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 						$orderarray['tip'] = $orderlist['tips'];
 						$orderarray['subscription'] = $orderlist['subscription'];
 
-						//$orderproducts = selectloopQuery("order_products","order_id = '".$orderlist['ID']."' and merchant_id = '".$orderlist['merchant_id']."' and user_id = '".$orderlist['user_id']."'");
-						/*$sqlorderproducts = 'select * from order_products where order_id = \''.$orderlist['ID'].'\' and 
-						merchant_id = \''.$orderlist['merchant_id'].'\' and user_id = \''.$orderlist['user_id'].'\'';
-						$orderproducts = Yii::$app->db->createCommand($sqlorderproducts)->queryAll();*/
 						$orderproducts = OrderProducts::find()
 						->where(['order_id'=>$orderlist['ID'], 'merchant_id'=>$orderlist['merchant_id'], 'user_id'=>$orderlist['user_id']])
 						->asArray()->All();
@@ -2534,9 +2410,6 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 					$orderid = $val['orderid'];
 					$orderproductid = $val['orderproductid'];
 					$inc = $val['inc']; 
-					//$orderlist = selectQuery("orders","ID = '".$orderid."'");
-					/*$sqlorderlist = 'select * from orders where ID = \''.$orderid.'\'';
-					$orderlist = Yii::$app->db->createCommand($sqlorderlist)->queryOne();*/
 					$orderlist = Orders::findOne($orderid);
 					$sqltotalorders = "select count(*) as count from order_products where order_id = '".$orderlist['ID']."'";
 					$totalorders = Yii::$app->db->createCommand($sqltotalorders)->queryOne();
@@ -2544,10 +2417,6 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 					if(!empty($orderlist)){
 					$orderarray = $totalordersarray = array(); 
 						$totalproductaarray = array(); 
-						//$orderproduct = selectQuery("orderproduct","order_id = '".$orderlist['ID']."' and ID = '".$orderproductid."'");
-						/*$sqlorderproduct = 'select * from order_products where order_id = \''.$orderlist['ID'].'\' and 
-						ID = \''.$orderproductid.'\'';
-						$orderproduct = Yii::$app->db->createCommand($sqlorderproduct)->queryAll();*/
 						$orderproduct = OrderProducts::find()
 						->where(['order_id'=>$orderlist['ID'], 'ID'=>$orderproductid])->asArray()->All();
 						if(count($orderproduct) > 0){
@@ -2572,10 +2441,8 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 	public function reservationlist($val){
 	    	    Yii::debug("====reservationlist parameters====".json_encode($val));
 		if(!empty($val['header_user_id'])){  
-							/*$merchantlist = $merchants = $merchanttables = array(); 
-							$sqlmerchantstablearray = 'select * from table_reservations where 
-							user_id = \''.$val['header_user_id'].'\' order by ID desc';
-							$merchantstablearray = Yii::$app->db->createCommand($sqlmerchantstablearray)->queryAll();*/
+							$merchantlist = $merchants = $merchanttables = array(); 
+							
 							$merchantstablearray = TableReservations::find()
 							->where(['user_id'=>$val['header_user_id']])
 							->orderBy([
@@ -2611,13 +2478,9 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 			$date = date('Y-m-d');
 					$orderid = $val['orderid'];
 					$email = !empty($val['email']) ? $val['email'] : '';
-					//$orderlist = selectQuery("orders","ID = '".$orderid."'");
-					/*$sqlorderlist = 'select * from orders where ID = \''.$orderid.'\'';
-					$orderlist = Yii::$app->db->createCommand($sqlorderlist)->queryOne();*/
+
 					$orderlist = Orders::findOne($orderid);
 					if(!empty($orderlist)){
-						/*$sqluserdetails = "select * from users where ID = '".$orderlist['user_id']."'";
-						$userdetails = Yii::$app->db->createCommand($sqluserdetails)->queryOne();*/
 						$userdetails = Users::findOne($orderlist['user_id']);
 						if(!empty($userdetails['ID'])){
 							$emailid = $email ?: $userdetails['email'];
@@ -2656,9 +2519,6 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 	    Yii::trace("============tablenames  val======".json_encode($val));
 		if(!empty($val['merchantid'])){
 						$merchantid = $val['merchantid'];
-					//$merchantsdata = selectQuery("merchant","status = '1' and ID = '".$merchantid."'");
-					 /*$sqlmerchantsdata = 'select * from merchant where status = \'1\' and ID = \''.$merchantid.'\'';
-					 $merchantsdata = Yii::$app->db->createCommand($sqlmerchantsdata)->queryOne();*/
 					 $merchantsdata = Merchant::find()
 					 ->where(['status'=>'1', 'ID'=>$merchantid])->asArray()->One();
 					 if(!empty($merchantsdata)){
@@ -2681,9 +2541,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 							$merchants['rating'] = !empty($feedbackrating) ? ceil($feedbackrating['rating']) : 0;
 							$merchants['logo'] = !empty($merchantsdata['logo']) ?  MERCHANT_LOGO.$merchantsdata['logo'] : '';
 							$merchants['coverpic'] = !empty($merchantsdata['coverpic']) ? MERCHANT_LOGO.$merchantsdata['coverpic'] : '';
-							/*$sqlmerchantstablesarray = 'select * from tablename where status = \'1\' and 
-							merchant_id = \''.$merchantsdata['ID'].'\'';
-							$merchantstablesarray = Yii::$app->db->createCommand($sqlmerchantstablesarray)->queryAll();*/
+							
 							$merchantstablesarray = Tablename::find()
 							->where(['status'=>'1', 'merchant_id'=>$merchantsdata['ID']])->asArray()->All();
 							foreach($merchantstablesarray as $merchanttable){
@@ -2694,8 +2552,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 							}
 
 							$merchants['tablelist'] = $merchantlist;
-							/*$sqlmerchantstablearray = 'select * from merchant_gallery where merchant_id = \''.$merchantsdata['ID'].'\'';
-							$merchantstablearray = Yii::$app->db->createCommand($sqlmerchantstablearray)->queryAll();*/
+							
 							$merchantstablearray = MerchantGallery::find()
 							->where(['merchant_id'=>$merchantsdata['ID']])->asArray()->allI();
 							if(!empty($merchantstablearray)){
@@ -2725,9 +2582,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 						$tableid = $val['tableid'];
 						$bookdate = $val['bookdate'];
 						$booktime = $val['booktime'];
-					//$merchantsdata = selectQuery("merchant","status = '1' and ID = '".$merchantid."'");
-					 /*$sqlmerchantsdata = 'select * from merchant where status = \'1\' and ID = \''.$merchantid.'\'';
-					 $merchantsdata = Yii::$app->db->createCommand($sqlmerchantsdata)->queryOne();*/
+
 					 $merchantsdata = Merchant::find()
 					 ->where(['status'=>'1', 'ID'=>$merchantid])->asArray()->One();
 					 
@@ -2742,10 +2597,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
                         {
                             
                         $merchantlist = $merchants = $merchanttables = array(); 
-							//$merchantstable = selectQuery("tablename","status = '1' and merchant_id = '".$merchantsdata['ID']."' and ID = '".$tableid."'");
-							/*$sqlmerchantstable = 'select * from tablename where status = \'1\' and 
-							merchant_id = \''.$merchantsdata['ID'].'\' and ID = \''.$tableid.'\'';
-							$merchantstable = Yii::$app->db->createCommand($sqlmerchantstable)->queryOne();*/
+
 							$merchantstable = Tablename::find()
 							->where(['status'=>'1', 'merchant_id'=>$merchantsdata['ID'], 'ID'=>$tableid])->asArray()->One();
 							if(!empty($merchantstable)){
@@ -2761,7 +2613,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 							    $tablearray['number_of_person'] = $val['number_of_person']; 
 								$tablearray['status'] = '0';
 								$tablearray['reg_date'] = date('Y-m-d h:i:s');
-								//$result = insertQuery($tablearray,'table_reservations');
+
 								$result = new TableReservations;
 								$result->attributes = $tablearray;
 	                            $result->save();
@@ -2787,9 +2639,6 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 		if(!empty($val['header_user_id'])){  
 							$merchantlist = $merchants = $merchanttables = array(); 
 							$merchantid = $val['merchantid'];
-							//$merchantstablearray = selectloopQuery("merchant_gallery"," merchant_id = '".$merchantid."'");
-							/*$sqlmerchantstablearray = 'select * from merchant_gallery where merchant_id = \''.$merchantid.'\'';
-							$merchantstablearray = Yii::$app->db->createCommand($sqlmerchantstablearray)->queryAll();*/
 							$merchantstablearray = MerchantGallery::find()
 							->where(['merchant_id'=>$merchantid])->asArray()->All();
 							if(!empty($merchantstablearray)){
@@ -2824,10 +2673,7 @@ public function contestlist($val){
 			return $payload;
 	}
 	public function contestdetaillist($val){
-	    Yii::trace("=====contest details ======".json_encode($val));
-	    
-			/*$sqlContestDet = 'select * from contest where contest_id = \''.$val['contestId'].'\'';
-			$resContestDet = Yii::$app->db->createCommand($sqlContestDet)->queryOne();*/
+    
 			$resContestDet = Contest::find()->where(['contest_id'=>$val['contestId']])->asArray()->One();
 		if(!empty($resContestDet)){	
 			$merchantIdIn = str_replace(",","','",$resContestDet['contest_participants']);
@@ -2857,8 +2703,6 @@ order by remain_coins desc limit '.$val['userCount'] ;
         Yii::trace("====forgot password======".json_encode($val));
 		$mobilenumber = $val['mobilenumber']; 
 		if(!empty($mobilenumber)){
-		   /* $sqlalreadyid = "SELECT * FROM users WHERE mobile = '".$mobilenumber."'";
-					$alreadyid = Yii::$app->db->createCommand($sqlalreadyid)->queryOne();*/
 					$alreadyid = Users::find()->where(['mobile'=>$mobilenumber])->asArray()->One();
 					if(empty($alreadyid)){
 		    
@@ -2888,8 +2732,8 @@ order by remain_coins desc limit '.$val['userCount'] ;
 		    		  $mobilenumber =  trim($val['mobilenumber']);
 						$otp = $val['otp'];
 
-			//$sqlvalidotp = 'select seq_number as otp from sequence_master where seq_name = \''.$mobilenumber.'\' order by reg_date desc limit 1';
-			//$resvalidotp = Yii::$app->db->createCommand($sqlvalidotp)->queryOne();
+			$sqlvalidotp = 'select seq_number as otp from sequence_master where seq_name = \''.$mobilenumber.'\' order by reg_date desc limit 1';
+			$resvalidotp = Yii::$app->db->createCommand($sqlvalidotp)->queryOne();
 			$resvalidotp['otp'] = '1234';
 						if($resvalidotp['otp']==$otp){ 
 							$userarray = array();	
@@ -2905,8 +2749,7 @@ order by remain_coins desc limit '.$val['userCount'] ;
                 			$userarray['status'] = '1';
                 			$userarray['latitude'] = $val['latitude'];
                 			$userarray['longitude'] = $val['longitude'];
-                			/*$sqlalreadyid = "SELECT * FROM users WHERE mobile = '".$userarray['mobile']."'";
-					$alreadyid = Yii::$app->db->createCommand($sqlalreadyid)->queryOne();*/
+
 					$alreadyid = Users::find()->where(['mobile'=>$userarray['mobile']])->asArray()->One();
 					if(empty($alreadyid)){
 					    
@@ -2920,7 +2763,6 @@ order by remain_coins desc limit '.$val['userCount'] ;
 							$payload = array("status"=>'1',"usersid"=>base64_encode($result->ID)
 							,"text"=>"OTP Verified Successfuly",'user_details' => ($userarray) );	  
 						}else{
-						    //print_r(json_encode($result->getErrors()));exit;
 							$payload = array("status"=>'0',"text"=>"User Not  Registered",'user_details' => null);
 						} 
 					}else{
@@ -3069,20 +2911,13 @@ order by remain_coins desc limit '.$val['userCount'] ;
     	 	         else{
     	 	            $getproducts = array();
 						foreach($upsellingremainprodcuts as $merchantproduct){
-						    /*$sqltax = 'select tax_type,tax_value from merchant_food_category_tax where 
-							merchant_id = \''.$merchantid.'\' 
-							and food_category_id = \''.$merchantproduct['foodtype'].'\'';
-							$restax = Yii::$app->db->createCommand($sqltax)->queryAll();*/
+
 							$restax = MerchantFoodCategoryTax::find()
-							->select('tax_type','tax_value')
+							->select('tax_type,tax_value')
 							->where(['merchant_id'=>$merchantid, 'food_category_id'=>$merchantproduct['foodtype']])
 							->asArray()->All();
-							
-							
-							/*$sqlSectionPrice = 'select * from section_item_price_list 
-					        where merchant_id= \''.$merchantid.'\' and item_id = \''.$merchantproduct['ID'].'\' 
-					        and section_id = \''.$tabledet['section_id'].'\'';
-					        $resSectionPrice = Yii::$app->db->createCommand($sqlSectionPrice)->queryOne();*/
+						
+
 						    $resSectionPrice = SectionItemPriceList::find()
 							->where(['merchant_id'=>$merchantid, 'item_id'=>$merchantproduct['ID'], 'section_id'=>$tabledet['section_id']])
 							->asArray()->One();
