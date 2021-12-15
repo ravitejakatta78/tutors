@@ -222,7 +222,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
                 </tbody>
               </table>
               <input type="hidden" id="ttl_tax" name="ttl_tax" >
-              <input type="hidden" id="ttl_discount" name="ttl_discount" value="<?= $prevFullSingleOrderDet['discount_number'] ?? '' ; ?>">
+              <input type="hidden" id="ttl_discount" name="ttl_discount" value="<?= $prevFullSingleOrderDet['discount_number'] ?? 0 ; ?>">
               <input type="hidden" id="ttl_discount_type" name="ttl_discount_type"  >
               <input type="hidden" id="ttl_cpn_amt" name="ttl_cpn_amt" >
               <input type="hidden" id="ttl_sub_amt" name="ttl_sub_amt" >
@@ -232,6 +232,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
               <input type="hidden" id="merchantcpn" name="merchantcpn" value="" >
               <input type="hidden" id="user_name" name="user_name" value="<?= $userDet['name'] ?? '' ; ?>" >
               <input type="hidden" id="user_mobile" name="user_mobile" value="<?= $userDet['mobile'] ?? '' ; ?>" >
+              <input type="hidden" id="current_order_id" name="current_order_id" value="<?= $current_order_id; ?>" >
 
               </form>
               <hr>
@@ -1186,9 +1187,9 @@ function totlrealprice(dynamictip = '')
         }
     }
     else if(ttl_discount >= 0){
-        if(!isNaN(ttl_discount)){
-            ttl_discount = 0;
-        }
+        //if(!isNaN(ttl_discount)){
+        //    ttl_discount = 0;
+        //}
 			$(".ttl-discount").html(parseFloat(ttl_discount).toFixed(2));
             var calDiscountAmount = parseFloat(ttl_discount);
     }

@@ -4073,12 +4073,12 @@ order by reg_date,purchase_number';
 		,'resServiceBoy' => $resServiceBoy
 		,'userDet' => $userDet, 'runningOrders' => $runningOrders,'merchantcoupons' => $merchantcoupons
 		,'fcqarr' => $fcqarr, 'merchant_pay_types' => $merchant_pay_types
+		,'current_order_id' => !empty($current_order_id) ? $current_order_id : 0
 		]);
 	}	
 	public function actionSaveneworder()
 	{
 		extract($_REQUEST);
-		//echo "<pre>";print_r($_REQUEST);exit;
 		$arr =  $_REQUEST;
 if(!empty($user_mobile)){
 	
@@ -4130,7 +4130,7 @@ if(!empty($user_mobile)){
 			$table_det = Tablename::findOne($tableid);
 		}
 		
-		if($table_det['table_status'] == '1'){
+		if ($table_det['table_status'] == '1' && $current_order_id > 0) {
 			$orderData['order_id'] =  $table_det['current_order_id'];
 			$_POST['productprice'] = $pricetot;
 			$orderData['user_id'] = $user_id ?? '';
