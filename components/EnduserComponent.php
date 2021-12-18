@@ -1567,7 +1567,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 										$singleproducts['image'] = !empty($merchantproduct['image']) ? MERCHANT_PRODUCT_URL.$merchantproduct['image'] : '';
 
 										$restax = MerchantFoodCategoryTax::find()
-										->select('tax_type','tax_value')
+										->select('tax_type,tax_value')
 										->where(['merchant_id'=>$merchantid, 'food_category_id'=>$merchantproduct['foodtype']])
 										->asArray()->All();
 										
@@ -1584,7 +1584,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 										    $sqlcategoryDetail = 'select 0 foodtype, \'Recommended\' food_category ,count(foodtype) itemcount  from product where merchant_id = \''.$merchantid.'\'
                                                         
                                                         union all
-select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category end as food_category
+														select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category end as food_category
                                                         ,count(foodtype) itemcount  from product p
                                                         left join food_categeries fc on fc.id = p.foodtype
                                                         where p.merchant_id = \''.$merchantid.'\'
