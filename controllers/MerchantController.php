@@ -2146,7 +2146,7 @@ if ($model->load(Yii::$app->request->post()) ) {
 			$empRoleIdNameArr = array_column($empRole,'role_name','ID'); 
 		
 			$categorytypes = Sections::find()->where(['merchant_id' => Yii::$app->user->identity->merchant_id])
-			->asArray->All();
+			->asArray()->All();
 
 // 			echo "<pre>";
 // 			print_r($categorytypes);exit;
@@ -2335,7 +2335,7 @@ if ($model->load(Yii::$app->request->post()) ) {
 
 		$empRoleIdNameArr = array_column($empRole,'role_name','ID');
 		
-		$res = EmployeeAttendance::find()->where(['created_on'=>date('Y-m-d')])->asArray->All(); 
+		$res = EmployeeAttendance::find()->where(['created_on'=>date('Y-m-d')])->asArray()->All(); 
 		
 		return $this->render('empattendance',['empModel'=>$empModel,'empRoleIdNameArr'=>$empRoleIdNameArr,'res'=>$res]);					
 	}
