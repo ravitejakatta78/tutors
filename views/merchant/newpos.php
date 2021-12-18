@@ -1659,19 +1659,16 @@ $("#savecr").click(function(){
 					     var request = $.ajax({
                             url: "cancelreasonpos",
                             type: "POST",
-                            data: {orderid : orderid,cr_reason:cr_reason,orderstatus:orderstatus},
+                            data: {orderid : orderid,cr_reason:cr_reason,orderstatus:'3',tableid:tableid},
                         }).done(function(msg) {
         	                swal(
                 				'Success!',
                 				'Reason Updated Successfully',
                 				'success'
                 			);
-        		if(orderstatus == 2){
-            		window.location.replace("newpos?tableid="+tableid+"&tableName="+$tableName+"&current_order_id=0");
-        		}
-        		else{
-            		window.location.replace("newpos?tableid="+tableid+"&tableName="+$tableName+"&current_order_id="+orderid);
-        		}
+        		window.location.replace("newpos?tableid="+tableid+"&tableName="+$tableName+"&current_order_id=0");
+        		
+        		
         }); 
 					}
 				});

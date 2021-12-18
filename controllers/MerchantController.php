@@ -3001,7 +3001,6 @@ $runningPie = [];
 	}
 	public function actionClosetableorder(){
 	    extract($_POST);
-	    echo "sad".$_POST['STATUS'];exit;
 	    if(isset($_POST['STATUS'])){
 	        if($_POST['STATUS'] == 'TXN_SUCCESS'){
 	            $orderDet = Orders::findOne($_POST['ORDERID']);
@@ -4633,24 +4632,17 @@ $catModel = AllocatedRooms::findOne($resUpdate['room_alocated']);
 	public function actionCancelreasonpos()
 	{
 	    extract($_POST);
-	    $orderdet = Orders::findOne($orderid);
-	    if($orderstatus == 1 && empty($orderdet['preparetime']) ){
-    	    $model = new \app\models\OrderRejections;
-    	    $model->order_id = $orderid;
-    	    $model->rejected_by = Yii::$app->user->identity->ID;
-    	    $model->rejection_reason = $cr_reason;
-    	    $model->created_on = date('Y-m-d H:i:s');
-    	    $model->reg_date = date('Y-m-d');
-    	    $model->save();
 
-	    }
-	    else{
+		$model =Orders::findOne($orderid);
+        $model->orderprocess = '3';
+        $model->cancel_reason = $cr_reason;
+		$model->closed_by = Yii::$app->user->identity->merchant_id;
+        $model->save();
 
-            $model =Orders::findOne($orderid);
-            $model->orderprocess = '3';
-            $model->cancel_reason = $cr_reason;
-            $model->save();
-	    }
+		$tabledet = Tablename::findOne($tableid);
+		$tabledet->table_status = null;
+		$tabledet->current_order_id = 0;
+	    $tabledet->save();
 	     
 	}
 	public function actionCounterSettlement()
