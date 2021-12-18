@@ -3963,6 +3963,7 @@ order by reg_date,purchase_number';
 		   else{
 			$tableName = "PARCEL";
 		   }
+
 		   
 		}
 
@@ -4011,13 +4012,16 @@ order by reg_date,purchase_number';
 			if(!empty($prevFullSingleOrderDet['user_id'])){
 				$userDet = Users::findOne($prevFullSingleOrderDet['user_id']);
 			}
-			$sqlPrevOrderDetails = 'select op.user_id,op.order_id,op.merchant_id,op.product_id
-			,sum(op.count) count,(op.price) price
-			,sum(coalesce(op.count,0)*coalesce(op.price,0)) 
-			as totalprice,u.name,u.mobile from order_products op left join users u on op.user_id = u.ID 
-			where order_id = \''.$current_order_id.'\' and count != \'0\' group by op.user_id,op.order_id,op.merchant_id,op.product_id
-			,u.name,u.mobile,op.price';
-			$prevOrderDetails = Yii::$app->db->createCommand($sqlPrevOrderDetails)->queryAll();
+			if($prevFullSingleOrderDet['orderprocess'] != '3' && $prevFullSingleOrderDet['orderprocess'] != '4'){
+				$sqlPrevOrderDetails = 'select op.user_id,op.order_id,op.merchant_id,op.product_id
+				,sum(op.count) count,(op.price) price
+				,sum(coalesce(op.count,0)*coalesce(op.price,0)) 
+			    as totalprice,u.name,u.mobile from order_products op left join users u on op.user_id = u.ID 
+			    where order_id = \''.$current_order_id.'\' and count != \'0\' group by op.user_id,op.order_id,op.merchant_id,op.product_id
+			    ,u.name,u.mobile,op.price';
+			    $prevOrderDetails = Yii::$app->db->createCommand($sqlPrevOrderDetails)->queryAll();
+			}
+			
 		}
 		else{
 		  $prevFullSingleOrderDet['paymenttype'] = '1';
