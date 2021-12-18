@@ -1481,44 +1481,39 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 	}
 	public function qrcode($val)
 	{
- 		 Yii::debug('===qrcodenew parameters==='.json_encode($val));
 		if(!empty($val['enckey'])){ 
-						$userwherearray = $userarray = array();
-						
-						if ( strstr( $val['enckey'], 'superpilot' ) ) {
-                            $pos = explode('?',$val['enckey']);
-                            parse_str($pos[1], $outputencarray);
-                            $enckey = Utility::decrypt($outputencarray['enckey']);
-                        } else {
-						    $enckey = Utility::decrypt(trim($val['enckey']));
-                        }
-						
-
-    					 $foodtype = trim($val['foodtype']) ?: 0;
-						 $latfrom = trim($val['lat']) ?: 0;
-						 $lngfrom = trim($val['lng']) ?: 0;
+			$userwherearray = $userarray = array();
+			if ( strstr( $val['enckey'], 'superpilot' ) ) {
+                $pos = explode('?',$val['enckey']);
+                parse_str($pos[1], $outputencarray);
+                $enckey = Utility::decrypt($outputencarray['enckey']);
+            } else {
+			    $enckey = Utility::decrypt(trim($val['enckey']));
+            }
+			$foodtype = trim($val['foodtype']) ?: 0;
+			$latfrom = trim($val['lat']) ?: 0;
+			$lngfrom = trim($val['lng']) ?: 0;
 						/* $enckey = trim($_POST['enckey']);*/ 
-							if(!empty($enckey)){
-							    if($latfrom == 0 || $lngfrom == 0){
-							        $payload = array("status"=>'0',"text"=>"Unable to get your location");
-							        exit;
-							    }
-								$merchantexplode = explode(',',$enckey);
-								$merchantid = $merchantexplode[0];
-								$tableid = $merchantexplode[1];
+			if(!empty($enckey)){
+			    if($latfrom == 0 || $lngfrom == 0){
+			        $payload = array("status"=>'0',"text"=>"Unable to get your location");
+			        exit;
+				}
+				$merchantexplode = explode(',',$enckey);
+				$merchantid = $merchantexplode[0];
+				$tableid = $merchantexplode[1];
 								
-								$tabel_Det = Tablename::findOne($tableid);
-								$merchantdetails = Merchant::find()
-								->where(['ID'=>$merchantid, 'status'=>'1'])->asArray()->One();
-								if(($tabel_Det['current_order_id'] != 0 || $tabel_Det['current_order_id'] != null) && $merchantdetails['table_occupy_status'] == 1)
-								{
-								    $currentOrder = Orders::findOne($tabel_Det['current_order_id']);
-								    if($currentOrder['user_id'] != $val['header_user_id'] ){
-								        $payload = array("status"=>'0',"text"=>"Table is already occupied");
-									    return $payload;
-									    exit;
-								    }    
-								}
+				$tabel_Det = Tablename::findOne($tableid);
+				$merchantdetails = Merchant::find()
+					->where(['ID'=>$merchantid, 'status'=>'1'])->asArray()->One();
+				if(($tabel_Det['current_order_id'] != 0 || $tabel_Det['current_order_id'] != null) && $merchantdetails['table_occupy_status'] == 1)	{
+				    $currentOrder = Orders::findOne($tabel_Det['current_order_id']);
+				    if($currentOrder['user_id'] != $val['header_user_id'] ){
+				        $payload = array("status"=>'0',"text"=>"Table is already occupied");
+					    return $payload;
+					    exit;
+				    }
+				}
 								
 
 						
