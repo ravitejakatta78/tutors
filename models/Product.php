@@ -23,6 +23,8 @@ use Yii;
  * @property string $status 0=pending,1=active,2-failed
  * @property int $item_type 1=Veg 2=Non Veg
  * @property int $today_special 1=Yes 2=No
+ * @property string $taste_category
+ * @property int $taste_range  
  * @property string $reg_date
  * @property string $mod_date
  */
@@ -44,9 +46,9 @@ class Product extends \yii\db\ActiveRecord
         return [
             [['merchant_id', 'title', 'availabilty', 'status', 'reg_date'], 'required'],
             [['title', 'slug', 'labeltag', 'serveline', 'price', 'saleprice', 'image', 'availabilty', 'status'], 'string'],
-            [['foodtype', 'food_category_quantity', 'upselling','item_type','today_special'], 'integer'],
+            [['foodtype', 'food_category_quantity', 'upselling','item_type','today_special', 'taste_range'], 'integer'],
             [['mod_date'], 'safe'],
-            [['merchant_id', 'unique_id'], 'string', 'max' => 50],
+            [['merchant_id', 'unique_id', 'taste_category'], 'string', 'max' => 50],
             [['reg_date'], 'string', 'max' => 20],
         ];
     }
@@ -75,7 +77,10 @@ class Product extends \yii\db\ActiveRecord
             'mod_date' => 'Mod Date',
             'upselling' => 'Upselling',
             'item_type' => 'Item Type',
-            'today_special' => 'Today Special'
+            'today_special' => 'Today Special',
+            'taste_category' => 'Taste Category',
+            'taste_range' => 'Taste Range'
+
         ];
     }
 }

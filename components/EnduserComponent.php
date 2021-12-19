@@ -27,6 +27,8 @@ use app\models\Contest;
 use app\models\SequenceMaster;
 use app\models\AllocatedRooms;
 use app\models\Userinformation;
+use yii\helpers\ArrayHelper;
+
 
 date_default_timezone_set("asia/kolkata");
 
@@ -1530,8 +1532,13 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 									->where(['merchant_id'=>$merchantdetails['ID'], 'ID'=>$tableid, 'status'=>'1'])
 									->asArray()->One();
 									if(!empty($tabledetails)){
-										$sqlmerchantproductsarray = 'select p.*,section_item_price,section_item_sale_price from product p 
+										$sqlmerchantproductsarray = 'select p.*, section_item_price, section_item_sale_price, food_type_name
+										,  food_category, food_section_name , fs.ID food_section_id
+										from product p 
 										left join section_item_price_list sipl on sipl.item_id =  p.ID and sipl.section_id = \''.$tabledetails['section_id'].'\' 
+										left join food_categeries fc on fc.ID = p.foodtype 
+										left join food_category_types fct on fct.ID =  p.food_category_quantity
+										left join food_sections fs on fs.ID =  fc.food_section_id
 										where p.merchant_id = \''.$merchantdetails['ID'].'\' 
 										and  p.status = \'1\' ';
 
@@ -1560,11 +1567,14 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 										$singleproducts['labeltag'] = $merchantproduct['labeltag'];
 										$singleproducts['serveline'] = $merchantproduct['serveline'];
 										$singleproducts['price'] = $merchantproduct['section_item_price'];
-										$singleproducts['food_category'] = Utility::foodtype_value_another($merchantproduct['foodtype'],$merchantdetails['ID']);
-										$singleproducts['food_unit'] = Utility::foodcategory_type($merchantproduct['food_category_quantity']);
+										$singleproducts['food_category'] = $merchantproduct['food_category'];
+										$singleproducts['food_unit'] = $merchantproduct['food_type_name'];
+										$singleproducts['food_section_name'] = $merchantproduct['food_section_name'];
 										$singleproducts['saleprice'] = $merchantproduct['section_item_sale_price'];
 										$singleproducts['availabilty'] = $merchantproduct['availabilty']; 
 										$singleproducts['image'] = !empty($merchantproduct['image']) ? MERCHANT_PRODUCT_URL.$merchantproduct['image'] : '';
+										$singleproducts['taste_category'] = !empty($merchantproduct['taste_category']) ? MyConst::TASTE_CATEGORIES[$merchantproduct['taste_category']] : '';
+										$singleproducts['taste_range'] = !empty($merchantproduct['taste_range']) ? $merchantproduct['taste_range'] : 3;
 
 										$restax = MerchantFoodCategoryTax::find()
 										->select('tax_type,tax_value')
@@ -1590,14 +1600,30 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
                                                         where p.merchant_id = \''.$merchantid.'\'
                                                         group by foodtype';
 											$categoryDetail = Yii::$app->db->createCommand($sqlcategoryDetail)->queryAll();
-							            	$getproductsreindex = \yii\helpers\ArrayHelper::index($getproducts, null, 'food_category');
-                                            $newProduclistArr = [];
-											$pr = 0;
-											foreach($getproductsreindex as $catName => $catItems){
-												$newProduclistArr[$pr]['categoryName'] =$catName;
+							            	$getproductsreindex = ArrayHelper::index($getproducts, null, 'food_category');
+											$getSections = array_values(array_unique(array_column($getproducts,'food_section_name')));
+											$getSectionCategory = array_column($getproducts,'food_section_name','food_category');
+											$newProduclistArr = $sectioncheckarr = [];
+											
+											for($p=0;$p<count($getSections);$p++){
+												$newProduclistArr[$p]['sectionName'] = $getSections[$p];
+												$pr = 0;	
+												foreach($getSectionCategory as $key => $value){
+													if($getSections[$p] == $value){
+														$newProduclistArr[$p]['sectionCategory'][$pr]['categoryName'] = $key; 
+														$newProduclistArr[$p]['sectionCategory'][$pr]['categoryItems'] = $getproductsreindex[$key]; 
+														$pr++;
+													}
+												}
+											}
+											
+											/*foreach($getproductsreindex as $sectionName => $catItems){
+												$newProduclistArr[$pr]['sectionName'] =$sectionName;
 												$newProduclistArr[$pr]['items'] =$catItems;
 												$pr++;
-											}
+											} */
+
+											
 
 										$payload = array("status"=>'1',"merchantid"=>$merchantdetails['ID'],"table"=>$tabledetails['ID']
 										,"tablename"=>$tabledetails['name'],"store"=>$merchantdetails['storename'],"storetype"=>$merchantdetails['storetype']

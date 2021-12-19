@@ -48,6 +48,20 @@ use yii\helpers\Url;
 	   <div class="col-md-8">
 	   <?= $form->field($model, 'price')->textinput(['class' => 'form-control','placeholder'=>'Price'])->label(false); ?>
 	   </div></div> -->
+
+	   <div class="form-group row">
+	   <label class="control-label col-md-4">Today Special</label>
+	   <div class="col-md-8">
+			      <?= $form->field($model, 'today_special')
+				  ->dropdownlist(['2' => 'No','1' => 'Yes']
+				  )->label(false); ?>	   </div></div>
+
+		<div class="form-group row">
+	   <label class="control-label col-md-4">Taste Category</label>
+	   <div class="col-md-8">
+	   <?= $form->field($model, 'taste_category')
+				  ->dropdownlist(\app\helpers\MyConst::TASTE_CATEGORIES
+				  )->label(false); ?>	   </div></div>
 	   
 
 </div>
@@ -108,13 +122,14 @@ use yii\helpers\Url;
   <?= $form->field($model, 'item_type')
 				  ->dropdownlist(['1' => 'Veg','2' => 'Non Veg']
 				  )->label(false); ?>	   </div></div>
-				  
-				  	   	   	   <div class="form-group row">
-	   <label class="control-label col-md-4">Today Special</label>
+				  <div class="form-group row">
+	   <label class="control-label col-md-4">Taste Range</label>
 	   <div class="col-md-8">
-			      <?= $form->field($model, 'today_special')
-				  ->dropdownlist(['2' => 'No','1' => 'Yes']
+  		<?= $form->field($model, 'taste_range')
+				  ->dropdownlist(['1' => '1','2' => '2','3' => '3','4' => '4','5' => '5']
 				  )->label(false); ?>	   </div></div>
+				  
+				  	   	   	
 	   </div>
 	   </div>
 	   </div>

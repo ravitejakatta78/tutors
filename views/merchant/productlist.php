@@ -154,6 +154,19 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
 	   <div class="col-md-8">
 			      <?= $form->field($model, 'upselling')
 				  ->dropdownlist(['2' => 'No','1' => 'Yes']
+				  )->label(false); ?>	  
+		</div></div>
+		<div class="form-group row">
+	   <label class="control-label col-md-4">Item Type</label>
+	   <div class="col-md-8">
+  		<?= $form->field($model, 'item_type')
+				  ->dropdownlist(['1' => 'Veg','2' => 'Non Veg']
+				  )->label(false); ?>	   </div></div>
+		<div class="form-group row">
+	   <label class="control-label col-md-4">Taste Range</label>
+	   <div class="col-md-8">
+  		<?= $form->field($model, 'taste_range')
+				  ->dropdownlist(['1' => '1','2' => '2','3' => '3','4' => '4','5' => '5']
 				  )->label(false); ?>	   </div></div>
 </div>
 <div class="col-md-6">
@@ -189,12 +202,13 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
 	   <div class="col-md-8">
 			      <?= $form->field($model, 'unique_id')->textinput(['class' => 'form-control'])->label(false); ?>
 	   </div></div>
-	   	   <div class="form-group row">
-	   <label class="control-label col-md-4">Item Type</label>
+	   <div class="form-group row">
+	   <label class="control-label col-md-4">Taste Category</label>
 	   <div class="col-md-8">
-  <?= $form->field($model, 'item_type')
-				  ->dropdownlist(['1' => 'Veg','2' => 'Non Veg']
+	   <?= $form->field($model, 'taste_category')
+				  ->dropdownlist(\app\helpers\MyConst::TASTE_CATEGORIES
 				  )->label(false); ?>	   </div></div>
+	   	
 	   </div>
 	   </div>
 	   </div>

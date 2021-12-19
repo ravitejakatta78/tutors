@@ -17,6 +17,7 @@ class MyConst
 	const TYPE_INACTIVE = '2';
 	
 	const ROOM_RESERVATION_TYPES = ['4' => 'Hotels','6' => 'Service Apartments' , '7' => 'P.G' ,'8' => 'Resorts'];
+	const TASTE_CATEGORIES = ['1' => 'Spicy','2' => 'Sweet','3' => 'Normal'];
 }
 
 ?>
