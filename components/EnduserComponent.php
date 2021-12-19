@@ -27,6 +27,7 @@ use app\models\Contest;
 use app\models\SequenceMaster;
 use app\models\AllocatedRooms;
 use app\models\Userinformation;
+use app\models\Banners;
 use yii\helpers\ArrayHelper;
 
 
@@ -46,7 +47,7 @@ class EnduserComponent extends Component {
         echo Html::encode($this->content);
     }
 	public function bannerlist($val){
-		$sqlmerchantsarray = 'select * from banners where status = \'1\'';
+		$sqlmerchantsarray = "select * from banners where status = '1' and merchant_id = {$val['merchant_id']}";
 		$merchantsarray = Yii::$app->db->createCommand($sqlmerchantsarray)->queryAll();
 					 if(!empty($merchantsarray)){
 							$merchantlist = $merchants = array();
@@ -1623,15 +1624,16 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 												$pr++;
 											} */
 
-											
 
-										$payload = array("status"=>'1',"merchantid"=>$merchantdetails['ID'],"table"=>$tabledetails['ID']
-										,"tablename"=>$tabledetails['name'],"store"=>$merchantdetails['storename'],"storetype"=>$merchantdetails['storetype']
-										,"servingtype"=>$merchantdetails['servingtype'],"verify"=>$merchantdetails['verify']
-										,"location"=>$merchantdetails['location'],"logo"=>$merchantlgo,"coverpic"=>$merchantcoverpic
-										,"productlist"=>$newProduclistArr,'categoryDetail'=>$categoryDetail,'configured_tip' => $merchantdetails['tip']);
+
+										$payload = array("status"=>'1', "merchantid"=>$merchantdetails['ID'], "table"=>$tabledetails['ID']
+										, "tablename"=>$tabledetails['name'], "store"=>$merchantdetails['storename'], "storetype"=>$merchantdetails['storetype']
+										, "servingtype"=>$merchantdetails['servingtype'], "verify"=>$merchantdetails['verify']
+										, "location"=>$merchantdetails['location'], "logo"=>$merchantlgo, "coverpic"=>$merchantcoverpic
+										, "productlist"=>$newProduclistArr,"categoryDetail"=>$categoryDetail, "configured_tip" => $merchantdetails['tip']
+										, "bannerdet" => $this->bannerlist(['merchant_id' => $merchantid])
+										);
 									}else{
-										
 										$payload = array("status"=>'0',"text"=>"Invalid Table or seat details scan again");
 									}
 								}else{

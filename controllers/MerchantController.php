@@ -4,50 +4,51 @@ namespace app\controllers;
 
 use yii;
 use yii\helpers\Url;
-use \app\models\Product;
-use \app\models\Orders;
-use \app\models\FoodCategeries;
-use \app\models\Tablename;
-use \app\models\Sections;
-use \app\models\RoomReservations;
-use \app\models\RoomTitleImages;
-use \app\models\RoomGuestIdentitiy;
-use \app\models\Userinformation;
-use \app\models\Serviceboy;
-use \app\models\Merchant;
-use \app\models\MerchantCoupon;
-use \app\models\CounterSettlement;
+use app\models\Product;
+use app\models\Orders;
+use app\models\FoodCategeries;
+use app\models\Tablename;
+use app\models\Sections;
+use app\models\RoomReservations;
+use app\models\RoomTitleImages;
+use app\models\RoomGuestIdentitiy;
+use app\models\Userinformation;
+use app\models\Serviceboy;
+use app\models\Merchant;
+use app\models\MerchantCoupon;
+use app\models\CounterSettlement;
+use app\models\Banners;
 use app\helpers\Utility;
 use yii\web\UploadedFile;
 use yii\web\Response;
 use yii\bootstrap\ActiveForm;
-use \app\models\MerchantGallery;
-use \app\models\Ingredients;
-use \app\models\MerchantRecipe;
-use \app\models\IngredientPurchase;
-use \app\models\IngredientPurchaseDetail;
-use \app\models\MerchantVendor;
-use \app\models\MerchantEmployee;
-use \app\models\MerchantPermissions;
-use \app\models\MerchantTax;
-use \app\models\MerchantLoyaltyDetails;
-use \app\models\EmployeeRole;
-use \app\models\EmployeeAttendance;
-use \app\models\MerchantNotifications;
-use \app\models\InventaryUpdationRequest;
-use \app\models\MerchantLoyalty;
-use \app\models\RoomProfileTitles;
-use \app\models\FoodSections;
-use \app\models\SectionItemPriceList;
-use \app\models\FoodCategoryTypes;
-use \app\models\MerchantFoodCategoryTax;
-use \app\models\OrderProducts;
-use \app\models\IngredientStockRegister;
-use \app\models\TableReservations;
-use \app\models\AllocatedRooms;
+use app\models\MerchantGallery;
+use app\models\Ingredients;
+use app\models\MerchantRecipe;
+use app\models\IngredientPurchase;
+use app\models\IngredientPurchaseDetail;
+use app\models\MerchantVendor;
+use app\models\MerchantEmployee;
+use app\models\MerchantPermissions;
+use app\models\MerchantTax;
+use app\models\MerchantLoyaltyDetails;
+use app\models\EmployeeRole;
+use app\models\EmployeeAttendance;
+use app\models\MerchantNotifications;
+use app\models\InventaryUpdationRequest;
+use app\models\MerchantLoyalty;
+use app\models\RoomProfileTitles;
+use app\models\FoodSections;
+use app\models\SectionItemPriceList;
+use app\models\FoodCategoryTypes;
+use app\models\MerchantFoodCategoryTax;
+use app\models\OrderProducts;
+use app\models\IngredientStockRegister;
+use app\models\TableReservations;
+use app\models\AllocatedRooms;
 use yii\db\Query;
-use \app\models\Users;
-use \yii\helpers\ArrayHelper;
+use app\models\Users;
+use yii\helpers\ArrayHelper;
 
 
 
@@ -4691,6 +4692,58 @@ $catModel = AllocatedRooms::findOne($resUpdate['room_alocated']);
             }
 	        echo "1";
 	    }
-	    
+	}
+	public function actionBannerdetails(){
+		$status = '1';
+		$bannerdet = Banners::find()
+		->where(['merchant_id' => Yii::$app->user->identity->merchant_id])
+		->orderBy([
+            'ID'=>SORT_DESC
+        ])
+		->asArray()->all();
+		$model = new Banners;
+				if ($model->load(Yii::$app->request->post()) ) {
+			$MerchantGalleryArr = Yii::$app->request->post('Banners');
+			$model->user_id = (string)Yii::$app->user->identity->ID;
+			$model->merchant_id = (string)Yii::$app->user->identity->merchant_id;
+			$model->reg_date = date('Y-m-d h:i:s');
+			$model->status = '1';
+			$image = UploadedFile::getInstance($model, 'image');
+			if($image){
+				$imagename = strtolower(base_convert(time(), 10, 36) . '_' . md5(microtime())).'.'.$image->extension;
+			//	$image->saveAs('uploads/bannerimage/' . $imagename);
+		        $image->saveAs('../../bannerimage/' . $imagename);
+				$model->image = $imagename;
+		
+			}
+			if($model->validate()){
+				$model->save();
+	Yii::$app->getSession()->setFlash('success', [
+        'title' => 'Banner',
+		'text' => 'Banner Uploaded Successfully',
+        'type' => 'success',
+        'timer' => 3000,
+        'showConfirmButton' => false
+    ]);
+				return $this->redirect('bannerdetails');
+			}
+			else
+			{
+				echo "<pre>";print_r($model->getErrors());exit;
+			}
+		}
+		return $this->render('bannerDetails',['bannerdet'=>$bannerdet,'model'=>$model]);
+	}
+	public function actionDeletebanner()
+	{
+		extract($_POST);
+		$bannerDet = Banners::findOne($id);
+		if($bannerDet['image']){
+			$imagePath =  '../../'.Url::to(['../../bannerimage/'. $bannerDet['image']]);
+			if(file_exists($imagePath)){
+				unlink($imagePath);	
+			}
+			\Yii::$app->db->createCommand()->delete('banners', ['id' => $id])->execute();
+		}
 	}
 }
