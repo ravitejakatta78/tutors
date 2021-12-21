@@ -47,7 +47,10 @@ class EnduserComponent extends Component {
         echo Html::encode($this->content);
     }
 	public function bannerlist($val){
-		$sqlmerchantsarray = "select * from banners where status = '1' and merchant_id = {$val['merchant_id']}";
+		$sqlmerchantsarray = "select * from banners where status = '1' ";
+		if(!empty($val['merchant_id'])){
+			$sqlmerchantsarray .= " and merchant_id = {$val['merchant_id']} ";
+		}
 		$merchantsarray = Yii::$app->db->createCommand($sqlmerchantsarray)->queryAll();
 					 if(!empty($merchantsarray)){
 							$merchantlist = $merchants = array();
@@ -59,7 +62,7 @@ class EnduserComponent extends Component {
 							$payload = array("status"=>'1',"bannerlist"=>$merchantlist);
 					}else{
 						
-						$payload = array("status"=>'0',"text"=>"Invalid user");
+						$payload = array("status"=>'1',"bannerlist"=>[]);
 					 }
 					 return $payload;
 	}
