@@ -697,12 +697,12 @@ class ServiceboyComponent extends Component{
 						$orderarray['tablename'] = Utility::table_details($orderlist['tablename'],"name"); 
 						$orderarray['logo'] = !empty($merchantdetails['logo']) ? MERCHANT_LOGO.$merchantdetails['logo'] : '';
 						$orderarray['coverpic'] = !empty($merchantdetails['coverpic']) ? MERCHANT_LOGO.$merchantdetails['coverpic'] : '';
-						$orderarray['amount'] =  !empty($orderlist['amount']) ? $orderlist['amount'] : 0; 
-						$orderarray['tax'] = !empty($orderlist['tax']) ?  $orderlist['tax'] : 0;
-						$orderarray['tips'] = !empty($orderlist['tips']) ?  $orderlist['tips'] : 0;
-						$orderarray['subscription'] = !empty($orderlist['subscription']) ?   $orderlist['subscription'] : 0;
-						$orderarray['couponamount'] = !empty($orderlist['couponamount']) ?  $orderlist['couponamount'] : 0;
-						$orderarray['totalamount'] =  !empty($orderlist['totalamount']) ?   $orderlist['totalamount'] : 0;
+						$orderarray['amount'] =  sprintf("%.2f", (!empty($orderlist['amount']) ? $orderlist['amount'] : 0));; 
+						$orderarray['tax'] = sprintf("%.2f", (!empty($orderlist['tax']) ?  $orderlist['tax'] : 0));
+						$orderarray['tips'] = sprintf("%.2f", (!empty($orderlist['tips']) ?  $orderlist['tips'] : 0));
+						$orderarray['subscription'] = sprintf("%.2f", (!empty($orderlist['subscription']) ?   $orderlist['subscription'] : 0));
+						$orderarray['couponamount'] = sprintf("%.2f", (!empty($orderlist['couponamount']) ?  $orderlist['couponamount'] : 0));
+						$orderarray['totalamount'] =  sprintf("%.2f", (!empty($orderlist['totalamount']) ?   $orderlist['totalamount'] : 0));;
 						$orderarray['paymenttype'] =  $orderlist['paymenttype']=='cash' ? 'Cash' : 'Online';
 						$orderarray['orderprocess'] =  $orderlist['orderprocess']; 
 						$orderarray['orderprocesstext'] =  Utility::orderstatus_details($orderlist['orderprocess']); 
@@ -713,7 +713,7 @@ class ServiceboyComponent extends Component{
 						$orderarray['preparetime'] = $orderlist['preparetime']; 
 						$orderarray['orderline'] =  $orderlist['orderline'];
 						$orderarray['instructions'] =  $orderlist['instructions'];
-						$orderarray['discount_number'] =  !empty($orderlist['discount_number']) ?   $orderlist['discount_number'] : 0;
+						$orderarray['discount_number'] =  sprintf("%.2f", (!empty($orderlist['discount_number']) ?   $orderlist['discount_number'] : 0));;;
 						$sqlpendingamount = "select sum(totalamount) as pendingamount from order_transactions 
 						where order_id = '".$orderlist['ID']."' and merchant_id = '".$orderlist['merchant_id']."' 
 						and user_id = '".$orderlist['user_id']."' and paymenttype = 'cash' and paidstatus = '0'";
