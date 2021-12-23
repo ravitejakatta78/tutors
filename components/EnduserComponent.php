@@ -2951,17 +2951,20 @@ order by remain_coins desc limit '.$val['userCount'] ;
     						$singleproducts['id'] = (int)$merchantproduct['ID'];
     						$singleproducts['unique_id'] = $merchantproduct['unique_id'];
     						$singleproducts['title'] = $merchantproduct['title'];
-    						$singleproducts['labeltag'] = $merchantproduct['labeltag'];
+    						$singleproducts['labeltag'] = !empty($merchantproduct['labeltag']) ? $merchantproduct['labeltag'] : '';
     						$singleproducts['serveline'] = $merchantproduct['serveline'];
-    						$singleproducts['price'] = $resSectionPrice['section_item_price'];
+    						$singleproducts['price'] = !empty($resSectionPrice['section_item_price']) ? $resSectionPrice['section_item_price'] : '';
     						$singleproducts['foodtype'] = $merchantproduct['foodtype'];
     						$singleproducts['food_category'] = Utility::foodtype_value_another($merchantproduct['foodtype'],$merchantid);
     						$singleproducts['food_unit'] = Utility::foodcategory_type($merchantproduct['food_category_quantity']);
 
-    						$singleproducts['saleprice'] = $resSectionPrice['section_item_sale_price'];
+    						$singleproducts['saleprice'] = !empty($resSectionPrice['section_item_sale_price']) ? $resSectionPrice['section_item_sale_price'] : '';
     						$singleproducts['availabilty'] = $merchantproduct['availabilty']; 
     						$singleproducts['image'] = !empty($merchantproduct['image']) ? MERCHANT_PRODUCT_URL.$merchantproduct['image'] : '';
     						$singleproducts['tax'] = $restax;
+							$singleproducts['taste_category'] = $merchantproduct['taste_category'];
+							$singleproducts['taste_range'] = $merchantproduct['taste_range'];
+							$singleproducts['item_type'] = $merchantproduct['item_type'];
     						$getproducts[] = $singleproducts;
 						}
 						$getproductsreindex = \yii\helpers\ArrayHelper::index($getproducts, null, 'food_category');
