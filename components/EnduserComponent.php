@@ -2962,7 +2962,7 @@ order by remain_coins desc limit '.$val['userCount'] ;
     						$singleproducts['availabilty'] = $merchantproduct['availabilty']; 
     						$singleproducts['image'] = !empty($merchantproduct['image']) ? MERCHANT_PRODUCT_URL.$merchantproduct['image'] : '';
     						$singleproducts['tax'] = $restax;
-							$singleproducts['taste_category'] = $merchantproduct['taste_category'];
+							$singleproducts['taste_category'] = !empty($merchantproduct['taste_category']) ? $merchantproduct['taste_category'] : '';
 							$singleproducts['taste_range'] = $merchantproduct['taste_range'];
 							$singleproducts['item_type'] = $merchantproduct['item_type'];
     						$getproducts[] = $singleproducts;
