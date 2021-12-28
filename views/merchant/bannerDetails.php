@@ -4,6 +4,8 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use aryelds\sweetalert\SweetAlert;
+$actionId = Yii::$app->controller->action->id;
+
 ?>
 <script src="<?= Yii::$app->request->baseUrl.'/js/typeahead.js'?>"></script>
 <header class="page-header">
@@ -25,6 +27,8 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
   		<img src="<?php echo Url::base(); ?>/img/load.gif" >
   	</div>
  <section>
+ <?= \Yii::$app->view->renderFile('@app/views/merchant/_manageitems.php',['actionId'=>$actionId]); ?>  
+
           <div class="col-lg-12">
             <div class="card">
               <div class="card-header d-flex align-items-center pt-0 pb-0">

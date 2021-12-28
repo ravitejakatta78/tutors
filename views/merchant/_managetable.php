@@ -11,7 +11,7 @@ $permissions = (array_column($permissionsArr,'process_name'));
   <div class="col-md-12">
 		  <ul class="resp-tabs-list">
 		  <?php if($roleId == '0' || in_array('Items',$permissions) ) { ?>
-		<a href="<?= \yii\helpers\Url::to(['merchant/managetable']); ?>"><li class="resp-tab-item <?php if($actionId == 'managetable') { echo "resp-tab-active" ;} ?>">Tables</li></a>
+		<a href="<?= \yii\helpers\Url::to(['merchant/managetable']); ?>"><li class="resp-tab-item <?php if($actionId == 'managetable') { echo "resp-tab-active" ;} ?>">Spots</li></a>
 		  <?php } if($roleId == '0' || in_array('Manage Tables',$permissions) ) { ?>
 			<a href="<?= \yii\helpers\Url::to(['merchant/sections']); ?>"><li class="resp-tab-item <?php if($actionId == 'sections') { echo "resp-tab-active" ;} ?>" >Sections</li></a>	
         <?php } if($roleId == '0' || in_array('Manage Tables',$permissions) ) { ?>

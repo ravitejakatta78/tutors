@@ -6,6 +6,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use aryelds\sweetalert\SweetAlert;
 $actionId = Yii::$app->controller->action->id;
+
 ?>
 <script src="<?= Yii::$app->request->baseUrl.'/js/typeahead.js'?>"></script>
 <header class="page-header">

@@ -19,6 +19,7 @@ use app\models\MerchantCoupon;
 use app\models\CounterSettlement;
 use app\models\Banners;
 use app\helpers\Utility;
+use app\helpers\MyConst;
 use yii\web\UploadedFile;
 use yii\web\Response;
 use yii\bootstrap\ActiveForm;
@@ -452,8 +453,8 @@ else{
 			->execute();	
 			
 				Yii::$app->getSession()->setFlash('success', [
-        'title' => 'Table',
-		'text' => 'Table Created Successfully',
+        'title' => 'Spot',
+		'text' => 'Spot Created Successfully',
         'type' => 'success',
         //'timer' => 3000,
         'showConfirmButton' => false
@@ -486,8 +487,8 @@ else{
 		if($tableNameUpdate->validate()){
 			$tableNameUpdate->save();
 			Yii::$app->getSession()->setFlash('success', [
-        'title' => 'Table',
-		'text' => 'Table Edited Successfully',
+        'title' => 'Spot',
+		'text' => 'Spot Edited Successfully',
         'type' => 'success',
         'timer' => 3000,
         'showConfirmButton' => false
@@ -4694,7 +4695,7 @@ $catModel = AllocatedRooms::findOne($resUpdate['room_alocated']);
 	    }
 	}
 	public function actionBannerdetails(){
-		$status = '1';
+		$status = MyConst::TYPE_ACTIVE;
 		$bannerdet = Banners::find()
 		->where(['merchant_id' => Yii::$app->user->identity->merchant_id])
 		->orderBy([
@@ -4707,11 +4708,10 @@ $catModel = AllocatedRooms::findOne($resUpdate['room_alocated']);
 			$model->user_id = (string)Yii::$app->user->identity->ID;
 			$model->merchant_id = (string)Yii::$app->user->identity->merchant_id;
 			$model->reg_date = date('Y-m-d h:i:s');
-			$model->status = '1';
+			$model->status = MyConst::TYPE_ACTIVE;
 			$image = UploadedFile::getInstance($model, 'image');
 			if($image){
 				$imagename = strtolower(base_convert(time(), 10, 36) . '_' . md5(microtime())).'.'.$image->extension;
-			//	$image->saveAs('uploads/bannerimage/' . $imagename);
 		        $image->saveAs('../../bannerimage/' . $imagename);
 				$model->image = $imagename;
 		

@@ -16,6 +16,8 @@ $permissions = (array_column($permissionsArr,'process_name'));
 			<a href="<?= \yii\helpers\Url::to(['merchant/food-categeries']); ?>"><li class="resp-tab-item <?php if($actionId == 'food-categeries') { echo "resp-tab-active" ;} ?>" >Item Categories</li></a>
         <?php } if($roleId == '0' || in_array('Food Categories',$permissions) ) { ?>
 			<a href="<?= \yii\helpers\Url::to(['merchant/foodsections']); ?>"><li class="resp-tab-item <?php if($actionId == 'foodsections') { echo "resp-tab-active" ;} ?>" >Menu Sections</li></a>
+        <?php }if($roleId == '0' || in_array('Food Categories',$permissions) ) { ?>
+			<a href="<?= \yii\helpers\Url::to(['merchant/bannerdetails']); ?>"><li class="resp-tab-item <?php if($actionId == 'bannerdetails') { echo "resp-tab-active" ;} ?>" >Banners</li></a>
         <?php } ?>
         </ul>
     </div>

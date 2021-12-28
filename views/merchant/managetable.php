@@ -27,10 +27,10 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
             <div class="card">
               
               <div class="card-header d-flex align-items-center pt-0 pb-0">
-                <h3 class="h4 col-md-6 pl-0 tab-title">Manage Table</h3>
+                <h3 class="h4 col-md-6 pl-0 tab-title">Manage Spots</h3>
 				<div class="col-md-6 text-right pr-0">
 				<button type="button" class="btn btn-add btn-xs" id="myBtn" data-toggle="modal" data-target="#myModal1"><i class="fa fa-plus mr-1"></i> Add Excel</button>
-				<button type="button" class="btn btn-add btn-xs" id="myBtn" data-toggle="modal" data-target="#myModal"><i class="fa fa-plus mr-1"></i> Add Table</button>
+				<button type="button" class="btn btn-add btn-xs" id="myBtn" data-toggle="modal" data-target="#myModal"><i class="fa fa-plus mr-1"></i> Add Spot</button>
 				</div>
               </div>
               <div class="card-body">
@@ -39,7 +39,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
                     <thead>
                       <tr>
 						<th>S No</th>
-						<th>Table Name</th> 
+						<th>Spot Name</th> 
 						<th>Capacity</th> 
 						<th>Section Name</th>
 						<th>Download QR Code</th>
@@ -99,7 +99,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
       
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title">Add Table</h4>
+          <h4 class="modal-title">Add Spot</h4>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
         
@@ -129,7 +129,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
 			   	<table id="tblAddRow" class="table table-bordered table-striped">
     <thead>
         <tr>
-			<th>Table Name</th>
+			<th>Spot Name</th>
 			<th>Capacity</th>
 			<th>Action</th>
         </tr>
@@ -152,7 +152,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
        <button id="btnAddRow" class="btn btn-add btn-xs" type="button">
     Add Row
 </button>
-		<?= Html::submitButton('Add Table', ['class'=> 'btn btn-add btn-hide']); ?>
+		<?= Html::submitButton('Add Spot', ['class'=> 'btn btn-add btn-hide']); ?>
       </div> 
 		<?php ActiveForm::end() ?>
 		
@@ -170,7 +170,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
       
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title">Add Table</h4>
+          <h4 class="modal-title">Add Spot</h4>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
         
@@ -207,7 +207,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
 	   </div></div>
 		
    <div class="modal-footer">
-		<?= Html::submitButton('Add Table', ['class'=> 'btn btn-add btn-hide']); ?>
+		<?= Html::submitButton('Add Spot', ['class'=> 'btn btn-add btn-hide']); ?>
       </div> 
 		<?php ActiveForm::end() ?>
 		
@@ -226,7 +226,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
       
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title">Edit Table</h4>
+          <h4 class="modal-title">Edit Spot</h4>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
 	    <div class="modal-body" id="edittablebody">

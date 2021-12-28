@@ -19,10 +19,10 @@ use yii\helpers\Url;
 		]
 		]) ?>
 		<div class="form-group row">
-		<label class="control-label col-md-4">Table Name</label>
+		<label class="control-label col-md-4">Spot Name</label>
 		<div class="col-md-8">
-		 <?= $form->field($model, 'name',['enableAjaxValidation' => true])->textinput(['class' => 'form-control','style'=> 'text-transform: uppercase','placeholder'=>'Table Name'])->label(false); ?>
-		 <?= $form->field($model, 'ID')->hiddeninput(['class' => 'form-control','placeholder'=>'Table Name'])->label(false); ?>
+		 <?= $form->field($model, 'name',['enableAjaxValidation' => true])->textinput(['class' => 'form-control','style'=> 'text-transform: uppercase','placeholder'=>'Spot Name'])->label(false); ?>
+		 <?= $form->field($model, 'ID')->hiddeninput(['class' => 'form-control','placeholder'=>'Spot Name'])->label(false); ?>
 		</div>
 		</div>
 		
@@ -42,7 +42,7 @@ use yii\helpers\Url;
 	   </div></div>
 		
    <div class="modal-footer">
-		<?= Html::submitButton('Edit Table', ['class'=> 'btn btn-add']); ?>
+		<?= Html::submitButton('Edit Spot', ['class'=> 'btn btn-add']); ?>
       </div> 
 		<?php ActiveForm::end() ?>
         

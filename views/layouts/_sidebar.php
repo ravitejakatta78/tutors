@@ -59,7 +59,7 @@ $tabPermissions = (array_column($tabPermissionsArr,'ID'));
 		 <?php } ?>
 		 <?php if( ($roleId == '0' || in_array('Manage Tables',$permissions)) && in_array('2',$tabPermissions) ) { ?> 
            <li class="<?php if($actionId == 'managetable' || $actionId == 'sections') { echo "active" ;} ?>">
-			<a href="<?php echo Url::to(['merchant/managetable']); ?>"> <i class="fa fa-table"></i>Manage Table </a></li>
+			<a href="<?php echo Url::to(['merchant/managetable']); ?>"> <i class="fa fa-table"></i>Manage Space </a></li>
 		 <?php } ?>
 		 <!-- <?php if($roleId == '0' || in_array('Manage Tables',$permissions)  ) { ?>-->
 			<!--<li class="<?php if($actionId == 'managetable') { echo "active" ;} ?>">-->
