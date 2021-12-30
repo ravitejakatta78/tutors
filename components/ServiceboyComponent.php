@@ -1321,10 +1321,10 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 		$merchant_details = Merchant::findOne($merchantid);
 		$tabel_Det = Tablename::findOne($val['table']);
 								
-								if(($tabel_Det['current_order_id'] != 0 || $tabel_Det['current_order_id'] != null) && $merchant_details['table_occupy_status'] == 1)
+								if(($tabel_Det['current_order_id'] != 0 || $tabel_Det['current_order_id'] != null) )
 								{
 								    $currentOrder = Orders::findOne($tabel_Det['current_order_id']);
-								    if($currentOrder['user_id'] != $val['user_id'] ){
+								    if(($currentOrder['user_id'] != $val['user_id']) || $merchant_details['table_occupy_status'] == 1 ){
 								        $payload = array("status"=>'0',"text"=>"Table is already occupied");
 									    return $payload;
 									    exit;
