@@ -4712,7 +4712,10 @@ $catModel = AllocatedRooms::findOne($resUpdate['room_alocated']);
 			$image = UploadedFile::getInstance($model, 'image');
 			if($image){
 				$imagename = strtolower(base_convert(time(), 10, 36) . '_' . md5(microtime())).'.'.$image->extension;
-		        $image->saveAs('../../bannerimage/' . $imagename);
+		        if(!is_dir('../../bannerimage/')){
+					mkdir('../../bannerimage/', 0777, true);
+				}
+				$image->saveAs('../../bannerimage/' . $imagename);
 				$model->image = $imagename;
 		
 			}

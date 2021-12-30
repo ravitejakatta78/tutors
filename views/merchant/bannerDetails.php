@@ -56,7 +56,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
 								?>
                                   <tr>
                                  	<td><?php echo $x;?></td>   
-									<td><img  width="100" height="100"  src="<?= Yii::$app->request->baseUrl.'/uploads/bannerimage/'.$banner['image'];?>" /></td>
+									<td><img  width="100" height="100"  src="<?= '../../../bannerimage/'.$banner['image'];?>" /></td>
 									<td><label class="switch">										  
 											<input type="checkbox" <?php if($banner['status']=='1'){ echo 'checked';}?> onChange="changestatus('banners',<?php echo $banner['ID'];?>);">										  
 											<span class="slider round"></span>										
