@@ -4135,7 +4135,7 @@ if(!empty($user_mobile)){
 			$table_det = Tablename::findOne($tableid);
 	         
 		}
-		
+		$merchant_details = Merchant::findOne(Yii::$app->user->identity->merchant_id);
 		if ($table_det['table_status'] == '1' && $current_order_id > 0) {
 			if($table_det['current_order_id'] != $current_order_id) {
 				Yii::$app->getSession()->setFlash('success', [
@@ -4172,7 +4172,7 @@ if(!empty($user_mobile)){
 			$order_status = 'Order updated successfully';
 		}
 		else{
-			if($table_det['table_status'] == '1') {
+			if($table_det['table_status'] == '1' && $merchant_details['table_occupy_status'] != 2) {
 				Yii::$app->getSession()->setFlash('success', [
 					'title' => 'Order',
 					'text' => 'Table is already occupied',
