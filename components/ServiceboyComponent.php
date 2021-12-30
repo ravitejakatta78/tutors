@@ -1318,18 +1318,18 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 			}
 			
 		}
-		
-		/* $tabel_Det = \app\models\Tablename::findOne($val['table']);
+		$merchant_details = Merchant::findOne($merchantid);
+		$tabel_Det = Tablename::findOne($val['table']);
 								
-								if($tabel_Det['current_order_id'] != 0 || $tabel_Det['current_order_id'] != null )
+								if(($tabel_Det['current_order_id'] != 0 || $tabel_Det['current_order_id'] != null) && $merchant_details['table_occupy_status'] == 1)
 								{
-								    $currentOrder = \app\models\Orders::findOne($tabel_Det['current_order_id']);
+								    $currentOrder = Orders::findOne($tabel_Det['current_order_id']);
 								    if($currentOrder['user_id'] != $val['user_id'] ){
 								        $payload = array("status"=>'0',"text"=>"Table is already occupied");
 									    return $payload;
 									    exit;
 								    }    
-								} */
+								} 
 						
 						
 						$valtax = !empty($val['tax']) ? number_format(trim($val['tax']), 2, '.', ',') : 0;

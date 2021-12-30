@@ -4172,7 +4172,7 @@ if(!empty($user_mobile)){
 			$order_status = 'Order updated successfully';
 		}
 		else{
-			if($table_det['table_status'] == '1' && $merchant_details['table_occupy_status'] != 2) {
+			if($table_det['table_status'] == '1' && $merchant_details['table_occupy_status'] == 1) {
 				Yii::$app->getSession()->setFlash('success', [
 					'title' => 'Order',
 					'text' => 'Table is already occupied',
