@@ -1013,66 +1013,23 @@ class EnduserComponent extends Component {
 				  return $payload;
 				  }
 		
-	public function applycoupon($val)
+	public function applycomputation($val)
 	{
-	    if(!empty($val['amount'])){
-	        $coupancode = trim($val['coupon']);
-	        $grandamt = $val['amount'];
-			$merchantid = trim($val['merchant_id']); 
-			$merchant_details = Merchant::findOne($merchantid);
-			$coupandetails = MerchantCoupon::find()
-			->where(['code'=>$coupancode, 'merchant_id'=>$merchantid])->asArray()->One();
-		    if(!empty($coupandetails)){
-		        if($coupandetails['status']=='Active'){ 
-		            	$todaydate = strtotime(date('Y-m-d H:i:s')); 
-						$datetime1 = strtotime($coupandetails['todate']); 
-						if($todaydate<=$datetime1){ 
-						    if(empty($coupandetails['minorderamt'])||$grandamt>$coupandetails['minorderamt']){
-                                if($coupandetails['type']=='percent'){ 
-								    $percentage = (int)$coupandetails['price']; 
-									$minusamount = ($grandamt*$percentage)/100; 
-									$totalamount = $grandamt-$minusamount; 
-								}
-								elseif($coupandetails['type']=='amount'){ 
-								    $minusamount = (int)$coupandetails['price']; 
-									$totalamount = $grandamt-$minusamount; 
-								}
-								
-									$maxamt = $coupandetails['maxamt'];
+        $table = $val['table'];
+		
+		$tableDetails = Tablename::findOne($table);
+		$sectionDetails = $tableDetails->section; // getting from Tablename model getSection function
 
-									$couponarray['amount'] = $grandamt;
-									$couponarray['coupanamt'] = number_format($minusamount, 2, '.', '');
-									$couponarray['totalamount'] = number_format($totalamount, 2, '.', '');
-	    					    	$payload = array('status'=>"1","couponarray"=>$couponarray);     
-    										
-													
-						    }
-						    else{
-    							$payload = array('status'=>'0',"message"=>"Min Order value for applying coupon is ".$coupandetails['minorderamt']); 
-						    }
-						}
-						else{
-						    	$payload = array('status'=>"0","message"=>"Coupan code Validation expired");     
-						}
-		        }
-		        else{
-		        	$payload = array('status'=>"0","message"=>"Coupan code Deactivated");     
-		        }
-		    }
-		    else{
-		        $payload = array('status'=>'0',"message"=>"Invalid Coupon Code.");
-		    }
-			
-	    }else{
-			$payload = array('status'=>'0',"message"=>"Please Provide Amount."); 
-		}  
+		$taxParamArr = ['productIdArr' => $val['product_id'], 'orderCountArr' => $val['order_count'],
+	                    'merchant_id' => $tableDetails['merchant_id']];
+		$taxAmount = Yii::$app->order->taxcomputation($taxParamArr);
+		$data = ['tax_amount' => $taxAmount];
+		$payload = ['status' => '1','message' => 'Order Price Computation', 'data' => $data];
 		return $payload;
 	}    
 	
 	public function applycouponold($val)
 	{
-	    Yii::debug("====apply coupon parameters====".json_encode($val));
-
 		if(!empty($val['amount'])){
 						$savingamt = 0; 
 					$coupancode = trim($val['coupon']);
@@ -1360,7 +1317,7 @@ public function qrcodenew($val)
 		
 		$resproducts = Product::find()->where(['merchant_id'=>$tabledetails['merchant_id']])->asArray()->All();
 		
-		$productsIndexArr = \yii\helpers\ArrayHelper::index($resproducts, 'ID');
+		$productsIndexArr = ArrayHelper::index($resproducts, 'ID');
 		
 
 		
@@ -2828,7 +2785,7 @@ order by remain_coins desc limit '.$val['userCount'] ;
         ,allocated_msgs,used_msgs from merchant where status = \''.MyConst::TYPE_ACTIVE.'\' and storetype in (\''.$room_reservation_types_ids_string.'\')';
         $resMerchants = Yii::$app->db->createCommand($sqlMerchants)->queryAll();
         
-        $resultMerchants = \yii\helpers\ArrayHelper::index($resMerchants, null, 'storetype');
+        $resultMerchants = ArrayHelper::index($resMerchants, null, 'storetype');
         
         
         for($i=0;$i<count($room_reservation_types_ids);$i++){        
@@ -2897,7 +2854,7 @@ order by remain_coins desc limit '.$val['userCount'] ;
 		
 		
 
-		$configurations = \yii\helpers\ArrayHelper::index($roomconfigurations,null,'configuration_type');
+		$configurations = ArrayHelper::index($roomconfigurations,null,'configuration_type');
 	
 		$payload = array("status"=>'1',"categories"=>$rescategories,'configurations' => $configurations);
 	
@@ -2967,7 +2924,7 @@ order by remain_coins desc limit '.$val['userCount'] ;
 							$singleproducts['item_type'] = $merchantproduct['item_type'];
     						$getproducts[] = $singleproducts;
 						}
-						$getproductsreindex = \yii\helpers\ArrayHelper::index($getproducts, null, 'food_category');
+						$getproductsreindex = ArrayHelper::index($getproducts, null, 'food_category');
                         $newProduclistArr = [];
 						$pr = 0;
 						foreach($getproductsreindex as $catName => $catItems){

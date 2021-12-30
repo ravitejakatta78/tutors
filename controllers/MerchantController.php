@@ -4133,9 +4133,21 @@ if(!empty($user_mobile)){
 		}
 		else{
 			$table_det = Tablename::findOne($tableid);
+	         
 		}
 		
 		if ($table_det['table_status'] == '1' && $current_order_id > 0) {
+			if($table_det['current_order_id'] != $current_order_id) {
+				Yii::$app->getSession()->setFlash('success', [
+					'title' => 'Order',
+					'text' => 'Table is already occupied',
+					'type' => 'warning',
+					'timer' => 3000,
+					'showConfirmButton' => false
+				]);
+				
+				return $this->redirect(['merchant/newpos','tableid'=>$tableid,'tableName'=>$table_det['name'],'current_order_id'=>0  ]);
+			}
 			$orderData['order_id'] =  $table_det['current_order_id'];
 			$_POST['productprice'] = $pricetot;
 			$orderData['user_id'] = $user_id ?? '';
@@ -4160,6 +4172,17 @@ if(!empty($user_mobile)){
 			$order_status = 'Order updated successfully';
 		}
 		else{
+			if($table_det['table_status'] == '1') {
+				Yii::$app->getSession()->setFlash('success', [
+					'title' => 'Order',
+					'text' => 'Table is already occupied',
+					'type' => 'warning',
+					'timer' => 3000,
+					'showConfirmButton' => false
+				]);
+				
+				return $this->redirect(['merchant/newpos','tableid'=>$tableid,'tableName'=>$table_det['name'],'current_order_id'=>0  ]);
+			}
 			$arr['amount'] = !empty($ttl_sub_amt) ? $ttl_sub_amt : 0;
 			$arr['taxamt'] = $ttl_tax ?? 0;;
 			$arr['tipamt'] = $ttl_tip ?? 0;

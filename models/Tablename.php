@@ -60,7 +60,7 @@ class Tablename extends \yii\db\ActiveRecord
             'current_order_id' => 'Current Order ID',
             'reg_date' => 'Reg Date',
             'mod_date' => 'Mod Date',
-             'section_id' => 'Section ID',
+            'section_id' => 'Section ID',
             'section_name' => 'Section Name',
         ];
     }
@@ -82,5 +82,10 @@ class Tablename extends \yii\db\ActiveRecord
             $this->addError($attribute, 'Name has already taken');  
         }
         }
+    }
+
+    public function getSection()
+    {
+        return $this->hasOne(Sections::class, ['ID' => 'section_id']);
     }
 }

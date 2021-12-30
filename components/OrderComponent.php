@@ -2,7 +2,11 @@
 namespace app\components;
 use yii;
 use yii\base\Component;
-use \app\helpers\Utility;
+use app\models\MerchantFoodCategoryTax;
+use app\models\Product;
+use app\helpers\Utility;
+use yii\helpers\ArrayHelper;
+
 date_default_timezone_set("asia/kolkata");
 
 class OrderComponent extends Component{
@@ -102,5 +106,33 @@ class OrderComponent extends Component{
 					    echo "<pre>";print_r($model->getErrors());exit;
 					}
 	}
+
+	public function taxcomputation($arr){
+		$calFoodTax = 0;
+		$taxamt = 0;
+		$resMerchantfoodTax = MerchantFoodCategoryTax::find()
+		                        ->select('tax_value,food_category_id')
+		                        ->where(['merchant_id'=>$arr['merchant_id']])->asArray()->All();
+		$merchantFoodTaxArr = ArrayHelper::index($resMerchantfoodTax, null, 'food_category_id');
+
+		$productDetails = Product::find()
+		                    ->select('ID,foodtype')
+		                    ->where(['merchant_id'=>$arr['merchant_id'],'status' => (string)Product::ACTIVE_PRODUCT])
+							->asArray()->all();
+		$prodvsfcidarr = array_column($productDetails,'foodtype','ID');					
+
+		foreach($arr['productIdArr'] as $i => $v){
+		    $foodTaxArr = !empty($merchantFoodTaxArr[$prodvsfcidarr[$v]]) ? $merchantFoodTaxArr[$prodvsfcidarr[$v]] : [];
+           if(count($foodTaxArr) > 0){
+                for($f =0;$f< count($foodTaxArr) ; $f++){
+                    $foodTaxValue = (float)($foodTaxArr[$f]['tax_value']);
+                    $calFoodTax = $calFoodTax + ($arr['orderCountArr'][$i] * ($foodTaxValue/100));
+                }
+                $taxamt = round($calFoodTax,2); 
+            }
+		}
+		return $taxamt;
+	}
+	
 }
 ?>

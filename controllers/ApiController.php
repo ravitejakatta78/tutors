@@ -148,8 +148,8 @@ public function beforeAction($action)
 				case 'redeem-rewards-details':
 				$this->redeemrewardsdetails($_REQUEST);
 				break;
-				case 'apply-coupon':
-				$this->applycoupon($_REQUEST);
+				case 'apply-computation':
+				$this->applycomputation($_REQUEST);
 				break;
 				case 'cancel-coupon':
 				$this->cancelcoupon($_REQUEST);
@@ -909,13 +909,13 @@ cos((latitude*pi()/180)) * cos(((".$longitude."- longitude)* pi()/180))))*180/pi
 		}
 		return $this->asJson($payload);		
 	}
-	public function applycoupon($val)
+	public function applycomputation($val)
 	{
 		$headerslist = apache_request_headers();
 		$usersid = base64_decode($headerslist['Authorization']);
 		if(!empty($usersid)){
 			$val['header_user_id'] = $usersid;
-			$payload = Yii::$app->enduser->applycoupon($val);
+			$payload = Yii::$app->enduser->applycomputation($val);
 		}else{
 			$payload = array('status'=>'0','message'=>'Invalid users details');
 		}

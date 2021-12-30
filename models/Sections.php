@@ -46,4 +46,9 @@ class Sections extends \yii\db\ActiveRecord
             'section_name' => 'Section Name',
         ];
     }
+
+    public function getTables()
+    {
+        return $this->hasMany(Tablename::class, ['section_id' => 'ID']);
+    }
 }

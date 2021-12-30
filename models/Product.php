@@ -30,6 +30,7 @@ use Yii;
  */
 class Product extends \yii\db\ActiveRecord
 {
+    const ACTIVE_PRODUCT = 1;
     /**
      * {@inheritdoc}
      */
