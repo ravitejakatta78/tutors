@@ -1307,7 +1307,7 @@ cos((latitude*pi()/180)) * cos(((".$longitude."- longitude)* pi()/180))))*180/pi
 		$usersid = $_REQUEST['usersid']; 
 		if(!empty($usersid)){
 			$val['header_user_id'] = $usersid;
-			$payload = Yii::$app->enduser->qrcode($val);
+			$payload = Yii::$app->serviceboy->qrcode($val);
 		}else{
 			$payload = array('status'=>'0','message'=>'Invalid users details');
 		}

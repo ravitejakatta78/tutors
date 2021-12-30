@@ -1153,139 +1153,104 @@ class ServiceboyComponent extends Component{
 	    return array('status'=>'1','reasons'=>$res);
 	    
 	}
-	public function qrcodepilot($val)
+	public function qrcode($val)
 	{
-
-	    		 Yii::debug('===qrcode parameters==='.json_encode($val));
-		
-						$userwherearray = $userarray = array();
-						
-						if ( strstr( $val['enckey'], 'foodqonline' ) ) {
-                            $pos = explode('?',$val['enckey']);
-                            parse_str($pos[1], $outputencarray);
-                            $enckey = \app\helpers\Utility::decrypt($outputencarray['enckey']);
-                        } else {
-						    $enckey = \app\helpers\Utility::decrypt(trim($val['enckey']));
-                        }
-						
-
-    					 $foodtype = trim($val['foodtype']) ?: 0;
-						 $latfrom = trim($val['lat']) ?: 0;
-						 $lngfrom = trim($val['lng']) ?: 0;
+		if(!empty($val['enckey'])){ 
+			$userwherearray = $userarray = array();
+			if ( strstr( $val['enckey'], 'superpilot' ) ) {
+                $pos = explode('?',$val['enckey']);
+                parse_str($pos[1], $outputencarray);
+                $enckey = Utility::decrypt($outputencarray['enckey']);
+            } else {
+			    $enckey = Utility::decrypt(trim($val['enckey']));
+            }
+			$foodtype = trim($val['foodtype']) ?: 0;
+			$latfrom = trim($val['lat']) ?: 0;
+			$lngfrom = trim($val['lng']) ?: 0;
 						/* $enckey = trim($_POST['enckey']);*/ 
-								$merchantid = $val['merchant_id'];
+			if(!empty($enckey)){
+			    if($latfrom == 0 || $lngfrom == 0){
+			        $payload = array("status"=>'0',"text"=>"Unable to get your location");
+			        exit;
+				}
+				$merchantexplode = explode(',',$enckey);
+				$merchantid = $merchantexplode[0];
+				$tableid = $merchantexplode[1];
 								
-							$merchantdetails = Merchant::find()->where(['ID'=>$merchantid,'status'=>'1'])->asArray()->One();
+				$tabel_Det = Tablename::findOne($tableid);
+				$merchantdetails = Merchant::find()
+					->where(['ID'=>$merchantid, 'status'=>'1'])->asArray()->One();
+				if(($tabel_Det['current_order_id'] != 0 || $tabel_Det['current_order_id'] != null) && $merchantdetails['table_occupy_status'] == 1)	{
+				    $currentOrder = Orders::findOne($tabel_Det['current_order_id']);
+				    if($currentOrder['user_id'] != $val['header_user_id'] ){
+				        $payload = array("status"=>'0',"text"=>"Table is already occupied");
+					    return $payload;
+					    exit;
+				    }
+				}
+								
+
 						
 							if(!empty($merchantdetails)){
-									$sqlSections = 'select s.ID section_id,s.section_name from sections s 
-									inner join tablename tn on s.ID = tn.section_id
-									where tn.merchant_id = \''.$merchantdetails['ID'].'\' and s.ID = \''.$val['section_id'].'\'';
-									$resSections = Yii::$app->db->createCommand($sqlSections)->queryAll();
-
-									if(!empty($resSections)){
-		$sqlproductDetails = 'select P.ID,fs.ID food_section_id,fs.food_section_name,P.title,P.food_category_quantity,P.price,P.image
-		,fc.food_category,fc.ID  food_category_ID
-		,case when food_type_name is not null then concat(title ,\' (\' , food_type_name , \')\') else title end  title_quantity  
-		,P.item_type
-		from product P 
-		left join food_categeries fc on fc.ID = P.foodtype  
-		left join food_sections fs on fc.food_section_id =  fs.ID
-		left join food_category_types fct on fct.ID =  P.food_category_quantity 
-		and fct.merchant_id =  \''.$val['merchant_id'].'\'
-		where P.merchant_id = \''.$val['merchant_id'].'\' ';
-		if(!empty($val['term']) && isset($val['term'])){
-		$sqlproductDetails .= ' and (title like \''.'%'.$val['term'].'%'.'\' or fs.food_section_name like \''.'%'.$val['term'].'%'.'\' )';
-		}
-		if(!empty($val['isVeg'])){
-		    $sqlproductDetails .= ' and item_type = \''.$val['isVeg'].'\'';
-		}
-		$productDetails = Yii::$app->db->createCommand($sqlproductDetails)->queryAll();
-		$foodSectionArr =  array_values(array_unique(array_filter(array_column($productDetails,'food_section_id'))));
-		$fsNameArr = array_column($productDetails,'food_section_name','food_section_id');
-		$titleNameArr = array_column($productDetails,'title_quantity','ID');
-		
-
-		$foodCategories = FoodCategeries::find()->where(['merchant_id'=>$val['merchant_id']])->asArray()->All();
-		
-		$resproducts = Product::find()
-		->where(['merchant_id'=>$val['merchant_id'], 'status'=>'1'])->asArray()->All();
-		
-		$productsIndexArr = \yii\helpers\ArrayHelper::index($resproducts, 'ID');
-		
-
-		
-		$fcArr = array_column($foodCategories,'food_category','ID'); 
-		
-
-		for($i=0;$i<count($productDetails);$i++)
-		{
-				$fsCatArr[$productDetails[$i]['food_section_id']][$i] = $productDetails[$i]['food_category_ID'];
-		        $fcProdArr[$productDetails[$i]['food_category_ID']][$i] = $productDetails[$i]['ID'];
-		}
-	
-	//return print_r($fcProdArr);
-$getproducts = array();
-		if(!empty($foodSectionArr)){
-		    for($fs = 0;$fs <count($foodSectionArr);$fs++){
-		        
-		        $fcId = array_values(array_unique($fsCatArr[$foodSectionArr[$fs]]));
-		         
-		        for($fc =0; $fc < count($fcId) ; $fc++){
-		            $foodCatArr[$fc]['id'] = $fcId[$fc];
-		            $foodCatArr[$fc]['name'] = $fcArr[$fcId[$fc]];
-		            //echo $fcId[$fc]."<br>";
-		            $prodIDArr = array_values($fcProdArr[$fcId[$fc]]);
-		            //print_r($prodIDArr); 
-		            $prodArr = array();
-					for($fp=0;$fp<count($prodIDArr);$fp++){
-
-							$resSectionPrice = SectionItemPriceList::find()
-							->where(['merchant_id'=>$merchantdetails['ID'], 'item_id'=>$prodIDArr[$fp], 'section_id'=>$val['section_id']])
-							->asArray()->One();	
+									$latlngdistance = Utility::haversineGreatCircleDistance($latfrom,$lngfrom,$merchantdetails['latitude'],$merchantdetails['longitude']);
 						
-						
-		                $prodArr[$fp]['id'] = $prodIDArr[$fp]; 
-		                $prodArr[$fp]['unique_id'] = $productsIndexArr[$prodIDArr[$fp]]['unique_id']; 
-		                $prodArr[$fp]['title'] = $productsIndexArr[$prodIDArr[$fp]]['title'];
-		                $prodArr[$fp]['item_type'] = $productsIndexArr[$prodIDArr[$fp]]['item_type'];
-		                
-						$prodArr[$fp]['labeltag'] = $productsIndexArr[$prodIDArr[$fp]]['labeltag'];
-						$prodArr[$fp]['serveline'] = $productsIndexArr[$prodIDArr[$fp]]['serveline'];
-						$prodArr[$fp]['price'] = !empty($resSectionPrice) ? $resSectionPrice['section_item_price'] : $productsIndexArr[$prodIDArr[$fp]]['price'];
-						$prodArr[$fp]['food_category'] = Utility::foodtype_value_another($productsIndexArr[$prodIDArr[$fp]]['foodtype'],$merchantdetails['ID']);
-						$prodArr[$fp]['saleprice'] = !empty($resSectionPrice) ? $resSectionPrice['section_item_sale_price'] : $productsIndexArr[$prodIDArr[$fp]]['saleprice'];
-						$prodArr[$fp]['availabilty'] = $productsIndexArr[$prodIDArr[$fp]]['availabilty']; 
-						$prodArr[$fp]['image'] = !empty($productsIndexArr[$prodIDArr[$fp]]['image']) ? MERCHANT_PRODUCT_URL.$productsIndexArr[$prodIDArr[$fp]]['image'] : '';
-						$prodArr[$fp]['title_quantity'] = $titleNameArr[$prodIDArr[$fp]];
-						
-		            
-					    
+									if($latlngdistance > $merchantdetails['scan_range']){
+									    $payload = array("status"=>'0',"text"=>"Restaurent or  theater distance is too long");
+									//return $payload;
+									 //   exit;
+									}
+
+									$tabledetails = Tablename::find()
+									->where(['merchant_id'=>$merchantdetails['ID'], 'ID'=>$tableid, 'status'=>'1'])
+									->asArray()->One();
+									if(!empty($tabledetails)){
+										$sqlmerchantproductsarray = 'select p.*,section_item_price,section_item_sale_price from product p 
+										left join section_item_price_list sipl on sipl.item_id =  p.ID and sipl.section_id = \''.$tabledetails['section_id'].'\' 
+										where p.merchant_id = \''.$merchantdetails['ID'].'\' 
+										and  p.status = \'1\' ';
+
+										if($foodtype>0){
+                                            $sqlmerchantproductsarray .= ' and p.foodtype = \''.$foodtype.'\' ';
+										}
+										
+										if(!empty($val["isVeg"])){
+										       $sqlmerchantproductsarray .= ' and p.item_type = \''.$val['isVeg'].'\' ';
+										}
+										
+										if(!empty($val["today_special"])){
+										       $sqlmerchantproductsarray .= ' and p.today_special = \''.$val['today_special'].'\' ';
+										}
+										
+										
+										$merchantproductsarray = Yii::$app->db->createCommand($sqlmerchantproductsarray)->queryAll();
+										$getproducts = array();
+										foreach($merchantproductsarray as $merchantproduct){
+										    if($merchantproduct['section_item_sale_price'] > 0){
+										$singleproducts = array();
+										$singleproducts['id'] = (int)$merchantproduct['ID'];
+										$singleproducts['unique_id'] = $merchantproduct['unique_id'];
+										$singleproducts['title'] = $merchantproduct['title'];
+										$singleproducts['item_type'] = $merchantproduct['item_type'];
+										$singleproducts['labeltag'] = $merchantproduct['labeltag'];
+										$singleproducts['serveline'] = $merchantproduct['serveline'];
+										$singleproducts['price'] = $merchantproduct['section_item_price'];
+										$singleproducts['food_category'] = Utility::foodtype_value_another($merchantproduct['foodtype'],$merchantdetails['ID']);
+										$singleproducts['food_unit'] = Utility::foodcategory_type($merchantproduct['food_category_quantity']);
+										$singleproducts['saleprice'] = $merchantproduct['section_item_sale_price'];
+										$singleproducts['availabilty'] = $merchantproduct['availabilty']; 
+										$singleproducts['image'] = !empty($merchantproduct['image']) ? MERCHANT_PRODUCT_URL.$merchantproduct['image'] : '';
+
 										$restax = MerchantFoodCategoryTax::find()
-										->where(['merchant_id'=>$merchantdetails['ID'], 
-										'food_category_id'=>$productsIndexArr[$prodIDArr[$fp]]['foodtype']])
+										->select('tax_type,tax_value')
+										->where(['merchant_id'=>$merchantid, 'food_category_id'=>$merchantproduct['foodtype']])
 										->asArray()->All();
 										
-										$prodArr[$fp]['tax'] = $restax;
-					    
-					}
-		            $foodCatArr[$fc]['products']  = $prodArr; 
-					unset($prodArr);
-				}
-				
-		        
-		        $getproducts[$fs]['id'] = $foodSectionArr[$fs];
-		        $getproducts[$fs]['name'] = $fsNameArr[$foodSectionArr[$fs]];
-		        $getproducts[$fs]['subcategories'] = $foodCatArr;
-		        
-		        
-		        
-		    }
-			
-		   	
-		    
-		}	
-									    
+										$singleproducts['tax'] = $restax;
+										
+										
+										$getproducts[] = $singleproducts;
+										    }
+										} 
 										$merchantlgo = !empty($merchantdetails['logo']) ? MERCHANT_LOGO.$merchantdetails['logo'] : '';
                                     
 										$merchantcoverpic = !empty($merchantdetails['coverpic']) ? MERCHANT_LOGO.$merchantdetails['coverpic'] : '';
@@ -1299,54 +1264,40 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
                                                         where p.merchant_id = \''.$merchantid.'\'
                                                         group by foodtype';
 											$categoryDetail = Yii::$app->db->createCommand($sqlcategoryDetail)->queryAll();
-					$sqlsections = 'select ID,s.section_name
-					from sections s  
-					where s.merchant_id = \''.$merchantid.'\'';		            
-					$ressections = Yii::$app->db->createCommand($sqlsections)->queryAll();
+							            	$getproductsreindex = \yii\helpers\ArrayHelper::index($getproducts, null, 'food_category');
+                                            $newProduclistArr = [];
+											$pr = 0;
+											foreach($getproductsreindex as $catName => $catItems){
+												$newProduclistArr[$pr]['categoryName'] =$catName;
+												$newProduclistArr[$pr]['items'] =$catItems;
+												$pr++;
+											}
 
-					$sectionsArr = [];
-					$tableDetArr = [];
-					for($s=0;$s<count($ressections);$s++){
-
-					   $resTable = Tablename::find()->
-					   where(['merchant_id'=>$merchantid, 'section_id'=>$ressections[$s]['ID']])->asArray()->All();
-					    if(!empty($resTable)){
-					    for($t=0;$t<count($resTable);$t++){
-					        $tableDetArr[$t]['id'] = $resTable[$t]['ID'];
-					        $tableDetArr[$t]['tablename'] = $resTable[$t]['name'];
-					    }
-					
-					    }
-					    
-					    
-					    $sectionsArr[$s]['id'] = $ressections[$s]['ID']  ;
-					    $sectionsArr[$s]['section_name'] =  $ressections[$s]['section_name'];
-					    $sectionsArr[$s]['table_details'] = $tableDetArr;
-					unset($tableDetArr);
-					    
-					}
-
-					
-					
-					
-										$payload = array("status"=>'1',"merchantid"=>$merchantdetails['ID']
-										,"store"=>$merchantdetails['storename'],"storetype"=>$merchantdetails['storetype']
+										$payload = array("status"=>'1',"merchantid"=>$merchantdetails['ID'],"table"=>$tabledetails['ID']
+										,"tablename"=>$tabledetails['name'],"store"=>$merchantdetails['storename'],"storetype"=>$merchantdetails['storetype']
 										,"servingtype"=>$merchantdetails['servingtype'],"verify"=>$merchantdetails['verify']
 										,"location"=>$merchantdetails['location'],"logo"=>$merchantlgo,"coverpic"=>$merchantcoverpic
-										,"categories"=>$getproducts,'categoryDetail'=>$categoryDetail,'sections'=>$sectionsArr);
-    									}else{
-    									    $payload = array("status"=>'0',"text"=>"Requires atleast one section");
-    									}
-									    
-									
+										,"productlist"=>$newProduclistArr,'categoryDetail'=>$categoryDetail,'configured_tip' => $merchantdetails['tip']);
+									}else{
+										
+										$payload = array("status"=>'0',"text"=>"Invalid Table or seat details scan again");
+									}
 								}else{
 									
-									$payload = array("status"=>'0',"text"=>"Invalid Restaurant or  theater can again");
+									$payload = array("status"=>'0',"text"=>"Invalid Restaurent or  theater can again");
 								}
-							
-						
-		return $payload;
+							}else{
+									
+								$payload = array("status"=>'0',"text"=>"Please scan again");
+							}
+						}else{
+								
+							$payload = array("status"=>'0',"text"=>"Please scan again");
+						}
+		return $payload;	
+	    
 	}
+
 		public function cash($val){
 	    	    		 Yii::debug('===cash parameters==='.json_encode($val));
 
