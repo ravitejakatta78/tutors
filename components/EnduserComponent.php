@@ -2343,7 +2343,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 							}
 						}
 						$orderarray['merchant_id'] =  $orderlist['merchant_id'];
-						$orderarray['order_id'] =  $orderlist['ID'];
+						$orderarray['order_id'] =  (string)$orderlist['ID'];
 						$orderarray['unique_id'] =  $orderlist['order_id']; 
 						$orderarray['username'] = Utility::user_details($orderlist['user_id'],"name");
 						$orderarray['storename'] = Utility::merchant_details($orderlist['merchant_id'],"storename");
