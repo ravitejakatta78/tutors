@@ -2328,71 +2328,71 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 		return $payload;
 	}
 	public function order($val){
-					$date = date('Y-m-d');
-					$orderid = $val['orderid'];
-					$orderlist = Orders::findOne($orderid);
-					if(!empty($orderlist)){
-						$merchantdetails = Merchant::findOne($orderlist['merchant_id']);
-					
-					$orderarray = $totalordersarray = array(); 
-						$totalproductaarray = array();
-						
+        $date = date('Y-m-d');
+		$orderid = $val['orderid'];
+		$orderlist = Orders::findOne($orderid);
+		if(!empty($orderlist)){
+			$merchantdetails = Merchant::findOne($orderlist['merchant_id']);
+			$orderarray = $totalordersarray = array(); 
+			$totalproductaarray = array();
+			$minutes = $orderlist['preparetime'];
+			if(!empty($orderlist['preparetime']) && $orderlist['preparetime'] > '0'  && !empty($orderlist['preparedate'])){
+				$datetime1 = time();
+				$datetime2 = strtotime($orderlist['preparedate']);
+				$interval = $datetime1 - $datetime2;   
+				$remainingsec = $orderlist['preparetime']*60 - $interval;
+				$orderarray['preparetime'] =  $remainingsec;
+				if($remainingsec<=0){
+					$orderarray['preparetime'] = 0;
+				}
+			}
+            $tableDetails = Tablename::findOne($orderlist['tablename']);
+			
+			$orderarray['merchant_id'] =  $orderlist['merchant_id'];
+			$orderarray['order_id'] =  (string)$orderlist['ID'];
+			$orderarray['unique_id'] =  $orderlist['order_id']; 
+			$orderarray['username'] = Utility::user_details($orderlist['user_id'],"name");
+			$orderarray['storename'] = Utility::merchant_details($orderlist['merchant_id'],"storename");
+			$orderarray['verify'] = Utility::merchant_details($orderlist['merchant_id'],"verify");
+			$orderarray['tablename'] = $tableDetails['name']; 
+			$orderarray['section_name'] = $tableDetails->section['section_name'];
+			$orderarray['totalamount'] =  $orderlist['amount'];
+			$orderarray['couponamount'] = !empty($orderlist['couponamount']) ? (string)trim($orderlist['couponamount']) : '0';
+		
+			$orderarray['paymenttype'] =  $orderlist['paymenttype']== '1' ? 'Cash' : 'Online';
+			$orderarray['orderprocesstext'] =  Utility::orderstatus_details($orderlist['orderprocess']);
+			$orderarray['orderprocess'] = $orderlist['orderprocess'];
+			$orderarray['ordertype'] = $orderlist['ordertype'] == 2 ? 'Offline' : 'Online';
+			$orderarray['paidstatus'] =   Utility::status_details($orderlist['paidstatus']);  
+			$orderarray['enckey'] =  Utility::encrypt($orderlist['merchant_id'].','.$orderlist['tablename']); 
+			$orderarray['serviceboy'] = Utility::serviceboy_details($orderlist['serviceboy_id'],"name");
+			$orderarray['logo'] = !empty($merchantdetails['logo']) ? MERCHANT_LOGO.$merchantdetails['logo'] : '';
+			$orderarray['coverpic'] = !empty($merchantdetails['coverpic']) ? MERCHANT_LOGO.$merchantdetails['coverpic'] : ''; 
+			$orderarray['showaddmore'] = $orderlist['orderprocess'] == '3' ? '0' : '1' ;
+			$orderarray['tax'] = $orderlist['tax'];
+			$orderarray['tip'] = $orderlist['tips'];
+			$orderarray['subscription'] = $orderlist['subscription'];
 
-
-						$minutes = $orderlist['preparetime'];
-						if(!empty($orderlist['preparetime']) && $orderlist['preparetime'] > '0'  && !empty($orderlist['preparedate'])){
-							$datetime1 = time();
-							$datetime2 = strtotime($orderlist['preparedate']);
-							$interval = $datetime1 - $datetime2;   
-							$remainingsec = $orderlist['preparetime']*60 - $interval;
-							$orderarray['preparetime'] =  $remainingsec;
-							if($remainingsec<=0){
-                                $orderarray['preparetime'] = 0;
-							}
-						}
-						$orderarray['merchant_id'] =  $orderlist['merchant_id'];
-						$orderarray['order_id'] =  (string)$orderlist['ID'];
-						$orderarray['unique_id'] =  $orderlist['order_id']; 
-						$orderarray['username'] = Utility::user_details($orderlist['user_id'],"name");
-						$orderarray['storename'] = Utility::merchant_details($orderlist['merchant_id'],"storename");
-						$orderarray['verify'] = Utility::merchant_details($orderlist['merchant_id'],"verify");
-						$orderarray['tablename'] = Utility::table_details($orderlist['tablename'],"name"); 
-						$orderarray['totalamount'] =  $orderlist['amount'];
-						$orderarray['couponamount'] = !empty($orderlist['couponamount']) ? (string)trim($orderlist['couponamount']) : '0';
-					
-						$orderarray['paymenttype'] =  $orderlist['paymenttype']=='cash' ? 'Cash' : 'Online';
-						$orderarray['orderprocesstext'] =  Utility::orderstatus_details($orderlist['orderprocess']);
-						$orderarray['orderprocess'] = $orderlist['orderprocess'];
-						$orderarray['paidstatus'] =   $orderlist['paidstatus'];  
-						$orderarray['enckey'] =  Utility::encrypt($orderlist['merchant_id'].','.$orderlist['tablename']); 
-	                    $orderarray['serviceboy'] = Utility::serviceboy_details($orderlist['serviceboy_id'],"name");
-	                    $orderarray['logo'] = !empty($merchantdetails['logo']) ? MERCHANT_LOGO.$merchantdetails['logo'] : '';
-						$orderarray['coverpic'] = !empty($merchantdetails['coverpic']) ? MERCHANT_LOGO.$merchantdetails['coverpic'] : ''; 
-						$orderarray['showaddmore'] = $orderlist['orderprocess'] == '3' ? '0' : '1' ;
-						$orderarray['tax'] = $orderlist['tax'];
-						$orderarray['tip'] = $orderlist['tips'];
-						$orderarray['subscription'] = $orderlist['subscription'];
-
-						$orderproducts = OrderProducts::find()
-						->where(['order_id'=>$orderlist['ID'], 'merchant_id'=>$orderlist['merchant_id'], 'user_id'=>$orderlist['user_id']])
-						->asArray()->All();
-						if(count($orderproducts) > 0){
-						foreach($orderproducts as $orderproduct){
-							$productaarray = array();
-						$productaarray['id'] = $orderproduct['ID'];
-						$productaarray['order'] = $orderproduct['inc'];
-						$productaarray['name'] = Utility::product_details($orderproduct['product_id'],'title');
-						$productaarray['count'] = $orderproduct['count'];
-						$productaarray['price'] = $orderproduct['price'];
-						$productaarray['reorder'] = $orderproduct['reorder'];
-						$totalproductaarray[] = $productaarray;
-							}
-						}
-						$orderarray['products'] =  array_filter($totalproductaarray);
-				 	$payload = array('status'=>'1','orders'=>$orderarray); 
-					}else{
-					$payload = array('status'=>'0','message'=>'Order not found!!');
-					}
+			$orderproducts = OrderProducts::find()
+				->where(['order_id'=>$orderlist['ID'], 'merchant_id'=>$orderlist['merchant_id'], 'user_id'=>$orderlist['user_id']])
+				->asArray()->All();
+			if(count($orderproducts) > 0){
+				foreach($orderproducts as $orderproduct){
+					$productaarray = array();
+					$productaarray['id'] = $orderproduct['ID'];
+					$productaarray['order'] = $orderproduct['inc'];
+					$productaarray['name'] = Utility::product_details($orderproduct['product_id'],'title');
+					$productaarray['count'] = $orderproduct['count'];
+					$productaarray['price'] = $orderproduct['price'];
+					$productaarray['reorder'] = $orderproduct['reorder'];
+					$totalproductaarray[] = $productaarray;
+				}
+			}
+			$orderarray['products'] =  array_filter($totalproductaarray);
+			$payload = array('status'=>'1','orders'=>$orderarray); 
+		}else{
+			$payload = array('status'=>'0','message'=>'Order not found!!');
+		}
 		return $payload;
 	}
 	public function arrangeorder($val){
