@@ -1626,6 +1626,10 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 		return $payload;
 	}
 	public function cash($val){
+		
+		$connection = \Yii::$app->db;	
+	$transaction = $connection->beginTransaction();
+    try {
 		$userdetails = Users::findOne($val['header_user_id']);
 		if(!empty($val['merchantid'])&&!empty($val['table'])&&!empty($val['productid'])&&!empty($val['count'])&&!empty($val['price'])){
 		    
@@ -1634,7 +1638,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 		if(!empty($tabel_Det)){
 								if(($tabel_Det['current_order_id'] != 0 || $tabel_Det['current_order_id'] != null) && $merchant_details['table_occupy_status'] == 1)
 								{
-								        $payload = array("status"=>'0',"text"=>"Table is already occupied");
+								        $payload = ["status"=>'0',"text"=>"Table is already occupied"];
 									    return $payload;
 									    exit;
 								}
@@ -1713,12 +1717,12 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 									$x=1;
 									for($i=0;$i<count($productidsarray);$i++){
 										$productscount = array();
-										$productscount['order_id'] = $orderdetails['ID'];
-										$productscount['user_id'] = $userdetails['ID'];
-										$productscount['merchant_id'] = $merchantid;
-										$productscount['product_id'] = trim($productidsarray[$i]);
-										$productscount['count'] = trim($productcountarray[$i]);
-										$productscount['price'] = trim($productpricearray[$i]);
+										$productscount['order_id'] = (string)$orderdetails['ID'];
+										$productscount['user_id'] = (string)$userdetails['ID'];
+										$productscount['merchant_id'] = (string)$merchantid;
+										$productscount['product_id'] = (string)trim($productidsarray[$i]);
+										$productscount['count'] = (string)trim($productcountarray[$i]);
+										$productscount['price'] = (string)trim($productpricearray[$i]);
 										$productscount['inc'] = (string)$x;
 										$productscount['reorder'] = '0';
 
@@ -1791,6 +1795,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 						                    else{
 						                       Yii::debug('===cash errors==='.json_encode($tableUpdate->getErrors()));
 						                    }
+											$transaction->commit();
 										$payload = array("status"=>'1',"id"=>$orderdetails['ID'],"text"=>"Order Created successfully");
 									
 								}
@@ -1803,6 +1808,9 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 								
 							$payload = array("status"=>'0',"text"=>"Invalid parameters");
 						}
+					} catch(Exception $e) {
+						$transaction->rollback();
+					}
 		return $payload;
 	}
 	public function reordercash($val){
@@ -2350,7 +2358,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 						$orderarray['verify'] = Utility::merchant_details($orderlist['merchant_id'],"verify");
 						$orderarray['tablename'] = Utility::table_details($orderlist['tablename'],"name"); 
 						$orderarray['totalamount'] =  $orderlist['amount'];
-						$orderarray['couponamount'] = !empty($_POST['couponamount']) ? trim($_POST['couponamount']) : 0;
+						$orderarray['couponamount'] = !empty($orderlist['couponamount']) ? (string)trim($orderlist['couponamount']) : '0';
 					
 						$orderarray['paymenttype'] =  $orderlist['paymenttype']=='cash' ? 'Cash' : 'Online';
 						$orderarray['orderprocesstext'] =  Utility::orderstatus_details($orderlist['orderprocess']);
