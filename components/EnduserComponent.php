@@ -2778,16 +2778,20 @@ order by remain_coins desc limit '.$val['userCount'] ;
 		}
 		return $payload;
 	}
-	public function listofhotels($val)
+	public function storetypedetails($val)
 	{
 	    $roomreservationhotelslist = [];
-        $room_reservation_types = MyConst::ROOM_RESERVATION_TYPES;
-        $room_reservation_types_ids = array_keys($room_reservation_types);
-        $room_reservation_types_ids_string = implode("','",$room_reservation_types_ids);
+        //$room_reservation_types = MyConst::ROOM_RESERVATION_TYPES;
+        $room_reservation_types = \yii\helpers\ArrayHelper::map(\app\models\Storetypes::find()
+				  ->where(['type_status'=>'1'])
+				  ->all(), 'ID', 'storetypename');
+
+		$room_reservation_types_ids = array_keys($room_reservation_types);
+		$room_reservation_types_ids_string = implode("','",$room_reservation_types_ids);
 
         $sqlMerchants = 'select ID,user_id,unique_id,name,email,password,mobile,storetype,storename,address,state,city
-        ,location,concat(\'http://superpilot.in/development/merchantimages/\',logo) logo,latitude,longitude,concat(\'http://superpilot.in/development/merchantimages/\',qrlogo) qrlogo
-        ,concat(\'http://superpilot.in/development/merchantimages/\',coverpic) coverpic,status,otp,recommend,verify,description,servingtype
+        ,location,concat(\'http://superpilot.in/dev/merchantimages/\',logo) logo,latitude,longitude,concat(\'http://superpilot.in/dev/merchantimages/\',qrlogo) qrlogo
+        ,concat(\'http://superpilot.in/dev/merchantimages/\',coverpic) coverpic,status,otp,recommend,verify,description,servingtype
         ,plan,useraccess,scan_range
         ,open_time,close_time,table_res_avail,owner_type,tax,tip,reg_date,mod_date,food_serve_type,subscription_date
         ,allocated_msgs,used_msgs from merchant where status = \''.MyConst::TYPE_ACTIVE.'\' and storetype in (\''.$room_reservation_types_ids_string.'\')';
@@ -2795,12 +2799,15 @@ order by remain_coins desc limit '.$val['userCount'] ;
         
         $resultMerchants = ArrayHelper::index($resMerchants, null, 'storetype');
         
+			for($i=0;$i<count($room_reservation_types_ids);$i++){        
+				if(isset($resultMerchants[$room_reservation_types_ids[$i]])){
+
+				$roomreservationhotelslist[$i]['id'] = $room_reservation_types_ids[$i];  
+				$roomreservationhotelslist[$i]['name'] = $room_reservation_types[$room_reservation_types_ids[$i]];  
+				$roomreservationhotelslist[$i]['merchantdetails'] = $resultMerchants[$room_reservation_types_ids[$i]];
+			}
+		}
         
-        for($i=0;$i<count($room_reservation_types_ids);$i++){        
-            $roomreservationhotelslist[$i]['id'] = $room_reservation_types_ids[$i];  
-            $roomreservationhotelslist[$i]['name'] = $room_reservation_types[$room_reservation_types_ids[$i]];  
-            $roomreservationhotelslist[$i]['merchantdetails'] = $resultMerchants[$room_reservation_types_ids[$i]];
-        }
         
         $payload = array("status"=>'1',"roomreservationhotelslist"=>$roomreservationhotelslist);
 	    return $payload;

@@ -217,8 +217,8 @@ public function beforeAction($action)
 				case 'roomreservations':
 				$this->roomreservations($_REQUEST);
 				break;
-				case 'listofhotels':
-				$this->listofhotels($_REQUEST);
+				case 'storetypedetails':
+				$this->storetypedetails($_REQUEST);
 				break;	
 				case 'roomcategeries':
 				$this->roomcategeries($_REQUEST);
@@ -1069,13 +1069,13 @@ cos((latitude*pi()/180)) * cos(((".$longitude."- longitude)* pi()/180))))*180/pi
 		}
 		return $this->asJson($payload);				
 	}
-	public function listofhotels($val)
+	public function storetypedetails($val)
 	{
 		$headerslist = apache_request_headers();
 		$usersid = base64_decode($headerslist['Authorization']);
 		if(!empty($usersid)){
 			$val['header_user_id'] = $usersid;
-			$payload = Yii::$app->enduser->listofhotels($val);
+			$payload = Yii::$app->enduser->storetypedetails($val);
 		}else{
 			$payload = array('status'=>'0','message'=>'Invalid users details');
 		}
