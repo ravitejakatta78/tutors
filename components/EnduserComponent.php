@@ -2798,15 +2798,16 @@ order by remain_coins desc limit '.$val['userCount'] ;
         $resMerchants = Yii::$app->db->createCommand($sqlMerchants)->queryAll();
         
         $resultMerchants = ArrayHelper::index($resMerchants, null, 'storetype');
-        
-			for($i=0;$i<count($room_reservation_types_ids);$i++){        
-				if(isset($resultMerchants[$room_reservation_types_ids[$i]])){
+        $roomreservationhotelslist = array();
+			foreach($room_reservation_types_ids as $k => $v){
+				if(isset($resultMerchants[$room_reservation_types_ids[$k]])){
 
-				$roomreservationhotelslist[$i]['id'] = $room_reservation_types_ids[$i];  
-				$roomreservationhotelslist[$i]['name'] = $room_reservation_types[$room_reservation_types_ids[$i]];  
-				$roomreservationhotelslist[$i]['merchantdetails'] = $resultMerchants[$room_reservation_types_ids[$i]];
+				$hotelslist['id'] = $room_reservation_types_ids[$k];  
+				$hotelslist['name'] = $room_reservation_types[$room_reservation_types_ids[$k]];  
+				$hotelslist['merchantdetails'] = $resultMerchants[$room_reservation_types_ids[$k]];
+				$roomreservationhotelslist[] = $hotelslist;
+				}
 			}
-		}
         
         
         $payload = array("status"=>'1',"roomreservationhotelslist"=>$roomreservationhotelslist);
