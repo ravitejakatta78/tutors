@@ -447,7 +447,9 @@ class ServiceboyComponent extends Component{
 				  $customerdetails['billed_amount'] =  '0';
 				  $customerdetails['running_amount'] =  '0';
 				  $customerdetails['payable_amount'] =  '0';
-				  
+				  $customerdetails['inpocket_amount'] =  '0';
+				  $customerdetails['store_open_time'] =  $merchant['open_time'];
+				  $customerdetails['store_close_time'] =  $merchant['close_time'];
 					$payload = array("status"=>'1',"users"=>$customerdetails);
 				  }  else {
 						
