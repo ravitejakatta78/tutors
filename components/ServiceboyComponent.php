@@ -444,6 +444,9 @@ class ServiceboyComponent extends Component{
 				  $customerdetails['todayorders'] =  $todayorders ?: '0';
 				  $customerdetails['totalpoints'] =  $totalpoints ?: '0';
 				  $customerdetails['loginstatus'] =  $row['loginstatus'];
+				  $customerdetails['billed_amount'] =  '0';
+				  $customerdetails['running_amount'] =  '0';
+				  $customerdetails['payable_amount'] =  '0';
 				  
 					$payload = array("status"=>'1',"users"=>$customerdetails);
 				  }  else {
@@ -686,10 +689,10 @@ class ServiceboyComponent extends Component{
 					}
 					}
 					$payload = array('status'=>'1','orders'=>$totalordersarray
-						,'completed_orders' => ($order_history_array['completed_orders'] ?? 0)
-						,'running_orders' => ($order_history_array['running_orders'] ?? 0)
-						,'completed_amount' => ($order_history_array['completed_amount'] ?? 0)
-						,'running_amount' => ($order_history_array['running_amount'] ?? 0)
+						,'completed_orders' => ($order_history_array['completed_orders'] ?? '0')
+						,'running_orders' => ($order_history_array['running_orders'] ?? '0')
+						,'completed_amount' => ($order_history_array['completed_amount'] ?? '0')
+						,'running_amount' => ($order_history_array['running_amount'] ?? '0')
 					); 
 
 		return $payload;
