@@ -708,6 +708,7 @@ class ServiceboyComponent extends Component{
 				
 					$merchantdetails = Merchant::findOne($orderlist['merchant_id']);
 					if(!empty($orderlist)){
+					$tableDetails = Tablename::findOne($orderlist['tablename']);	
 					$orderarray = $totalordersarray = array(); 
 						$totalproductaarray = array();
 						$orderarray['order_id'] =  $orderlist['ID'];
@@ -715,7 +716,8 @@ class ServiceboyComponent extends Component{
 						$orderarray['unique_id'] =  $orderlist['order_id']; 
 						$orderarray['username'] = Utility::user_details($orderlist['user_id'],"name");
 						$orderarray['storename'] =  !empty($merchantdetails['storename']) ? $merchantdetails['storename'] : '';
-						$orderarray['tablename'] = Utility::table_details($orderlist['tablename'],"name"); 
+						$orderarray['tablename'] = $tableDetails['name'];
+						$orderarray['section_name'] = $tableDetails->section['section_name']; 
 						$orderarray['logo'] = !empty($merchantdetails['logo']) ? MERCHANT_LOGO.$merchantdetails['logo'] : '';
 						$orderarray['coverpic'] = !empty($merchantdetails['coverpic']) ? MERCHANT_LOGO.$merchantdetails['coverpic'] : '';
 						$orderarray['amount'] =  sprintf("%.2f", (!empty($orderlist['amount']) ? $orderlist['amount'] : 0));; 
