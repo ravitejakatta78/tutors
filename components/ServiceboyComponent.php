@@ -2,7 +2,7 @@
 namespace app\components;
 use yii;
 use yii\base\Component;
-use \app\helpers\Utility;
+use app\helpers\Utility;
 use app\models\Product;
 use app\models\Merchant;
 use app\models\Serviceboy;
@@ -13,8 +13,9 @@ use app\models\SectionItemPriceList;
 use app\models\MerchantFoodCategoryTax;
 use app\models\Tablename;
 use app\models\CoinsTransactions;
-use \app\models\OrderPushPilot;
-use \app\models\OrderRejections;
+use app\models\OrderPushPilot;
+use app\models\OrderRejections;
+use yii\helpers\ArrayHelper;
 
  date_default_timezone_set("asia/kolkata");
 
@@ -589,13 +590,24 @@ class ServiceboyComponent extends Component{
 					$sqlnotpaidorderlistarray .= ' order by ID desc';
 					$notpaidorderlistarray = Yii::$app->db->createCommand($sqlnotpaidorderlistarray)->queryAll();
 					
-					/*$sqlpaidorderlistarray = 'select * from orders where merchant_id = \''.$serviceboydetails['merchant_id'].'\' and date(reg_date) = \''.$date.'\' and orderprocess IN (\'1\',\'2\',\'4\') and paidstatus = \'1\' 
+					$sql_history_array = 'select 
+					sum(case when (orderprocess = \'4\') then 1 else 0 end) completed_orders
+					,sum(case when (orderprocess in (\'1\',\'2\')) then 1 else 0 end) running_orders
+					,sum(case when (orderprocess = \'4\') then totalamount else 0 end) completed_amount
+					,sum(case when (orderprocess in (\'1\',\'2\')) then totalamount else 0 end) running_amount
+					from orders where merchant_id = \''.$serviceboydetails['merchant_id'].'\' '; 
+					if(!empty($val['sdate'])){
+				    	$sql_history_array .= '    and date(reg_date) between \''.$val['sdate'].'\' and \''.$val['edate'].'\'  '; 
+					}
+					$sql_history_array .= ' and orderprocess IN (\'1\',\'2\',\'4\')  
 					and serviceboy_id = \''.$serviceboydetails['ID'].'\' order by ID desc';
-					$paidorderlistarray = Yii::$app->db->createCommand($sqlpaidorderlistarray)->queryAll();
-					*/
+					$order_history_array = Yii::$app->db->createCommand($sql_history_array)->queryAll();
+					
 					$orderlistarray  = $notpaidorderlistarray ;//array_merge($notpaidorderlistarray,$paidorderlistarray);
+					$totalordersarray = array();
+
 					if(!empty($orderlistarray)){
-					$orderarray = $totalordersarray = array();
+						$orderarray = [];
 					foreach($orderlistarray as $orderlist){
 						$totalproductaarray = array();
 						$feedbackDet = \app\models\Feedback::find()->where(['order_id'=>$orderlist['order_id']])->asArray()->one();
@@ -672,10 +684,9 @@ class ServiceboyComponent extends Component{
 						
 						$totalordersarray[] = $orderarray;
 					}
-				 	$payload = array('status'=>'1','orders'=>$totalordersarray); 
-					}else{
-					$payload = array('status'=>'1','message'=>'Order not found!!','orders' => []);
 					}
+					$payload = array('status'=>'1','orders'=>$totalordersarray,'history' => $order_history_array); 
+
 		return $payload;
 	}
 	public function order($val)
@@ -1264,7 +1275,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
                                                         where p.merchant_id = \''.$merchantid.'\'
                                                         group by foodtype';
 											$categoryDetail = Yii::$app->db->createCommand($sqlcategoryDetail)->queryAll();
-							            	$getproductsreindex = \yii\helpers\ArrayHelper::index($getproducts, null, 'food_category');
+							            	$getproductsreindex = ArrayHelper::index($getproducts, null, 'food_category');
                                             $newProduclistArr = [];
 											$pr = 0;
 											foreach($getproductsreindex as $catName => $catItems){
