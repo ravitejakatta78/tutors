@@ -601,7 +601,7 @@ class ServiceboyComponent extends Component{
 					}
 					$sql_history_array .= ' and orderprocess IN (\'1\',\'2\',\'4\')  
 					and serviceboy_id = \''.$serviceboydetails['ID'].'\' order by ID desc';
-					$order_history_array = Yii::$app->db->createCommand($sql_history_array)->queryAll();
+					$order_history_array = Yii::$app->db->createCommand($sql_history_array)->queryOne();
 					
 					$orderlistarray  = $notpaidorderlistarray ;//array_merge($notpaidorderlistarray,$paidorderlistarray);
 					$totalordersarray = array();
@@ -685,7 +685,12 @@ class ServiceboyComponent extends Component{
 						$totalordersarray[] = $orderarray;
 					}
 					}
-					$payload = array('status'=>'1','orders'=>$totalordersarray,'history' => $order_history_array); 
+					$payload = array('status'=>'1','orders'=>$totalordersarray
+						,'completed_orders' => ($order_history_array['completed_orders'] ?? 0)
+						,'running_orders' => ($order_history_array['running_orders'] ?? 0)
+						,'completed_amount' => ($order_history_array['completed_amount'] ?? 0)
+						,'running_amount' => ($order_history_array['running_amount'] ?? 0)
+					); 
 
 		return $payload;
 	}
