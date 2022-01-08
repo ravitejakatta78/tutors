@@ -615,12 +615,14 @@ class ServiceboyComponent extends Component{
 						$orderarray = [];
 					foreach($orderlistarray as $orderlist){
 						$totalproductaarray = array();
+						$tableDetails = Tablename::findOne($orderlist['tablename']);
 						$feedbackDet = \app\models\Feedback::find()->where(['order_id'=>$orderlist['order_id']])->asArray()->one();
 						$orderarray['order_id'] =  $orderlist['ID'];
 						$orderarray['unique_id'] =  $orderlist['order_id']; 
 						$orderarray['username'] = Utility::user_details($orderlist['user_id'],"name");
 						$orderarray['storename'] = Utility::merchant_details($orderlist['merchant_id'],"storename");
-						$orderarray['tablename'] = Utility::table_details($orderlist['tablename'],"name"); 
+						$orderarray['tablename'] = $tableDetails['name'];
+						$orderarray['section_name'] = $tableDetails->section['section_name']; 
 						$orderarray['amount'] =  $orderlist['amount']; 
 						$orderarray['tax'] = (string)(!empty($orderlist['tax']) ?  $orderlist['tax'] : 0);
 						$orderarray['tips'] = (string)(!empty($orderlist['tips']) ?  $orderlist['tips'] : 0);
