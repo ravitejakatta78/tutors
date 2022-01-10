@@ -10,6 +10,7 @@ use Yii;
  * @property int $ID
  * @property string $merchant_id
  * @property string $unique_id
+ * @property int $employee_id
  * @property string $name
  * @property string $mobile
  * @property string $email
@@ -42,7 +43,7 @@ class Serviceboy extends \yii\db\ActiveRecord
         return [
             [['merchant_id', 'unique_id', 'name', 'mobile', 'email', 'status', 'loginstatus', 'loginaccess', 'joiningdate', 'reg_date'], 'required'],
             [['name', 'mobile', 'email', 'password', 'status', 'loginstatus', 'push_id', 'profilepic'], 'string'],
-            [['otp', 'loginaccess'], 'integer'],
+            [['otp', 'loginaccess', 'employee_id'], 'integer'],
 			['password','required','on'=>'passwordscenario'],
             [['mod_date'], 'safe'],
             [['merchant_id', 'unique_id'], 'string', 'max' => 50],
@@ -59,6 +60,7 @@ class Serviceboy extends \yii\db\ActiveRecord
             'ID' => 'ID',
             'merchant_id' => 'Merchant ID',
             'unique_id' => 'Unique ID',
+            'employee_id' => 'Employee ID',
             'name' => 'Name',
             'mobile' => 'Mobile',
             'email' => 'Email',

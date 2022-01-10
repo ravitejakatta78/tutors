@@ -31,10 +31,10 @@ class PilotTable extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['merchant_id', 'table_id', 'serviceboy_id', 'created_on', 'created_by', 'updated_on'], 'required'],
-            [['table_id', 'serviceboy_id'], 'integer'],
+            [['merchant_id', 'section_id', 'serviceboy_id', 'created_on', 'created_by'], 'required'],
+            [['merchant_id', 'section_id', 'serviceboy_id'], 'integer'],
             [['created_on', 'updated_on'], 'safe'],
-            [['merchant_id', 'created_by'], 'string', 'max' => 20],
+            [[ 'created_by'], 'string', 'max' => 20],
         ];
     }
 
@@ -46,7 +46,7 @@ class PilotTable extends \yii\db\ActiveRecord
         return [
             'ID' => 'ID',
             'merchant_id' => 'Merchant ID',
-            'table_id' => 'Table ID',
+            'section_id' => 'Section ID',
             'serviceboy_id' => 'Serviceboy ID',
             'created_on' => 'Created On',
             'created_by' => 'Created By',

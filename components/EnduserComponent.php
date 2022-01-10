@@ -28,6 +28,7 @@ use app\models\SequenceMaster;
 use app\models\AllocatedRooms;
 use app\models\Userinformation;
 use app\models\Banners;
+use app\models\PilotTable;
 use yii\helpers\ArrayHelper;
 
 
@@ -1749,8 +1750,12 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 											$resUpdate = Yii::$app->db->createCommand($sqlUpdate)->execute();
 											}
 											}
+											
+											$pilotTable = PilotTable::find()->where(['merchant_id' => $merchantid,'section_id' => $tabel_Det->section['ID']])->asArray()->All();
+											$pilotTableId = ArrayHelper::getColumn($pilotTable,  'serviceboy_id');
+											$pilotTableIdString = implode("','",$pilotTableId);
 											$sqlserviceboyarray = "select * from serviceboy where merchant_id = '".$merchantid."' and 
-											loginstatus = '1' and push_id <> '' order by ID desc";
+											loginstatus = '1' and push_id <> '' and ID in ('".$pilotTableIdString."') order by ID desc";
 											$serviceboyarray = Yii::$app->db->createCommand($sqlserviceboyarray)->queryAll();
 											if(!empty($serviceboyarray)){
 												$stitle = 'New order.';
@@ -2782,7 +2787,7 @@ order by remain_coins desc limit '.$val['userCount'] ;
 	{
 	    $roomreservationhotelslist = [];
         //$room_reservation_types = MyConst::ROOM_RESERVATION_TYPES;
-        $room_reservation_types = \yii\helpers\ArrayHelper::map(\app\models\Storetypes::find()
+        $room_reservation_types = ArrayHelper::map(\app\models\Storetypes::find()
 				  ->where(['type_status'=>'1'])
 				  ->all(), 'ID', 'storetypename');
 

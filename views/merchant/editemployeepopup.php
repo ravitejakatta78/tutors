@@ -78,6 +78,17 @@ use yii\helpers\Url;
 	   <div class="col-md-8">
 	   <?= $form->field($model, 'emp_designation')->textinput(['class' => 'form-control','autocomplete'=>'off','placeholder'=>'Designation'])->label(false); ?>
 	   </div></div>
+	   	   <div class="form-group row">
+	   <label class="control-label col-md-4">Sections</label>  
+	   <div class="col-md-8">
+		<select name="sectiongroup[]" class="select" id="groupmultiselect" multiple="multiple"> 
+					<option value="">Select Section Name</option>
+					<?php  foreach($categorytypes as $ca){ ?>
+					<option value="<?php echo $ca['ID']; ?>" <?php if(in_array($ca['ID'],$pilotTableId)){ echo 'selected'; } ?>><?php echo $ca['section_name']; ?></option>
+					<?php } ?>
+					</select>
+	   </div>
+	   </div>
 	   </div>
 	   </div>
 	   </div>
@@ -98,5 +109,4 @@ $this->registerJs($script);
 <script>
 
 </script>    
-        
         

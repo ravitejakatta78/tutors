@@ -193,7 +193,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
 	   <div class="form-group row">
 	   <label class="control-label col-md-4">Sections</label>  
 	   <div class="col-md-8">
-		<select name="group[]" class="test" multiple="multiple"> 
+		<select name="sectiongroup[]" class="test" multiple="multiple"> 
 					<option value="">Select Section Name</option>
 					<?php  foreach($categorytypes as $ca){ ?>
 					<option value="<?php echo $ca['ID']; ?>"><?php echo $ca['section_name']; ?></option>

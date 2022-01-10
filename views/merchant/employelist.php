@@ -184,7 +184,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
 	   <div class="form-group row">
 	   <label class="control-label col-md-4">Sections</label>  
 	   <div class="col-md-8">
-		<select name="group[]" class="test" multiple="multiple"> 
+		<select name="sectiongroup[]" class="test" multiple="multiple"> 
 					<option value="">Select Section Name</option>
 					<?php  foreach($categorytypes as $ca){ ?>
 					<option value="<?php echo $ca['ID']; ?>"><?php echo $ca['section_name']; ?></option>
@@ -193,6 +193,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
 		<input type="hidden" id="update_merchant_id" name="update_merchant_id" value="<?= $id;?>">
 	   </div>
 	   </div>
+	   
 	   
 	   </div>
 	   </div>
@@ -265,4 +266,15 @@ function deleteemployee(id){
 				});
 
 }
+
+jQuery('body').on('click', '[data-toggle=dropdown]', function() {
+    var opened = $(this).parent().hasClass("open");
+    if (! opened) {
+        $('.btn-group').addClass('open');
+        $("button.multiselect").attr('aria-expanded', 'true');
+    } else {
+        $('.btn-group').removeClass('open');
+        $("button.multiselect").attr('aria-expanded', 'false');
+    }
+});
 </script>

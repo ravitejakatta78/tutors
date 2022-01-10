@@ -49,6 +49,7 @@ use app\models\TableReservations;
 use app\models\AllocatedRooms;
 use yii\db\Query;
 use app\models\Users;
+use app\models\PilotTable;
 use yii\helpers\ArrayHelper;
 
 
@@ -775,8 +776,8 @@ else{
 		
 		$empRole = EmployeeRole::find()->where(['merchant_id'=>Yii::$app->user->identity->merchant_id,'ID'=>'2'])->asArray()->all();
 		$empRoleIdNameArr = array_column($empRole,'role_name','ID'); 
-		$sqlcategorytypes = 'select * from sections where merchant_id = \''.Yii::$app->user->identity->merchant_id.'\'';
-		$categorytypes = Yii::$app->db->createCommand($sqlcategorytypes)->queryAll();
+		$categorytypes = Sections::find()->where(['merchant_id' => $merchantId])
+		->asArray()->All();
 	
         return $this->render('pilot',['pilotModel'=>$pilotModel,'model'=>$model,'empRoleIdNameArr'=>$empRoleIdNameArr,'categorytypes'=>$categorytypes]);
     }
@@ -816,7 +817,12 @@ else{
 	{
 		extract($_POST);
 		$serviceBoyModel = Serviceboy::findOne($id);
-		return $this->renderAjax('editpilot', ['model' => $serviceBoyModel,'id'=>$id]);		
+		$pilotTable = PilotTable::findOne($id);
+		$pilotTableId = ArrayHelper::index($pilotTable, null, 'ID');
+		$categorytypes = Sections::find()->where(['merchant_id' => $merchantId])
+		->asArray()->All();
+		return $this->renderAjax('editpilot', ['model' => $serviceBoyModel,'id'=>$id
+		, 'pilotTable' => $pilotTable, 'categorytypes' => $categorytypes]);		
 	}
 	public function actionUpdatepilot()
 	{
@@ -2087,11 +2093,13 @@ if ($model->load(Yii::$app->request->post()) ) {
 					->orderBy(['ID'=>SORT_DESC])
 					
 					->asArray()->all();
-				
+	$connection = \Yii::$app->db;	
+	$transaction = $connection->beginTransaction();
+	try {		
 		if ($model->load(Yii::$app->request->post()) ) {
 			$MerchantEmployeeArr = Yii::$app->request->post('MerchantEmployee');
 			$hashPassword = password_hash($MerchantEmployeeArr['emp_password'], PASSWORD_DEFAULT);
-			$model->merchant_id = (string)Yii::$app->user->identity->merchant_id;
+			$model->merchant_id = (string)$merchantId;
 			$model->emp_id = Utility::emp_uniqueid('merchant_employee','EMP',$merchantId);
 			$model->emp_password =  $hashPassword;
 			$model->emp_status = '1';
@@ -2106,8 +2114,9 @@ if ($model->load(Yii::$app->request->post()) ) {
 				if($emproleDet['role_name'] == 'PILOT')
 				{
 							$serviceModel = new Serviceboy;
-							$serviceModel->merchant_id = (string)Yii::$app->user->identity->merchant_id;
+							$serviceModel->merchant_id = (string)$merchantId;
 							$serviceModel->unique_id = Utility::get_uniqueid('serviceboy','SBOY');
+							$serviceModel->employee_id = $model->ID;
 							$serviceModel->name = $MerchantEmployeeArr['emp_name'] ;
 							$serviceModel->mobile = $MerchantEmployeeArr['emp_phone'] ;
 							$serviceModel->email = $MerchantEmployeeArr['emp_email'] ;
@@ -2119,11 +2128,31 @@ if ($model->load(Yii::$app->request->post()) ) {
 							$serviceModel->reg_date = date('Y-m-d H:i:s');
 							$serviceModel->mod_date = date('Y-m-d H:i:s');
 								if ( $serviceModel->validate() ) {
-							$serviceModel->save();
+									$serviceModel->save();
+									if(!empty($_POST['sectiongroup'])){
+										for($i=0; $i < count($_POST['sectiongroup']); $i++ ) {
+											$modelPilotTable = new PilotTable;
+											$modelPilotTable->merchant_id = $merchantId;
+											$modelPilotTable->section_id = $_POST['sectiongroup'][$i];
+											$modelPilotTable->serviceboy_id  = $serviceModel->ID;
+											$modelPilotTable->created_on = date('Y-m-d H:i:s');
+											$modelPilotTable->created_by = Yii::$app->user->identity->emp_name;
+											if ( $modelPilotTable->validate() ) {
+												$modelPilotTable->save();
+											}
+											else{
+												//echo "<pre>";print_r($modelPilotTable->getErrors());exit;
+											}	
+											
+										}
+									}
 								}else{
 								    //echo "<pre>";print_r($serviceModel->getErrors());exit;
 								}
 				}
+				
+
+				$transaction->commit();
 				Yii::$app->getSession()->setFlash('success'
 				,[
 					'title' => 'Employee',
@@ -2144,6 +2173,11 @@ if ($model->load(Yii::$app->request->post()) ) {
 				//echo "<pre>";print_r($model->getErrors());exit;
 			}
 		}
+	}
+	catch(Exception $e) {
+        Yii::trace('======error====='.json_encode($e->getErrors()));
+        $transaction->rollback();
+    }
 			$empRole = EmployeeRole::find()->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])->asArray()->all();
 			$empRoleIdNameArr = array_column($empRole,'role_name','ID'); 
 		
@@ -2153,13 +2187,27 @@ if ($model->load(Yii::$app->request->post()) ) {
 // 			echo "<pre>";
 // 			print_r($categorytypes);exit;
 		
-		return $this->render('employelist',['model'=>$model,'empModel'=>$empModel,'empRoleIdNameArr'=>$empRoleIdNameArr,'categorytypes'=>$categorytypes]);
+		return $this->render('employelist',['model'=>$model,'empModel'=>$empModel,'empRoleIdNameArr'=>$empRoleIdNameArr
+		,'categorytypes'=>$categorytypes,'id' => $merchantId]);
 	}
 	public function actionEditemployeepopup()
 	{
 		extract($_POST);
 		$empModel = MerchantEmployee::findOne($id);
-		return $this->renderAjax('editemployeepopup', ['model' => $empModel,'id'=>$id]);		
+		$serviceBoy =  Serviceboy::find()
+		->where(['employee_id'=>$empModel['ID']])
+		->asArray()->One();
+		$pilotTableId = [];
+		if(!empty($serviceBoy)){
+			$pilotTable = PilotTable::find()->where(['serviceboy_id' => $serviceBoy['ID']])->asArray()->All();
+			$pilotTableId = ArrayHelper::getColumn($pilotTable,  'section_id');
+						
+		}
+		$categorytypes = Sections::find()->where(['merchant_id' => $empModel['merchant_id']])
+			->asArray()->All();
+
+		return $this->renderAjax('editemployeepopup', ['model' => $empModel, 'id'=>$id
+		, 'categorytypes' => $categorytypes,'pilotTableId' => $pilotTableId]);		
     
 	}
 	public function actionUpdateemployee()
@@ -2195,7 +2243,41 @@ if ($model->load(Yii::$app->request->post()) ) {
 			$sqlUPdate = 'update serviceboy set name = \''.$employeeArr['emp_name'].'\'
 			,email = \''.$employeeArr['emp_email'].'\',mobile =  \''.$employeeArr['emp_phone'].'\' 
 			where mobile = \''.$employeeUpdate['merchant_id'].'\' and merchant_id = \''.$employeeUpdate['merchant_id'].'\'';
-			$resUpdate = Yii::$app->db->createCommand($sqlUPdate)->execute();	
+			$resUpdate = Yii::$app->db->createCommand($sqlUPdate)->execute();
+			$serviceBoy =  Serviceboy::find()
+			->where(['employee_id' => $_POST['MerchantEmployee']['ID']])
+			->asArray()->One();
+			if(!empty($serviceBoy)){
+				$pilotTable = PilotTable::find()->where(['serviceboy_id' => $serviceBoy['ID']])->asArray()->All();
+				$pilotTableId = ArrayHelper::getColumn($pilotTable,  'section_id');
+				
+				$sectionGroup = $_POST['sectiongroup'];
+
+				if(!empty($sectionGroup))
+				{
+					$sqlPilotTable = 'delete from pilot_table where serviceboy_id = \''.$serviceBoy['ID'].'\'';
+					$resDelPilotTable = Yii::$app->db->createCommand($sqlPilotTable)->execute();
+					
+					for($i=0; $i < count($_POST['sectiongroup']); $i++ ) {
+						$modelPilotTable = new PilotTable;
+						$modelPilotTable->merchant_id = $employeeUpdate['merchant_id'];
+						$modelPilotTable->section_id = $_POST['sectiongroup'][$i];
+						$modelPilotTable->serviceboy_id  = $serviceBoy['ID'];
+						$modelPilotTable->created_on = date('Y-m-d H:i:s');
+						$modelPilotTable->created_by = Yii::$app->user->identity->emp_name;
+						if ( $modelPilotTable->validate() ) {
+							$modelPilotTable->save();
+						}
+						else{
+							//echo "<pre>";print_r($modelPilotTable->getErrors());exit;
+						}
+					}	
+				}
+
+			}
+
+
+			
 		}
 
 	

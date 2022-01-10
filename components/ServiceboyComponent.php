@@ -539,7 +539,7 @@ class ServiceboyComponent extends Component{
 						$orderarray['discount_number'] = $orderlist['discount_number'];
 						$orderarray['couponamount'] = $orderlist['couponamount'];
 						$orderarray['coupon'] = $orderlist['coupon'];
-						$orderarray['userprofilepic'] = !empty($orderlist['user_id']) ? \app\helpers\Utility::user_image($orderlist['user_id']) : '';
+						$orderarray['userprofilepic'] = !empty($orderlist['user_id']) ? Utility::user_image($orderlist['user_id']) : '';
 
 						$sqlpendingamount = "select sum(totalamount) as pendingamount from order_transactions where order_id = '".$orderlist['ID']."' 
 						and merchant_id = '".$orderlist['merchant_id']."' and user_id = '".$orderlist['user_id']."' 
@@ -642,7 +642,7 @@ class ServiceboyComponent extends Component{
 						$orderarray['instructions'] = $orderlist['instructions'];
 						$orderarray['tax'] = $orderlist['tax']; 
 						$orderarray['discount_number'] = $orderlist['discount_number'];
-						$orderarray['userprofilepic'] = !empty($orderlist['user_id']) ? \app\helpers\Utility::user_image($orderlist['user_id']) : '';
+						$orderarray['userprofilepic'] = !empty($orderlist['user_id']) ? Utility::user_image($orderlist['user_id']) : '';
 						$sqlpendingamount = "select sum(totalamount) as pendingamount from order_transactions where order_id = '".$orderlist['ID']."' 
 						and merchant_id = '".$orderlist['merchant_id']."' and user_id = '".$orderlist['user_id']."' and paymenttype = 'cash'
 						and paidstatus = '0'";
@@ -808,7 +808,7 @@ class ServiceboyComponent extends Component{
 						$message = "Hey ".ucwords($userdetails['name']).", ".$serviceboydetails['name']." has been Accepted your order.";			
 						//Utility::sendNewFCM($userdetails['push_id'],$title,$message,$image,null,null,$orderid);	
     					$notificationdet = ['type' => 'ORDER_ACCEPTED','username' => $userdetails['name']];
-						\app\helpers\Utility::sendNewFCM($userdetails['push_id'],$title,$message,$image,'6',null,$orderdetails['ID'],$notificationdet); 
+						Utility::sendNewFCM($userdetails['push_id'],$title,$message,$image,'6',null,$orderdetails['ID'],$notificationdet); 
 
 						}
 						
@@ -821,7 +821,7 @@ class ServiceboyComponent extends Component{
 												$smessage = $orderlist['order_id'].' is accepted by '.Utility::serviceboy_details($roderarray['serviceboy_id'],'name');
 												$simage = '';
 												foreach($serviceboyarray as $serviceboy){ 
-													\app\helpers\Utility::sendNewFCM($serviceboy['push_id'],$stitle,$smessage,$simage,null,null,$orderid); 
+													Utility::sendNewFCM($serviceboy['push_id'],$stitle,$smessage,$simage,null,null,$orderid); 
 												}
 											}
 						
@@ -1361,8 +1361,8 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 							$userarray['merchant_id'] = $merchantid;
 							$userarray['serviceboy_id'] = isset($val['serviceboy_id']) ? $val['serviceboy_id'] : '';
 							$userarray['tablename'] = 	$val['table']; 
-							$userarray['order_id'] = \app\helpers\Utility::order_id($merchantid,'order'); 
-							$userarray['txn_id'] = \app\helpers\Utility::order_id($merchantid,'transaction'); 
+							$userarray['order_id'] = Utility::order_id($merchantid,'order'); 
+							$userarray['txn_id'] = Utility::order_id($merchantid,'transaction'); 
 							$userarray['txn_date'] = date('Y-m-d H:i:s');
 							$userarray['reg_date'] = date('Y-m-d H:i:s');
 							$userarray['amount'] = $val['amount'];
@@ -1542,7 +1542,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 									if(!empty($coinsdata['user_id'])&&!empty($coinsdata['coins'])){
 									$sqlDelete = "delete from coins_transactions where ID = '".$coinsdata['ID']."'";
 									$resDelete = Yii::$app->db->createCommand($sqlDelete)->execute();
-									\app\helpers\Utility::coins_deduct($coinsdata['user_id'],$coinsdata['coins']);
+									Utility::coins_deduct($coinsdata['user_id'],$coinsdata['coins']);
 									}
 									
 								 $transactionscount = array(); 
