@@ -48,7 +48,8 @@ class FoodCategeries extends \yii\db\ActiveRecord
             'food_category' => 'Food Category',
             'reg_date' => 'Reg Date',
             'food_section_id' => 'Food Section Id',
-            'upselling' => 'Upselling'
+            'upselling' => 'Upselling',
+            'category_img' => 'Category Image'
         ];
     }
     public static function allcategeries()

@@ -54,7 +54,7 @@ use yii\helpers\ArrayHelper;
 
 
 
-define('SITE_URL','http://superpilot.in/dev/');
+define('SITE_URL','http://localhost');
 class MerchantController extends GoController
 {
 
@@ -344,7 +344,7 @@ else{
 	
 	}
 	return $this->render('foodcategeries',['allcategeries'=>$allcategeries,'foodcatgerymodel'=>$foodcatgerymodel
-	,'categorytypes'=>$rescategorytypes,'model' => $model,'foodSections'=>$foodSections]);
+	,'categorytypes'=>$rescategorytypes,'model' => $model,'foodSections'=>$foodSections,'site_url' => SITE_URL]);
     }
     public function actionEditcategorypopup()
     {

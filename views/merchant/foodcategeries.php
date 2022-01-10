@@ -42,18 +42,24 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
                         <th>S.No</th>
                         <th>Item Category</th>
                         <th>Upselling</th>
+                        <th>Category Image</th>
                         <th class="text-center">Edit</th>
                         <th class="text-center">Tax</th>
                       </tr>
                     </thead>
 		    <tbody>
 			<?php
+
 			 $categeryCount = count($allcategeries);
-			 for($i=0;$i< $categeryCount ;$i++){?>
+			 for($i=0;$i< $categeryCount ;$i++){
+        $path = 'file:///'.$_SERVER["DOCUMENT_ROOT"].'/merchant_docs/'.$allcategeries[$i]['merchant_id'].'/item_category';
+         ?>
 			<tr>
 			    <td><?= $i+1 ; ?></td>
 			    <td><?= $allcategeries[$i]['food_category'] ; ?></td>
 			    <td><?= $allcategeries[$i]['upselling'] == '1' ? 'Yes' : 'No' ; ?></td>
+          <td><img src="<?= SITE_URL.'/merchant_docs/'.$allcategeries[$i]['merchant_id'].'/item_category/'.$allcategeries[$i]['category_img']; ?>" alt="" class="img-table dash-icon" style="height:50px">
+          </td> 
 			    <td class="icons text-center">
 				<a id="<?php echo $allcategeries[$i]['ID']; ?>" onclick="editcategory('<?php echo $allcategeries[$i]['ID']; ?>');"><span class="fa fa-pencil"></span></a>
                             </td>
