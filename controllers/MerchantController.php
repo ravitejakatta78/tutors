@@ -343,6 +343,7 @@ else{
 	return $this->redirect('food-categeries');
 	
 	}
+	
 	return $this->render('foodcategeries',['allcategeries'=>$allcategeries,'foodcatgerymodel'=>$foodcatgerymodel
 	,'categorytypes'=>$rescategorytypes,'model' => $model,'foodSections'=>$foodSections,'site_url' => SITE_URL]);
     }

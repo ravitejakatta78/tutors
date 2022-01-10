@@ -23,7 +23,7 @@ use yii\helpers\Html;
 		    <?php for($fs = 0;$fs <count($foodSections);$fs++) { ?>
 		    <option value="<?= $foodSections[$fs]['ID']; ?>" <?php if( $categorytypes[0]['food_section_id'] ==  $foodSections[$fs]['ID']) { ?> selected <?php } ?>><?= $foodSections[$fs]['food_section_name']; ?></option>
 		    <?php } ?>
-		</select>    
+		</select>     
 		<span id="err_food_section" style="display:none;color:red">Please Enter Menu Section</span>
 		</div>
 		</div>

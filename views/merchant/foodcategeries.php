@@ -46,6 +46,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
                         <th class="text-center">Edit</th>
                         <th class="text-center">Tax</th>
                       </tr>
+                      
                     </thead>
 		    <tbody>
 			<?php
