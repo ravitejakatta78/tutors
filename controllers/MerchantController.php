@@ -310,10 +310,14 @@ else{
 
 		$foodcatgerymodel['merchant_id'] = (string)$merchantId;
 		$foodcatgerymodel['reg_date'] = date('Y-m-d H:i:s A');
-		$foodcatgerymodel->save();
-		$food_cat_id =  $foodcatgerymodel->getPrimaryKey();		
     	
-		
+		if(!empty($_FILES['category_label']['name'])){
+			$newName =	$this->uploadItemCategory($_FILES['category_label'],$merchantId,'insert');
+			$foodcatgerymodel['category_img'] = $newName;
+		}
+		$foodcatgerymodel->save();
+		$food_cat_id =  $foodcatgerymodel->getPrimaryKey();	
+
 
 		$catTypeArray = array_filter($categorytypes);
 	    if(!empty($catTypeArray))
@@ -389,6 +393,13 @@ else{
 
 		
 	}
+	
+	if(!empty($_FILES['update_category_label']['name'])){
+		$newName =	$this->uploadItemCategory($_FILES['update_category_label'],$merchantId,'update');
+		$foodCategoryUpdate['category_img'] = $newName;
+		$foodCategoryUpdate->save();
+	}
+
 	if(count($foodCateQtys) > 0)
 	{
 			for($i=0;$i<count($foodCateQtys);$i++)
@@ -424,6 +435,20 @@ else{
     ]);
 	return $this->redirect('food-categeries');		
     }
+	public function uploadItemCategory($filearray,$merchantId,$reqType)
+	{
+		$file_tmpname = $filearray['tmp_name'];
+		$file_name = $filearray['name'];
+		$file_size = $filearray['size'];
+		$file_ext = pathinfo($file_name, PATHINFO_EXTENSION);		
+		$newname = date('YmdHis',time()).mt_rand().'.'.$file_ext;
+		$path = '../../merchant_docs/'.$merchantId.'/item_category';
+		if (!is_dir($path)) {
+			mkdir($path, 0777, true);
+		}
+		move_uploaded_file($file_tmpname,$path.'/'.$newname);
+		return $newname;
+	}
 	public function actionManagetable()
 	{
 	    	extract($_POST);

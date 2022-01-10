@@ -38,6 +38,14 @@ use yii\helpers\Html;
 
 		</div>
 		</div>
+
+		<div class="form-group row">
+		<label class="control-label col-md-4">Category Image</label>
+		<div class="col-md-8">
+          <input type="file" class="form-control" name="update_category_label" >
+		</div>
+		</div>
+		
 		
 		</div>
 	<?php if(count($categorytypes)>0 &&  !empty($categorytypes[0]['fcid'])   ) {?>	

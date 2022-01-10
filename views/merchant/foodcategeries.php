@@ -78,7 +78,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
           <h4 class="modal-title">Add Category</h4>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
-	<form method="post" action="food-categeries" onsubmit="return checkvalidation()">
+	<form method="post" action="food-categeries" enctype="multipart/form-data" onsubmit="return checkvalidation()">
         <div class="modal-body">
 
 		
@@ -112,6 +112,13 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
 		    <option value="2">No</option>
 		    <option value="1">Yes</option>
 		</select>    
+		</div>
+		</div>
+
+    <div class="form-group row">
+		<label class="control-label col-md-4">Category Image</label>
+		<div class="col-md-8">
+          <input type="file" class="form-control" name="category_label" >
 		</div>
 		</div>
 		
@@ -213,7 +220,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
           <h4 class="modal-title">Update Category</h4>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
-		<form method="post" action="updatefoodcategery">
+		<form method="post" action="updatefoodcategery" enctype="multipart/form-data">
         <div class="modal-body" id="foodcategerybody">
 </div>	
 		

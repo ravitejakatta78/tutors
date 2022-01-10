@@ -30,7 +30,7 @@ class FoodCategeries extends \yii\db\ActiveRecord
         return [
             [['merchant_id', 'food_category', 'reg_date'], 'required'],
             [['merchant_id'], 'string', 'max' => 50],
-            [['food_category'], 'string', 'max' => 255],
+            [['food_category', 'category_img'], 'string', 'max' => 255],
             [['reg_date'], 'string', 'max' => 50],
             [['food_section_id','upselling'],'integer']
             
