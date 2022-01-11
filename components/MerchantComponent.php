@@ -357,12 +357,19 @@ class MerchantComponent extends Component{
 	        ,sum(case when (table_status = 0 or table_status is null)  then 1 else 0 end) available_count
 	        from tablename where section_id = \''.$res['ID'].'\'';
 	        $restables = Yii::$app->db->createCommand($sqltables)->queryOne();
+			$resPilotTable = [];
+			if(!empty($val['serviceboy_id'])) {
+				$sqlPilotTable = 'select * from pilot_table where serviceboy_id = \''.$val['serviceboy_id'].'\'
+				and section_id = \''.$res['ID'].'\'';
+				$resPilotTable = Yii::$app->db->createCommand($sqlPilotTable)->queryOne();
+			}
 	        
 	        $tablesection['section_id'] = $res['ID'];
             $tablesection['section_name'] = $res['section_name'];
             $tablesection['total_tables'] = $restables['total_table'];
             $tablesection['tables_occupied'] = @$restables['occupied_count'] ?? "0";
             $tablesection['tables_available'] = @$restables['available_count'] ?? "0";
+			$tablesection['section_available'] = !empty($resPilotTable) ? true : false;
             $tablesectionlistarray[] = $tablesection;
 	        
 	    }
