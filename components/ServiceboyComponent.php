@@ -1286,7 +1286,7 @@ class ServiceboyComponent extends Component{
 select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category end as food_category
                                                         ,count(foodtype) itemcount  from product p
                                                         left join food_categeries fc on fc.id = p.foodtype
-                                                        where p.merchant_id = \''.$merchantid.'\'
+                                                     where p.merchant_id = \''.$merchantid.'\'
                                                         group by foodtype';
 											$categoryDetail = Yii::$app->db->createCommand($sqlcategoryDetail)->queryAll();
 							            	$getproductsreindex = ArrayHelper::index($getproducts, null, 'food_category');

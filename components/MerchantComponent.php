@@ -318,8 +318,10 @@ class MerchantComponent extends Component{
 		
 	}
 	public function tableslist($val){
-	    $sql = 'select tb.*,s.section_name,tb.section_id from tablename tb 
-	    inner join  sections s on s.ID = tb.section_id where tb.status = \'1\' and tb.merchant_id = \''.$val['merchant_id'].'\' ';
+	    $sql = 'select tb.*,s.section_name,tb.section_id,m.table_occupy_status from tablename tb 
+	    inner join  sections s on s.ID = tb.section_id where tb.status = \'1\' 
+		and tb.merchant_id = \''.$val['merchant_id'].'\'
+		inner join merchant m on m.ID =  tb.merchant_id ';
 	    if(!empty($val['section_id'])){
 	        $sql .= ' and s.ID = \''.$val['section_id'].'\' ' ;    
 	    }
@@ -333,10 +335,11 @@ class MerchantComponent extends Component{
 	        $tablelist['name'] = $res['name'];
 	        $tablelist['capacity'] = $res['capacity'];
             $tablelist['enckey'] = Utility::encrypt($val['merchant_id'].','.$res['ID']);
-             $tablelist['section_name'] = $res['section_name'];
-             $tablelist['section_id'] = $res['section_id'];
-             $tablelist['table_status'] = $res['table_status'] ?? 0;
-             $tablelist['table_status_text'] = ($res['table_status'] == 1) ? 'Occupied' : 'Free';
+            $tablelist['section_name'] = $res['section_name'];
+            $tablelist['section_id'] = $res['section_id'];
+            $tablelist['table_status'] = $res['table_status'] ?? 0;
+            $tablelist['table_status_text'] = ($res['table_status'] == 1) ? 'Occupied' : 'Free';
+			$tablelist['table_occupy_status'] = $res['table_occupy_status'] ?? 1;
             $tablelistarray[] = $tablelist;
 	        
 	    }
