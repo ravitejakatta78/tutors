@@ -319,9 +319,10 @@ class MerchantComponent extends Component{
 	}
 	public function tableslist($val){
 	    $sql = 'select tb.*,s.section_name,tb.section_id,m.table_occupy_status from tablename tb 
-	    inner join  sections s on s.ID = tb.section_id where tb.status = \'1\' 
-		and tb.merchant_id = \''.$val['merchant_id'].'\'
-		inner join merchant m on m.ID =  tb.merchant_id ';
+	    inner join  sections s on s.ID = tb.section_id 
+		inner join merchant m on m.ID =  tb.merchant_id
+		where tb.status = \'1\' 
+		and tb.merchant_id = \''.$val['merchant_id'].'\' ';
 	    if(!empty($val['section_id'])){
 	        $sql .= ' and s.ID = \''.$val['section_id'].'\' ' ;    
 	    }
@@ -339,7 +340,7 @@ class MerchantComponent extends Component{
             $tablelist['section_id'] = $res['section_id'];
             $tablelist['table_status'] = $res['table_status'] ?? 0;
             $tablelist['table_status_text'] = ($res['table_status'] == 1) ? 'Occupied' : 'Free';
-			$tablelist['table_occupy_status'] = $res['table_occupy_status'] ?? 1;
+			$tablelist['table_occupy_status'] = $res['table_occupy_status'] ?? 1  ;
             $tablelistarray[] = $tablelist;
 	        
 	    }
