@@ -683,7 +683,7 @@ class ServiceboyComponent extends Component{
 							}
 						}
 						$orderarray['products'] =  array_filter($totalproductaarray);
-						$orderarray['reg_date'] =  date('Y-m-d h:i:s A',strtotime($orderlist['reg_date']) ); 
+						$orderarray['reg_date'] =  date('d-M-Y h:i A',strtotime($orderlist['reg_date']) ); 
 						$orderarray['regdate'] =  date('h:i A',strtotime($orderlist['reg_date']) ); 
 						$orderarray['acceptedtime'] =  date('h:i A',strtotime($orderlist['preparedate']) ); 
 						$orderarray['pilot_rating'] = !empty($feedbackDet['pilot_rating']) ? $feedbackDet['pilot_rating'] : '';
