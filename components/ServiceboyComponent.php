@@ -733,7 +733,7 @@ class ServiceboyComponent extends Component{
 						$orderarray['orderprocesstext'] =  Utility::orderstatus_details($orderlist['orderprocess']); 
 						$orderarray['paidstatus'] =  Utility::status_details($orderlist['paidstatus']); 
 						$orderarray['reorder'] =  $orderlist['reorderprocess'];
-						$orderarray['reg_date'] =  date('Y-m-d h:i:s A',strtotime($orderlist['reg_date']) ); 
+						$orderarray['reg_date'] =  date('d-M-Y h:i A',strtotime($orderlist['reg_date']) ); 
 						$orderarray['preparedate'] =  $orderlist['preparedate'];
 						$orderarray['preparetime'] = $orderlist['preparetime']; 
 						$orderarray['orderline'] =  $orderlist['orderline'];
