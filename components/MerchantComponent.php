@@ -358,7 +358,7 @@ class MerchantComponent extends Component{
 	        from tablename where section_id = \''.$res['ID'].'\'';
 	        $restables = Yii::$app->db->createCommand($sqltables)->queryOne();
 			$resPilotTable = [];
-			if(!empty($val['serviceboy_id'])) {
+			if(!empty($val['header_user_id'])) {
 				$sqlPilotTable = 'select * from pilot_table where serviceboy_id = \''.$val['header_user_id'].'\'
 				and section_id = \''.$res['ID'].'\'';
 				$resPilotTable = Yii::$app->db->createCommand($sqlPilotTable)->queryOne();
