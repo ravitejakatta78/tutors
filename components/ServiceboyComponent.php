@@ -787,6 +787,7 @@ class ServiceboyComponent extends Component{
 
 					$orderlist = Orders::findOne($orderid);
 					if(!empty($orderlist)){
+						$orderlist['serviceboy_id'] = str_replace('""', NULL, $orderlist['serviceboy_id']);
 						if(empty($orderlist['serviceboy_id'])){
 						$roderarray = $roderwharray=  array();
 						$roderwharray['ID'] = $orderid; 
