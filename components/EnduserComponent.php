@@ -1591,7 +1591,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 										$payload = array("status"=>'1', "merchantid"=>$merchantdetails['ID'], "table"=>$tabledetails['ID']
 										, "tablename"=>$tabledetails['name'], "section_id"=>$tabledetails['section_id'], "store"=>$merchantdetails['storename'], "storetype"=>$merchantdetails['storetype']
 										, "servingtype"=>$merchantdetails['servingtype'], "verify"=>$merchantdetails['verify']
-										, "location"=>$merchantdetails['location'], "logo"=>$merchantlgo, "coverpic"=>$merchantcoverpic
+										, "location"=>$merchantdetails['location'], "logo"=>$merchantlgo, "merchant_mobile"=>$merchantdetails['mobile'], "coverpic"=>$merchantcoverpic
 										, "productlist"=>$newProduclistArr,"categoryDetail"=>$categoryDetail, "configured_tip" => $merchantdetails['tip']
 										, "bannerdet" => $this->bannerlist(['merchant_id' => $merchantid])
 										);
