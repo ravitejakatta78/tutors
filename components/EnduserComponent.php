@@ -29,6 +29,7 @@ use app\models\AllocatedRooms;
 use app\models\Userinformation;
 use app\models\Banners;
 use app\models\PilotTable;
+use app\models\UserWhislist;
 use yii\helpers\ArrayHelper;
 
 
@@ -3083,6 +3084,44 @@ order by remain_coins desc limit '.$val['userCount'] ;
 	public function coupondetails($val)
 	{
 	    
+	}
+	public function addwhislist($val){
+		if(!empty($val['merchant_id']))
+		{
+			$model = UserWhislist::find()->where(['user_id' => $val['header_user_id'],'merchant_id' => $val['merchant_id']])->One();
+			if(empty($model)) {
+				$newModel = new UserWhislist;
+				$newModel->user_id = $val['header_user_id'];
+				$newModel->merchant_id = $val['merchant_id'];
+				$newModel->status = 1;
+				$newModel->reg_date = date('Y-m-d H:i:s');
+				$newModel->created_by = $val['header_user_id'];
+				$newModel->updated_on = date('Y-m-d H:i:s');
+				$newModel->updated_by = $val['header_user_id'];
+				$newModel->save();
+			}
+			else{
+				if($model->status == 1) {
+					$model->status = 2;	
+				}
+				else{
+					$model->status = 1;
+				}
+				$model->save();
+			}
+			$payload = ["status"=>'1', "message" => 'Whislist Added Successfully!!'];
+		}
+		else{
+            $payload = ["status"=>'0',"message"=>'Please Provide Merchant Details'];
+		}
+		return $payload;
+	}
+	public function getUserWhilist($val){
+		$userid = $val['header_user_id'];
+		$sql = 'select * from user_whislist uw inner join users u on u.ID = uw.user_id
+		inner join merchant m on m.ID = uw.merchant_id where u.ID = \''.$val['header_user_id'].'\'';
+		$res = Yii::$app->db->createCommand($sql)->queryAll();
+		return $payload = ["status"=>'1',"whishlist_details"=>$res];
 	}
 }
 ?>

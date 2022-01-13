@@ -238,6 +238,12 @@ public function beforeAction($action)
 				case 'coupondetails':
 				$this->coupondetails($_REQUEST);
 				break;
+				case 'addwhislist':
+					$this->addwhislist($_REQUEST);
+				break;
+				case 'getUserWhilist':
+					$this->getUserWhilist($_REQUEST);
+				break;
 			}
 		}
 	}
@@ -1500,6 +1506,36 @@ public function reordercashpilot($val){
 		}
 		return $this->asJson($payload);				
 	}
+
+	public function addwhislist($val)
+	{
+
+		$headerslist = apache_request_headers();
+		$usersid = base64_decode($headerslist['Authorization']);
+		if(!empty($usersid)){
+			$val['header_user_id'] = $usersid;
+			$payload = Yii::$app->enduser->addwhislist($val);
+		}else{
+			$payload = array('status'=>'0','message'=>'Invalid users details');
+		}
+		return $this->asJson($payload);				
+	}
+
+	public function getUserWhilist($val)
+	{
+
+		$headerslist = apache_request_headers();
+		$usersid = base64_decode($headerslist['Authorization']);
+		if(!empty($usersid)){
+			$val['header_user_id'] = $usersid;
+			$payload = Yii::$app->enduser->getUserWhilist($val);
+		}else{
+			$payload = array('status'=>'0','message'=>'Invalid users details');
+		}
+		return $this->asJson($payload);				
+	}
+
+	
 	
 	public function actionClosetableorder(){
 	    //$_REQUEST
