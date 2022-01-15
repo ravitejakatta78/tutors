@@ -3119,9 +3119,11 @@ order by remain_coins desc limit '.$val['userCount'] ;
 	public function getStores($val)
 	{
 		$userid = $val['header_user_id'];
-        $room_reservation_types = ArrayHelper::map(\app\models\Storetypes::find()
+        $room_reservation_types = \app\models\Storetypes::find()
 				  ->where(['type_status'=>'1'])
-				  ->all(), 'ID', 'storetypename');
+				  ->all();
+
+
 		return $payload = ["status"=>'1',"store_details"=>$room_reservation_types];
 	}
 
@@ -3131,16 +3133,24 @@ order by remain_coins desc limit '.$val['userCount'] ;
 
 		$roomreservationhotelslist = [];
         //$room_reservation_types = MyConst::ROOM_RESERVATION_TYPES;
-        $room_reservation_types = ArrayHelper::map(\app\models\Storetypes::find()
-				  ->where(['type_status'=>'1'])
-				  ->all(), 'ID', 'storetypename');
+        //$room_reservation_types = ArrayHelper::map(\app\models\Storetypes::find()
+		//		  ->where(['type_status'=>'1'])
+		//		  ->all(), 'ID', 'storetypename');
+
+			$sqlroomreservationhotelslist = 'select * from storetypes where type_status = \'1\' ';
+			if(!empty($val['id'])){
+				$sqlroomreservationhotelslist .= ' and ID = \''.$val['id'].'\' ';
+			}
+			$roomreservationhotelslistarr = Yii::$app->db->createCommand($sqlroomreservationhotelslist)->queryAll();
+			$room_reservation_types = ArrayHelper::map($roomreservationhotelslistarr, 'ID', 'storetypename');
 
 		$room_reservation_types_ids = array_keys($room_reservation_types);
 		$room_reservation_types_ids_string = implode("','",$room_reservation_types_ids);
 
 		$sql = 'select *,concat(\'http://superpilot.in/dev/merchantimages/\',logo) logo,concat(\'http://superpilot.in/dev/merchantimages/\',qrlogo) qrlogo
         ,concat(\'http://superpilot.in/dev/merchantimages/\',coverpic) coverpic from user_whislist uw inner join users u on u.ID = uw.user_id
-		inner join merchant m on m.ID = uw.merchant_id where u.ID = \''.$val['header_user_id'].'\'';
+		inner join merchant m on m.ID = uw.merchant_id where u.ID = \''.$val['header_user_id'].'\' ';
+		
 		$res = Yii::$app->db->createCommand($sql)->queryAll();
 
         $res = ArrayHelper::index($res, null, 'storetype');
