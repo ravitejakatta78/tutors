@@ -3118,10 +3118,32 @@ order by remain_coins desc limit '.$val['userCount'] ;
 	}
 	public function getUserWhilist($val){
 		$userid = $val['header_user_id'];
-		$sql = 'select * from user_whislist uw inner join users u on u.ID = uw.user_id
+
+		$roomreservationhotelslist = [];
+        //$room_reservation_types = MyConst::ROOM_RESERVATION_TYPES;
+        $room_reservation_types = ArrayHelper::map(\app\models\Storetypes::find()
+				  ->where(['type_status'=>'1'])
+				  ->all(), 'ID', 'storetypename');
+
+		$room_reservation_types_ids = array_keys($room_reservation_types);
+		$room_reservation_types_ids_string = implode("','",$room_reservation_types_ids);
+
+		$sql = 'select *,concat(\'http://superpilot.in/dev/merchantimages/\',logo) logo,concat(\'http://superpilot.in/dev/merchantimages/\',qrlogo) qrlogo
+        ,concat(\'http://superpilot.in/dev/merchantimages/\',coverpic) coverpic from user_whislist uw inner join users u on u.ID = uw.user_id
 		inner join merchant m on m.ID = uw.merchant_id where u.ID = \''.$val['header_user_id'].'\'';
 		$res = Yii::$app->db->createCommand($sql)->queryAll();
-		return $payload = ["status"=>'1',"whishlist_details"=>$res];
+
+        $res = ArrayHelper::index($res, null, 'storetype');
+        $wishlist = array();
+			foreach($room_reservation_types_ids as $k => $v){
+				if(isset($res[$room_reservation_types_ids[$k]])){
+					$hotelslist['id'] = $room_reservation_types_ids[$k];  
+					$hotelslist['name'] = $room_reservation_types[$room_reservation_types_ids[$k]];  
+					$hotelslist['whislistdetails'] = $res[$room_reservation_types_ids[$k]];
+					$wishlist[] = $hotelslist;
+				}
+			}
+		return $payload = ["status"=>'1',"whishlist_details"=>$wishlist];
 	}
 }
 ?>
