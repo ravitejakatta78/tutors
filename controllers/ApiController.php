@@ -244,6 +244,9 @@ public function beforeAction($action)
 				case 'getUserWhilist':
 					$this->getUserWhilist($_REQUEST);
 				break;
+				case 'getStores':
+					$this->getStores($_REQUEST);
+				break;
 			}
 		}
 	}
@@ -1534,6 +1537,19 @@ public function reordercashpilot($val){
 		}
 		return $this->asJson($payload);				
 	}
+	public function getStores($val)
+	{
+		$headerslist = apache_request_headers();
+		$usersid = base64_decode($headerslist['Authorization']);
+		if(!empty($usersid)){
+			$val['header_user_id'] = $usersid;
+			$payload = Yii::$app->enduser->getStores($val);
+		}else{
+			$payload = array('status'=>'0','message'=>'Invalid users details');
+		}
+		return $this->asJson($payload);				
+	}
+	
 
 	
 	

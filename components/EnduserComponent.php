@@ -3116,6 +3116,16 @@ order by remain_coins desc limit '.$val['userCount'] ;
 		}
 		return $payload;
 	}
+	public function getStores($val)
+	{
+		$userid = $val['header_user_id'];
+        $room_reservation_types = ArrayHelper::map(\app\models\Storetypes::find()
+				  ->where(['type_status'=>'1'])
+				  ->all(), 'ID', 'storetypename');
+		return $payload = ["status"=>'1',"store_details"=>$room_reservation_types];
+	}
+
+
 	public function getUserWhilist($val){
 		$userid = $val['header_user_id'];
 
