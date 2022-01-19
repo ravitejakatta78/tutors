@@ -668,7 +668,7 @@ class ServiceboyComponent extends Component{
 						 
 
 						if(!empty(@$productDet['food_category_quantity'])){
-						    $productaarray['foodqtyname'] = (string)$productDet['food_category_quantity'];
+						    $productaarray['foodqtyname'] = (string)Utility::foodcategory_type($productDet['food_category_quantity']);
 						} else{
 						    $productaarray['foodqtyname'] = '';
 						}
@@ -761,7 +761,6 @@ class ServiceboyComponent extends Component{
 							$foodCategoryQuantity = $productDetails['food_category_quantity'];
 							if(!empty($foodCategoryQuantity)){
 							   $foodCategoryQuantityName =  Utility::foodcategory_type($foodCategoryQuantity);
-							    
 							}
 						$productaarray['order'] = $orderproduct['inc'];
 						$productaarray['name'] = $productDetails['title'];
@@ -1696,7 +1695,26 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 		return	$payload = array('status'=>'1','payment_names' => $paytypearray);
 
 	}
-
+	public function confirmpayment($val)
+	{
+		if(!empty($val['payment_method']) && !empty($val['paidstatus']) && !empty($val['order_id']))
+		{
+			$orderDetails = Orders::findOne($val['order_id']);
+			if(!empty($orderDetails)){
+				$orderDetails->paymenttype = $val['payment_method'];
+				$orderDetails->paidstatus = $val['paidstatus'];
+				$orderDetails->save();
+				$payload = ['status' => '1', 'message' => 'Payment Status Updated Successfully'];
+			}
+			else{
+				$payload = ['status' => '0', 'message' => 'Please Provide Valid Order Details'];	
+			}
+		}
+		else{
+			$payload = ['status' => '0', 'message' => 'Please Provide Required Parameters'];
+		}
+		return $payload;
+	}
 
 }
 ?>
