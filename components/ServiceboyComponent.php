@@ -662,18 +662,18 @@ class ServiceboyComponent extends Component{
 						$productaarray['order'] = $orderproduct['inc'];
 						
 						
-						$productaarray['name'] = Utility::product_details($orderproduct['product_id'],'title');
+						$productaarray['name'] = $productDet['title'];;
 						 
 
 						if(!empty(@$productDet['food_category_quantity'])){
-						    $productaarray['foodqtyname'] = Utility::foodcategory_type($productDet['food_category_quantity']);
+						    $productaarray['foodqtyname'] = $productDet['food_category_quantity'];
 						} else{
 						    $productaarray['foodqtyname'] = '';
 						}
 						$productaarray['count'] = $orderproduct['count'];
 						$productaarray['price'] = $orderproduct['price'];
 						$productaarray['reorder'] = $orderproduct['reorder']; 
-						
+						$productaarray['item_type'] = $productDet['item_type'];
 						
 						
 						$productaarray['productimage'] = !empty($productDet['image']) ? MERCHANT_PRODUCT_URL.$productDet['image'] : '';
@@ -716,7 +716,7 @@ class ServiceboyComponent extends Component{
 						$orderarray['order_id'] =  $orderlist['ID'];
 						$orderarray['merchant_id'] =  $orderlist['merchant_id'];
 						$orderarray['unique_id'] =  $orderlist['order_id']; 
-						$orderarray['username'] = Utility::user_details($orderlist['user_id'],"name");
+						$orderarray['username'] = Utility::user_details($orderlist['user_id'],"name") ?? '';
 						$orderarray['storename'] =  !empty($merchantdetails['storename']) ? $merchantdetails['storename'] : '';
 						$orderarray['tablename'] = $tableDetails['name'];
 						$orderarray['section_name'] = $tableDetails->section['section_name']; 
@@ -737,7 +737,7 @@ class ServiceboyComponent extends Component{
 						$orderarray['preparedate'] =  $orderlist['preparedate'];
 						$orderarray['preparetime'] = $orderlist['preparetime']; 
 						$orderarray['orderline'] =  $orderlist['orderline'];
-						$orderarray['instructions'] =  $orderlist['instructions'];
+						$orderarray['instructions'] =  $orderlist['instructions'] ?? '';
 						$orderarray['discount_number'] =  sprintf("%.2f", (!empty($orderlist['discount_number']) ?   $orderlist['discount_number'] : 0));;;
 						$sqlpendingamount = "select sum(totalamount) as pendingamount from order_transactions 
 						where order_id = '".$orderlist['ID']."' and merchant_id = '".$orderlist['merchant_id']."' 
@@ -754,20 +754,21 @@ class ServiceboyComponent extends Component{
 						if(count($orderproducts) > 0){
 						    
 						foreach($orderproducts as $orderproduct){
-						    
+						    $productDetails = Product::findOne($orderproduct['product_id']);
 							$productaarray = array();
-							$foodCategoryQuantity = Utility::product_details($orderproduct['product_id'],'food_category_quantity');
+							$foodCategoryQuantity = $productDetails['food_category_quantity'];
 							if(!empty($foodCategoryQuantity)){
 							   $foodCategoryQuantityName =  Utility::foodcategory_type($foodCategoryQuantity);
 							    
 							}
 						$productaarray['order'] = $orderproduct['inc'];
-						$productaarray['name'] = Utility::product_details($orderproduct['product_id'],'title');
+						$productaarray['name'] = $productDetails['title'];
 						$productaarray['count'] = $orderproduct['count'];
 						$productaarray['price'] = $orderproduct['price'];
 						$productaarray['reorder'] = $orderproduct['reorder']; 
 						$productaarray['foodqtyname'] = $foodCategoryQuantityName ?? '';
-					
+						$productaarray['item_type'] = $productDetails['item_type'];
+						
 						$totalproductaarray[] = $productaarray;
 							}
 						}
@@ -1679,19 +1680,18 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 	}
 	public function merchantpaymenttypes($val){
 
+		$paytypes = array('1'=>'Cash','2'=>'Online','3'=>'UPI','4'=>'Card');
+		$merchant_pay_types_det = \app\models\MerchantPaytypes::find()->where(['merchant_id'=>$val['merchant_id'],'status' => 1])->orderBy([
+            'ID'=>SORT_DESC
+        ])->asArray()->All();
+        $merchant_pay_types = array_column($merchant_pay_types_det,'paymenttype');
 
-        $paytypearray[0]['ID'] = '1';
-        $paytypearray[0]['name'] = 'Cash';
-        $paytypearray[1]['ID'] = '2';
-        $paytypearray[1]['name'] = 'Online';
-        $paytypearray[1]['ID'] = '3';
-        $paytypearray[1]['name'] = 'UPI';
-        $paytypearray[1]['ID'] = '4';
-        $paytypearray[1]['name'] = 'Card';
-        //= array('1'=>'Cash','2'=>'Online','3'=>'UPI','4'=>'Card');
-
-        
-	return					$payload = array('status'=>'1','payment_names' => $paytypearray);
+		foreach($merchant_pay_types as $merchant_pay_type) {
+			$paytypesarray['ID'] = $merchant_pay_type; 
+			$paytypesarray['name'] = $paytypes[$merchant_pay_type]; 
+			$paytypearray[] = $paytypesarray;
+	    }
+		return	$payload = array('status'=>'1','payment_names' => $paytypearray);
 
 	}
 
