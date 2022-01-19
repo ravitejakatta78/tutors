@@ -521,11 +521,13 @@ class ServiceboyComponent extends Component{
 					$orderarray = $totalordersarray = array();
 					foreach($orderlistarray as $orderlist){
 						$totalproductaarray = array();
+						$tableDetails = Tablename::findOne($orderlist['tablename']);
 						$orderarray['order_id'] =  $orderlist['ID'];
 						$orderarray['unique_id'] =  $orderlist['order_id']; 
 						$orderarray['username'] = Utility::user_details($orderlist['user_id'],"name");
 						$orderarray['storename'] = Utility::merchant_details($orderlist['merchant_id'],"storename");
-						$orderarray['tablename'] = Utility::table_details($orderlist['tablename'],"name"); 
+						$orderarray['tablename'] = $tableDetails['name']; 
+						$orderarray['section_name'] = $tableDetails->section['section_name']; 
 						$orderarray['amount'] =  $orderlist['amount'];
 						$orderarray['totalamount'] =  $orderlist['totalamount'];
 						$orderarray['paymenttype'] =  $orderlist['paymenttype']=='cash' ? 'Cash' : 'Online';
@@ -666,7 +668,7 @@ class ServiceboyComponent extends Component{
 						 
 
 						if(!empty(@$productDet['food_category_quantity'])){
-						    $productaarray['foodqtyname'] = $productDet['food_category_quantity'];
+						    $productaarray['foodqtyname'] = (string)$productDet['food_category_quantity'];
 						} else{
 						    $productaarray['foodqtyname'] = '';
 						}
