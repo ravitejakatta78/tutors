@@ -397,6 +397,7 @@ else{
 	
 	if(!empty($_FILES['update_category_label']['name'])){
 		$newName =	$this->uploadItemCategory($_FILES['update_category_label'],$merchantId,'update');
+		unlink('../../merchant_docs/'.$merchantId.'/item_category/'.$foodCategoryUpdate['category_img']);
 		$foodCategoryUpdate['category_img'] = $newName;
 		$foodCategoryUpdate->save();
 	}
