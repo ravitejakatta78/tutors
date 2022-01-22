@@ -631,7 +631,7 @@ class ServiceboyComponent extends Component{
 						$orderarray['subscription'] = (string)(!empty($orderlist['subscription']) ?   $orderlist['subscription'] : 0);
 						$orderarray['couponamount'] = (string)(!empty($orderlist['couponamount']) ?  $orderlist['couponamount'] : 0);
 						$orderarray['totalamount'] =  (string)(!empty($orderlist['totalamount']) ?   $orderlist['totalamount'] : 0);
-						$orderarray['paymenttype'] =  $orderlist['paymenttype']=='cash' ? 'Cash' : 'Online';
+						$orderarray['paymenttype'] =  $orderlist['paymenttype'];
 						$orderarray['orderprocess'] =  $orderlist['orderprocess']; 
 						$orderarray['paidstatus'] =  $orderlist['paidstatus']; 
 						$orderarray['orderline'] =  $orderlist['orderline']; 
@@ -730,7 +730,7 @@ class ServiceboyComponent extends Component{
 						$orderarray['subscription'] = sprintf("%.2f", (!empty($orderlist['subscription']) ?   $orderlist['subscription'] : 0));
 						$orderarray['couponamount'] = sprintf("%.2f", (!empty($orderlist['couponamount']) ?  $orderlist['couponamount'] : 0));
 						$orderarray['totalamount'] =  sprintf("%.2f", (!empty($orderlist['totalamount']) ?   $orderlist['totalamount'] : 0));;
-						$orderarray['paymenttype'] =  $orderlist['paymenttype']=='cash' ? 'Cash' : 'Online';
+						$orderarray['paymenttype'] =  $orderlist['paymenttype'];
 						$orderarray['orderprocess'] =  $orderlist['orderprocess']; 
 						$orderarray['orderprocesstext'] =  Utility::orderstatus_details($orderlist['orderprocess']); 
 						$orderarray['paidstatus'] =  Utility::status_details($orderlist['paidstatus']); 
