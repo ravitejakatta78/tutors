@@ -1024,7 +1024,7 @@ class ServiceboyComponent extends Component{
 							Utility::sendNewFCM($userdetails['push_id'],$title,$message,$image,null,null,$orderid);
 						}
 						$coinstransactions = array();
-						$coinsAdd = round(($orderlist['amount'] - $orderlist['coupanamt'] ) /20,0);
+						$coinsAdd = round(($orderlist['amount'] - $orderlist['couponamount'] ) /20,0);
 						$coinstransactions['user_id'] = $userdetails['ID'];
 						$coinstransactions['txn_id'] = Utility::coinstxn_id();
 						$coinstransactions['order_id'] = $orderlist['ID'];
