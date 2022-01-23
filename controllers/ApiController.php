@@ -247,6 +247,9 @@ public function beforeAction($action)
 				case 'getStores':
 					$this->getStores($_REQUEST);
 				break;
+				case 'usermerchantpaymenttypes':
+					$this->usermerchantpaymenttypes($_REQUEST);
+					break;
 			}
 		}
 	}
@@ -1546,6 +1549,18 @@ public function reordercashpilot($val){
 		if(!empty($usersid)){
 			$val['header_user_id'] = $usersid;
 			$payload = Yii::$app->enduser->getStores($val);
+		}else{
+			$payload = array('status'=>'0','message'=>'Invalid users details');
+		}
+		return $this->asJson($payload);				
+	}
+	public function usermerchantpaymenttypes($val)
+	{
+		$headerslist = apache_request_headers();
+		$usersid = base64_decode($headerslist['Authorization']);
+		if(!empty($usersid)){
+			$val['header_user_id'] = $usersid;
+			$payload = Yii::$app->enduser->usermerchantpaymenttypes($val);
 		}else{
 			$payload = array('status'=>'0','message'=>'Invalid users details');
 		}

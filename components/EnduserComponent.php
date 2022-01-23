@@ -1589,7 +1589,9 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 
 
 										$payload = array("status"=>'1', "merchantid"=>$merchantdetails['ID'], "table"=>$tabledetails['ID']
-										, "tablename"=>$tabledetails['name'], "section_id"=>$tabledetails['section_id'], "store"=>$merchantdetails['storename'], "storetype"=>$merchantdetails['storetype']
+										, "tablename"=>$tabledetails['name'], "section_id"=>$tabledetails['section_id']
+										, 'section_name' => $tabledetails->section['section_name']
+										, "store"=>$merchantdetails['storename'], "storetype"=>$merchantdetails['storetype']
 										, "servingtype"=>$merchantdetails['servingtype'], "verify"=>$merchantdetails['verify']
 										, "location"=>$merchantdetails['location'], "logo"=>$merchantlgo, "merchant_mobile"=>$merchantdetails['mobile'], "coverpic"=>$merchantcoverpic
 										, "productlist"=>$newProduclistArr,"categoryDetail"=>$categoryDetail, "configured_tip" => $merchantdetails['tip']
@@ -3164,6 +3166,22 @@ order by remain_coins desc limit '.$val['userCount'] ;
 				}
 			}
 		return $payload = ["status"=>'1',"whishlist_details"=>$wishlist];
+	}
+	public function usermerchantpaymenttypes($val){
+
+		$paytypes = array('1'=>'Cash','2'=>'Online','3'=>'UPI','4'=>'Card');
+		$merchant_pay_types_det = \app\models\MerchantPaytypes::find()->where(['merchant_id'=>$val['merchant_id'],'status' => 1])->orderBy([
+            'ID'=>SORT_DESC
+        ])->asArray()->All();
+        $merchant_pay_types = array_column($merchant_pay_types_det,'paymenttype');
+
+		foreach($merchant_pay_types as $merchant_pay_type) {
+			$paytypesarray['ID'] = $merchant_pay_type; 
+			$paytypesarray['name'] = $paytypes[$merchant_pay_type]; 
+			$paytypearray[] = $paytypesarray;
+	    }
+		return	$payload = array('status'=>'1','payment_names' => $paytypearray);
+
 	}
 }
 ?>
