@@ -228,6 +228,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
               <input type="hidden" id="ttl_cpn_amt" name="ttl_cpn_amt" >
               <input type="hidden" id="ttl_sub_amt" name="ttl_sub_amt" >
               <input type="hidden" id="ttl_amt" name="ttl_amt" >
+              <input type="hidden" id="ttl_pending_amount" name="ttl_pending_amount" >
               <input type="hidden" id="ttl_tip" name="ttl_tip" >
               <input type="hidden" id="pilotid" name="pilotid" value="" >
               <input type="hidden" id="merchantcpn" name="merchantcpn" value="" >
@@ -255,16 +256,24 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
               </div>
               <div class="row mt-2">
                 <div class="col-md-4">
-                  <span class="ttl-item">Coupon : ₹</span> 
+                  <span class="ttl-item">Coupon: ₹</span> 
                   <span class="item-count ttl-cpn-amt" id="item-count"> <?php echo ($ttl_cpn_amt =  !empty($prevFullSingleOrderDet['couponamount']) ? $prevFullSingleOrderDet['couponamount'] : 0) ?></span>
                 </div>
                 <div class="col-md-4">
-                  <span class="ttl-item">Sub Total : ₹</span> 
+                  <span class="ttl-item">Sub Total: ₹</span> 
                   <span class="ttl-sub-amt"> <?php echo $ttl_sub_amt = (!empty($prevFullSingleOrderDet['amount']) ? $prevFullSingleOrderDet['amount'] : 0) ?></span>
                 </div>
                 <div class="col-md-4">
-                  <span class="ttl-tip">Tip : ₹</span> 
+                  <span class="ttl-tip">Tip: ₹</span> 
                   <input type="text" id="ttl-tip-amt" class="ttl-tip-amt" value="<?php echo ($prevFullSingleOrderDet['tips'] ?? 0); ?>" style="width:50px" onchange="totlrealprice(1)"> 
+                </div>
+                <div class="col-md-4">
+                  <span class="ttl-paid">Paid: ₹</span> 
+                  <span class="ttl-paid-amount" > <?php echo $ttl_sub_amt = (!empty($prevFullSingleOrderDet['paid_amount']) ? $prevFullSingleOrderDet['paid_amount'] : 0) ?></span>
+                </div>
+                <div class="col-md-4">
+                  <span class="ttl-pending">Pending: ₹</span> 
+                  <span class="ttl-pending-amount"> <?php echo $ttl_sub_amt = (!empty($prevFullSingleOrderDet['pending_amount']) ? $prevFullSingleOrderDet['pending_amount'] : 0) ?></span>
                 </div>
                 <!-- <div class="col-md-4">
                   <span class="ttl-item">Discount :</span> 
@@ -1213,7 +1222,9 @@ function totlrealprice(dynamictip = '')
     $("#ttl-tip-amt").val(cal_tip);
     totalprice = (parseFloat(totalprice) + parseFloat(cal_tip)).toFixed(2);
     $("#ttl_payble").html(totalprice);
-   
+    var pendingAmount = (totalprice - parseFloat($(".ttl-paid-amount").html())).toFixed(2);
+    $(".ttl-pending-amount").html(pendingAmount);
+    $("#ttl_pending_amount").val(pendingAmount);
    }
 
 function plusorminus(id,price,typeinc = '',foodtypename)

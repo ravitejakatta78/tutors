@@ -222,8 +222,10 @@ class MerchantComponent extends Component{
 					$model->subscription = (string)$arr['subscriptionamt'];
 					$model->couponamount = (string)$arr['couponamount'];
 					$model->totalamount = (string)$arr['totalamt'];
+					$model->paid_amount = 0.00;
+					$model->pending_amount = $arr['totalamt'];
 					$model->coupon = $arr['merchant_coupon'];
-					$model['paymenttype'] = $arr['payment_mode'];
+					//$model['paymenttype'] = $arr['payment_mode'];
 							$model->orderprocess = '1';
 							$model->status = '1';
 							$model->paidstatus = '0';
@@ -253,7 +255,7 @@ class MerchantComponent extends Component{
 						$orderTransaction->tips =  !empty($arr['tipamt']) ? number_format(trim($arr['tipamt']),2, '.', ',') : '0'; 
 						$orderTransaction->subscription =  !empty($arr['subscriptionamt']) ? number_format(trim($arr['subscriptionamt']),2, '.', ',') : '0'; 
 						$orderTransaction->totalamount =   !empty($arr['totalamt']) ? number_format(trim($arr['totalamt']),2, '.', ',') : 0; 
-						$orderTransaction->paymenttype = $arr['payment_mode'];
+						//$orderTransaction->paymenttype = $arr['payment_mode'];
 						$orderTransaction->reorder= '0';
 						$orderTransaction->paidstatus = '0';
 						$orderTransaction->reg_date = date('Y-m-d h:i:s');

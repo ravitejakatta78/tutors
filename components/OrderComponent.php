@@ -133,6 +133,5 @@ class OrderComponent extends Component{
 		}
 		return $taxamt;
 	}
-	
 }
 ?>

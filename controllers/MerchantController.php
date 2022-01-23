@@ -1361,6 +1361,7 @@ if(!empty($_POST['ckcDel'])){
 					$compleamt = $orderData['popuptotalamt'];
 					$order_det->totalamount = (string)$compleamt;
 					$order_det->reorderprocess = '1';
+					$order_det->pending_amount = $orderData['pending_amount'];
 		
 		
 
@@ -1376,7 +1377,7 @@ if(!empty($_POST['ckcDel'])){
 							$orderTransaction->tips =  !empty($tipsamount) ? number_format(trim($tipsamount),2, '.', ',') : 0; 
 							$orderTransaction->subscription =  !empty($subscriptionamount) ? number_format(trim($subscriptionamount),2, '.', ',') : 0; 
 							$orderTransaction->totalamount =   !empty($compleamt) ? number_format(trim($compleamt),2, '.', ',') : 0; 
-							$orderTransaction->paymenttype = $orderData['payment_mode'];
+							$orderTransaction->paymenttype = $order_det->paymenttype;
 							$orderTransaction->reorder= '1';
 							$orderTransaction->paidstatus = '0';
 							$orderTransaction->reg_date = date('Y-m-d H:i:s');
@@ -3090,27 +3091,35 @@ $runningPie = [];
 	
 	public function actionUpdateorderstatus()
 	{
-		extract($_POST);
+	    extract($_POST);
 		$orderDet = Orders::findOne($id);
 		$tableUpdate = Tablename::findOne($orderDet['tablename']);
-		if(!empty($tableUpdate))
-		{
-			$table_status = null;
-			$current_order_id = 0;
-			$tableUpdate->table_status = $table_status;
-			$tableUpdate->current_order_id = $current_order_id;
-			$tableUpdate->save();
+	    $connection = \Yii::$app->db;	
+	    $transaction = $connection->beginTransaction();
+    	try {
+			if(!empty($tableUpdate)) {
+				$table_status = null;
+				$current_order_id = 0;
+				$tableUpdate->table_status = $table_status;
+				$tableUpdate->current_order_id = $current_order_id;
+				$tableUpdate->save();
+			}
+			$orderDet->orderprocess = '4';
+			$orderDet->paidstatus = '1';
+			$orderDet->pending_amount = 0.00;
+			$orderDet->paid_amount = (float)$orderDet->totalamount;
+			$orderDet->paymenttype = $orderpaymethod;
+			$orderDet->ordercompany = $orderorigin;
+			$orderDet->closed_by = Yii::$app->user->identity->merchant_id;
+			$orderDet->save();
+			$transaction->commit();
+			$arr = ['order_id' => $orderDet['ID']];
+			//$stockded = Yii::$app->merchant->deductstockfrominventory($arr);
+	    	return json_encode(['table_id'=>$tableUpdate['ID'] ?? 'PARCEL','table_name'=>$tableUpdate['name'] ?? 'PARCEL']);
+		} catch(Exception $e) {
+			Yii::trace('======error====='.json_encode($e->getErrors()));
+			$transaction->rollback();
 		}
-		$orderDet->orderprocess = '4';
-		$orderDet->paidstatus = '1';
-		$orderDet->paymenttype = $orderpaymethod;
-		$orderDet->ordercompany = $orderorigin;
-		$orderDet->closed_by = Yii::$app->user->identity->merchant_id;
-		$orderDet->save();
-		$arr = ['order_id' => $orderDet['ID']];
-		//$stockded = Yii::$app->merchant->deductstockfrominventory($arr);
-	    return json_encode(['table_id'=>$tableUpdate['ID'] ?? 'PARCEL','table_name'=>$tableUpdate['name'] ?? 'PARCEL']);
-	    
 	}
 	public function actionClosetableorder(){
 	    extract($_POST);
@@ -4275,7 +4284,8 @@ if(!empty($user_mobile)){
 			$orderData['merchant_discount'] = $ttl_discount ?? 0;
             $orderData['popuptipamt'] = $ttl_tip ?? 0;
 			$orderData['popuptotalamt'] = ($ttl_amt) ? ($ttl_amt) : 0;;
-			$orderData['payment_mode'] = 'Cash';
+			//$orderData['payment_mode'] = 'Cash';
+			$orderData['pending_amount'] = $ttl_pending_amount ?? 0;
 			$_POST['order_quantity_popup'] = $_POST['qtyitem'];
 			$_POST['order_price_popup'] = $_POST['priceind'];
 			$this->re_order($orderData);
@@ -4301,7 +4311,7 @@ if(!empty($user_mobile)){
 			$arr['couponamount'] = $ttl_cpn_amt ?? 0;;
 			$arr['totalamt'] = ($ttl_amt) ? ($ttl_amt) : 0;
 			$arr['merchant_coupon'] = $_POST['merchantcpn'];
-			$arr['payment_mode'] = 'Cash';
+			//$arr['payment_mode'] = 'Cash';
 			$arr['discount_mode'] = $ttl_discount_type ?? 0;
 			$arr['merchant_discount'] = $ttl_discount ?? 0;
 			$arr['tableid'] = $tableid;		

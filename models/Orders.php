@@ -16,6 +16,8 @@ use Yii;
  * @property string $txn_id
  * @property string $txn_date
  * @property string $amount
+ * @property float|null $paid_amount amount paid against the total bill amount
+ * @property float|null $pending_amount amount pending against the total bill amount
  * @property string $tax
  * @property string $tips
  * @property string $subscription
@@ -24,10 +26,10 @@ use Yii;
  * @property string $paymenttype
  * @property string $orderline
  * @property string $coupon
- * @property string $orderprocess 0=pending,1=accept,2-served,3-cancel,3-deliver
+ * @property string $orderprocess 0=pending,1=accept,2-served,3-cancel,4-deliver
  * @property string $orderprocessstatus 0=pending,1=show
  * @property string $status 0=pending,1=active,2-failed
- * @property string $paidstatus 0=pending,1=active,2-failed
+ * @property string $paidstatus 0=pending,1=paid,2-failed,3-partial paid
  * @property string $orderalert
  * @property string $deliverdate
  * @property string $reorderprocess 0=pending,1=accept
@@ -54,10 +56,11 @@ class Orders extends \yii\db\ActiveRecord
     {
         return [
             [['merchant_id', 'order_id', 'txn_id', 'txn_date', 'amount', 'tax'
-			, 'totalamount', 'paymenttype', 'orderline', 'orderprocess', 'status', 'paidstatus', 'paymentby', 'reg_date'], 'required'],
+			, 'totalamount', 'orderline', 'orderprocess', 'status', 'paidstatus', 'paymentby', 'reg_date'], 'required'],
             [['orderprocess', 'orderprocessstatus', 'status', 'paidstatus', 'reorderprocess','ordercompany','cancel_reason','instructions'], 'string'],
             [['preparetime', 'paymentby','ordertype','closed_by'], 'integer'],
             [['mod_date', 'discount_type', 'discount_number'], 'safe'],
+            [['paid_amount', 'pending_amount'], 'number'],
             [['user_id', 'merchant_id', 'serviceboy_id', 'tablename', 'order_id', 'txn_id', 'txn_date', 'amount', 'tax', 'tips', 'subscription', 'totalamount', 'paymenttype', 'orderline', 'coupon', 'preparedate'], 'string', 'max' => 50],
             [['orderalert', 'deliverdate', 'reg_date'], 'string', 'max' => 20],
         ];
@@ -78,6 +81,8 @@ class Orders extends \yii\db\ActiveRecord
             'txn_id' => 'Txn ID',
             'txn_date' => 'Txn Date',
             'amount' => 'Amount',
+            'paid_amount' => 'Paid Amount',
+            'pending_amount' => 'Pending Amount',
             'tax' => 'Tax',
             'tips' => 'Tips',
             'subscription' => 'Subscription',
