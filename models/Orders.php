@@ -56,7 +56,7 @@ class Orders extends \yii\db\ActiveRecord
     {
         return [
             [['merchant_id', 'order_id', 'txn_id', 'txn_date', 'amount', 'tax'
-			, 'totalamount', 'orderline', 'orderprocess', 'status', 'paidstatus', 'paymentby', 'reg_date'], 'required'],
+			, 'totalamount', 'orderline', 'orderprocess', 'status', 'paymentby', 'reg_date'], 'required'],
             [['orderprocess', 'orderprocessstatus', 'status', 'paidstatus', 'reorderprocess','ordercompany','cancel_reason','instructions'], 'string'],
             [['preparetime', 'paymentby','ordertype','closed_by'], 'integer'],
             [['mod_date', 'discount_type', 'discount_number'], 'safe'],

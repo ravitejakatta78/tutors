@@ -2768,7 +2768,7 @@ order by remain_coins desc limit '.$val['userCount'] ;
 							$payload = array("status"=>'0',"text"=>"User Not  Registered",'user_details' => null);
 						} 
 					}else{
-					    $sqlUPdate = 'update users set name = \''.$val['name'].'\',latitude = \''.$val['latitude'].'\',longitude = \''.$val['longitude'].'\'  where ID = \''.$alreadyid['ID'].'\'';
+					    $sqlUPdate = 'update users set latitude = \''.$val['latitude'].'\',longitude = \''.$val['longitude'].'\'  where ID = \''.$alreadyid['ID'].'\'';
 					    $resUpdate = Yii::$app->db->createCommand($sqlUPdate)->execute();
 					    	$payload = array("status"=>'1',"usersid"=>base64_encode($alreadyid['ID'])
 					    	,"text"=>"OTP Verified Successfuly"
