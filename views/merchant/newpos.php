@@ -105,7 +105,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
                               }
                                ?></p>
                               <p class="ordr-dtls">Table No: <?= $runningOrders[$r]['table_name']; ?></p>
-                              <p class="ordr-dtls">Bill Amount: <?= $runningOrders[$r]['totalamount']; ?></p>
+                              <p class="ordr-dtls">Bill Amount: <?= round($runningOrders[$r]['totalamount'],2); ?></p>
                           </div>
                         </div>
                       </div>

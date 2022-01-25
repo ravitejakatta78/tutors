@@ -21,6 +21,7 @@ use Yii;
  * @property string $reg_date
  * @property string $mod_date
  * @property string|null $date_of_birth
+ * @property string|null $anniversary_date
  * @property string|null $referral_code
  * @property string|null $latitude
  * @property string|null $longitude
@@ -45,7 +46,7 @@ class Users extends \yii\db\ActiveRecord
             [['unique_id', 'name', 'mobile', 'status', 'reg_date'], 'required'],
             [['password', 'mobile', 'status', 'push_id', 'profilepic', 'latitude', 'longitude'], 'string'],
             [['coins'], 'integer'],
-            [['mod_date', 'date_of_birth'], 'safe'],
+            [['mod_date', 'date_of_birth', 'anniversary_date'], 'safe'],
             [['unique_id', 'name', 'email'], 'string', 'max' => 50],
             [['otp'], 'string', 'max' => 10],
             [['reg_date'], 'string', 'max' => 20],
@@ -73,6 +74,7 @@ class Users extends \yii\db\ActiveRecord
             'reg_date' => 'Reg Date',
             'mod_date' => 'Mod Date',
             'date_of_birth' => 'Date Of Birth',
+            'anniversary_date' => 'Anniversary Date',
             'referral_code' => 'Referral Code',
             'latitude' => 'Latitude',
             'longitude' => 'Longitude',

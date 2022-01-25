@@ -87,7 +87,7 @@ $actionId = Yii::$app->controller->action->id;
 									<td><?php echo $orderModel['tax'];?></td>
 									<td><?php echo $orderModel['tips'];?></td>
 								<!--	<td><?php // $orderModel['subscription'];?></td> -->
-									<td><?php echo $orderModel['totalamount'];?></td>
+									<td><?php echo round($orderModel['totalamount'],2);?></td>
 									<td class="icons" ><a  onclick="billview('<?= $orderModel['ID'] ?>')" title="bill"><span class="fa fa-credit-card"></span></a>
 									<a  onclick="orderrecipeview('<?= $orderModel['ID'] ?>')" title="Receipe Cost Card"><span class="fa fa-eye"></span></a></td>
 								                                   </tr>

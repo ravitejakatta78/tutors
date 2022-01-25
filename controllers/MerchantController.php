@@ -4129,7 +4129,6 @@ order by reg_date,purchase_number';
 			
 		if(!empty($current_order_id) && $current_order_id > 0 )
 		{
-
 			$prevFullSingleOrderDet = Orders::findOne($current_order_id);
 			if(!empty($prevFullSingleOrderDet['user_id'])){
 				$userDet = Users::findOne($prevFullSingleOrderDet['user_id']);
@@ -4256,8 +4255,9 @@ if(!empty($user_mobile)){
 	         
 		}
 		$merchant_details = Merchant::findOne(Yii::$app->user->identity->merchant_id);
-		if ($table_det['table_status'] == '1' && $current_order_id > 0) {
-			if($table_det['current_order_id'] != $current_order_id) {
+		if ( ($table_det['table_status'] == '1' && $current_order_id > 0 && $merchant_details['table_occupy_status'] == 1) ||  
+		($merchant_details['table_occupy_status'] == 2 && $current_order_id > 0) ) {
+			if($table_det['current_order_id'] != $current_order_id && $merchant_details['table_occupy_status'] == 1) {
 				Yii::$app->getSession()->setFlash('success', [
 					'title' => 'Order',
 					'text' => 'Table is already occupied',
@@ -4268,7 +4268,7 @@ if(!empty($user_mobile)){
 				
 				return $this->redirect(['merchant/newpos','tableid'=>$tableid,'tableName'=>$table_det['name'],'current_order_id'=>0  ]);
 			}
-			$orderData['order_id'] =  $table_det['current_order_id'];
+			$orderData['order_id'] =  $current_order_id;
 			$_POST['productprice'] = $pricetot;
 			$orderData['user_id'] = $user_id ?? '';
 			$orderData['selectedpilot'] = $pilotid ?? '';
@@ -4289,7 +4289,7 @@ if(!empty($user_mobile)){
 			$_POST['order_quantity_popup'] = $_POST['qtyitem'];
 			$_POST['order_price_popup'] = $_POST['priceind'];
 			$this->re_order($orderData);
-			$cur_order_id = $table_det['current_order_id'];
+			$cur_order_id = $current_order_id;
 			$order_status = 'Order updated successfully';
 		}
 		else{
