@@ -411,8 +411,11 @@ class ServiceboyComponent extends Component{
 			  $totalorders = $restotalorders['count'];
 			  $sqltodayorders = "SELECT sum(case when (orderprocess != '4' and orderprocess != '3') then 1 else 0 end) rununing_orders
 			  ,sum(case when orderprocess = '4' then 1 else 0 end) completed_orders,
-			  count(*) as count,sum(case when  (paymenttype = 'cash' or paymenttype = '1') then totalamount else 0 end) OfflinePay
-			  ,sum( case when (paymenttype != 'cash' and paymenttype != '1') then totalamount else 0 end) OnlinePay,sum(tips) tips
+			  count(*) as count,sum(case when  (paymenttype = 'cash' or paymenttype = '1' and paidstatus = '1') then totalamount else 0 end) OfflinePay
+			  ,sum( case when (paymenttype = '1' and paidstatus = '1') then totalamount else 0 end) OnlinePay
+			  ,sum( case when (paymenttype = '3' or paymenttype = '4' and paidstatus = '1') then totalamount else 0 end) CounterPay
+			  ,sum(case when (orderprocess != '4' and orderprocess != '3' and paidstatus != '1' and and paidstatus != '2') then totalamount else 0 end) rununing_amount
+			  ,sum(tips) tips
 			  FROM orders WHERE merchant_id = '".$row['merchant_id']."' and serviceboy_id = '".$row['ID']."' 
 			  and reg_date>='".$date." 00:00:00' and reg_date<='".$date." 23:59:59'";
 			  $restodayorders = Yii::$app->db->createCommand($sqltodayorders)->queryOne();
@@ -445,9 +448,10 @@ class ServiceboyComponent extends Component{
 				  $customerdetails['totalpoints'] =  $totalpoints ?: '0';
 				  $customerdetails['loginstatus'] =  $row['loginstatus'];
 				  $customerdetails['billed_amount'] =  '0';
-				  $customerdetails['running_amount'] =  '0';
-				  $customerdetails['payable_amount'] =  '0';
-				  $customerdetails['inpocket_amount'] =  '0';
+				  $customerdetails['running_amount'] =  $restodayorders['rununing_amount'] ?: '0';
+				  $customerdetails['payable_amount'] =  $restodayorders['OfflinePay'] ?: '0';
+				  $customerdetails['inpocket_amount'] =  $restodayorders['OfflinePay'] ?: '0';
+				  $customerdetails['CounterPay'] = $restodayorders['CounterPay'] ?: '0';
 				  $customerdetails['store_open_time'] =  $merchant['open_time'];
 				  $customerdetails['store_close_time'] =  $merchant['close_time'];
 					$payload = array("status"=>'1',"users"=>$customerdetails);
@@ -1282,15 +1286,16 @@ class ServiceboyComponent extends Component{
 										$merchantlgo = !empty($merchantdetails['logo']) ? MERCHANT_LOGO.$merchantdetails['logo'] : '';
                                     
 										$merchantcoverpic = !empty($merchantdetails['coverpic']) ? MERCHANT_LOGO.$merchantdetails['coverpic'] : '';
-										
-										    $sqlcategoryDetail = 'select 0 foodtype, \'Recommended\' food_category ,count(foodtype) itemcount  from product where merchant_id = \''.$merchantid.'\'
+										$itemCategoryImagePath = SITE_URL.'merchant_docs/'.$merchantid.'/'.'item_category/';
+										    $sqlcategoryDetail = 'select 0 foodtype, \'Recommended\' food_category,null category_img,count(foodtype) itemcount  from product where merchant_id = \''.$merchantid.'\'
                                                         
                                                         union all
-select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category end as food_category
+													select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category end as food_category 
+													,concat(\''.$itemCategoryImagePath.'\',category_img) category_img
                                                         ,count(foodtype) itemcount  from product p
                                                         left join food_categeries fc on fc.id = p.foodtype
                                                      where p.merchant_id = \''.$merchantid.'\'
-                                                        group by foodtype';
+                                                        group by foodtype,category_img';
 											$categoryDetail = Yii::$app->db->createCommand($sqlcategoryDetail)->queryAll();
 							            	$getproductsreindex = ArrayHelper::index($getproducts, null, 'food_category');
                                             $newProduclistArr = [];

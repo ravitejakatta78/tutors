@@ -1553,12 +1553,15 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 										$merchantlgo = !empty($merchantdetails['logo']) ? MERCHANT_LOGO.$merchantdetails['logo'] : '';
                                     
 										$merchantcoverpic = !empty($merchantdetails['coverpic']) ? MERCHANT_LOGO.$merchantdetails['coverpic'] : '';
-										
-										    $sqlcategoryDetail = 'select 0 foodtype, \'Recommended\' food_category ,count(foodtype) itemcount  from product where merchant_id = \''.$merchantid.'\'
+										$itemCategoryImagePath = SITE_URL.'merchant_docs/'.$merchantid.'/'.'item_category/';
+										    $sqlcategoryDetail = 'select 0 foodtype, \'Recommended\' food_category 
+											,null category_img
+											,count(foodtype) itemcount  from product where merchant_id = \''.$merchantid.'\'
                                                         
                                                         union all
 														select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category end as food_category
-                                                        ,count(foodtype) itemcount  from product p
+                                                        ,concat(\''.$itemCategoryImagePath.'\',category_img) category_img
+														,count(foodtype) itemcount  from product p
                                                         left join food_categeries fc on fc.id = p.foodtype
                                                         where p.merchant_id = \''.$merchantid.'\'
                                                         group by foodtype';
