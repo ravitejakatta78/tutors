@@ -5,7 +5,7 @@ use aryelds\sweetalert\SweetAlert;
 $actionId = Yii::$app->controller->action->id;
 $merchant_det = \app\models\Merchant::findOne(Yii::$app->user->identity->merchant_id);
 $merchant_tip_percent = !empty($merchant_det) ? $merchant_det['tip'] : 0;
-$paytypearray = array('1'=>'Cash','2'=>'Online','3'=>'UPI','4'=>'Card');
+$paytypearray = array('1'=>'Cash On Dine','2'=>'Online Payment','3'=>'UPI Scanner','4'=>'Card Swipe');
 
 ?>
 

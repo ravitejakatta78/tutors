@@ -3174,8 +3174,7 @@ order by remain_coins desc limit '.$val['userCount'] ;
 		return $payload = ["status"=>'1',"whishlist_details"=>$wishlist];
 	}
 	public function usermerchantpaymenttypes($val){
-
-		$paytypes = array('1'=>'Cash','2'=>'Online','3'=>'UPI','4'=>'Card');
+		$paytypes = array('1'=>'Cash On Dine','2'=>'Online Payment','3'=>'UPI Scanner','4'=>'Card Swipe');
 		$merchant_pay_types_det = \app\models\MerchantPaytypes::find()->where(['merchant_id'=>$val['merchant_id'],'status' => 1])->orderBy([
             'ID'=>SORT_DESC
         ])->asArray()->All();
