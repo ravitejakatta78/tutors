@@ -726,6 +726,7 @@ class ServiceboyComponent extends Component{
 						$orderarray['storename'] =  !empty($merchantdetails['storename']) ? $merchantdetails['storename'] : '';
 						$orderarray['tablename'] = $tableDetails['name'];
 						$orderarray['section_name'] = $tableDetails->section['section_name']; 
+						$orderarray['enckey'] = Utility::encrypt($orderlist['merchant_id'].','.$orderlist['tablename']);
 						$orderarray['logo'] = !empty($merchantdetails['logo']) ? MERCHANT_LOGO.$merchantdetails['logo'] : '';
 						$orderarray['coverpic'] = !empty($merchantdetails['coverpic']) ? MERCHANT_LOGO.$merchantdetails['coverpic'] : '';
 						$orderarray['amount'] =  sprintf("%.2f", (!empty($orderlist['amount']) ? $orderlist['amount'] : 0));; 
