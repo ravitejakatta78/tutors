@@ -1500,9 +1500,9 @@ class ServiceboyComponent extends Component{
 		return $payload;
 	}
 		public function reordercash($val){
-	    	    		 Yii::debug('===reordercash parameters==='.json_encode($val));
+	    	Yii::debug('===reordercash parameters==='.json_encode($val));
 
-		if(!empty($val['merchantid'])){ 
+			if(!empty($val['merchantid'])){ 
 						$userwherearray = $userarray = array();
 						if(!empty($val['orderid'])){
 						    $userdetails = [];
@@ -1513,7 +1513,7 @@ class ServiceboyComponent extends Component{
 							$orderdetails = Orders::findOne($orderid);
 							$userdetails = Users::findOne($orderdetails['user_id']);
 
-						$orderamount = trim($val['totalamount']);
+							$orderamount = trim($val['totalamount']);
 							$totalamount = number_format($orderamount, 2, '.', ',');
 							
 							$userarray['amount'] =  trim($val['amount']); 
@@ -1586,8 +1586,8 @@ class ServiceboyComponent extends Component{
 									$x=$newid+1;
 									for($i=0;$i<count($productidsarray);$i++){
 										$productscount = array();
-										$productscount['order_id'] = $orderdetails['ID'];
-										$productscount['user_id'] = @$userdetails['ID'];
+										$productscount['order_id'] = (string)$orderdetails['ID'];
+										$productscount['user_id'] = @(string)$userdetails['ID'];
 										$productscount['merchant_id'] = $merchantid;
 										$productscount['product_id'] = trim($productidsarray[$i]);
 										$productscount['count'] = trim($productcountarray[$i]);
