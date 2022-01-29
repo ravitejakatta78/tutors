@@ -79,11 +79,15 @@ echo \Yii::$app->view->renderFile('@app/views/layouts/_footer.php');
     url: "checkneworder",
     type: "POST",
     }).done(function(msg) {
+		//alert(msg);
 					 data = JSON.parse(msg);
 					 for(var i=0;i<data.length;i++){
 							//	toastr.success(data[i]['name'] +' has got new order');
 								toastr.success('<p onclick="placeOrder(\''+data[i]['ID']+'\',\''+data[i]['name']+'\',\''+data[i]['current_order_id']+'\')">'+data[i]['name'] +' has got new order</p>');
+								var audio = new Audio("http://localhost/tutors/web/sounds/notification.mp3");
+                				audio.play();
 					 }
+
 
         });
 
