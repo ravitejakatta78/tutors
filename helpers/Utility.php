@@ -51,6 +51,9 @@ class Utility{
 	}else if($status==0){
 		return 'Pending';
 	}
+	else if($status==3){
+		return 'Partial Paid';
+	}
 
 	}
 
