@@ -109,7 +109,7 @@ $parcelCount = (array_values(array_filter(array_column($parcelDetails,'orderproc
 				</div>
 				<div class="col-md-4">
 				<button type="button" class="badge badge-success mb-0" onclick="billview('<?= $tableDetails[$i]['ID'] ;?>');"><i class="fa fa-eye" title="BILL"></i></button>
-				<button type="button" class="badge badge-success mb-0" onclick="placeOrder('<?= $tableDetails[$i]['ID'] ;?>','<?= $tableDetails[$i]['name'] ;?>','<?= $tableDetails[$i]['current_order_id'] ;?>')"><i class="fa fa-plus" title="Add More"></i></button>
+				<button type="button" class="badge badge-success mb-0" onclick="placeOrder('<?= $tableDetails[$i]['tableId'] ;?>','<?= $tableDetails[$i]['name'] ;?>','<?= $tableDetails[$i]['ID'] ;?>')"><i class="fa fa-plus" title="Add More"></i></button>
 
 				</div>
 				</div>

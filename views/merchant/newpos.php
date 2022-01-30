@@ -80,7 +80,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
                   
                   <?php if(count($runningOrders) > 0) {
                     for($r=0;$r<count($runningOrders);$r++) { ?>
-                      <div class="panel panel-default filtersearch2">
+                      <div class="panel panel-default filtersearch2" id="runningdiv_<?= $runningOrders[$r]['ID']; ?>">
                         <div class="panel-heading" role="tab" id="headingOne">
                           <h4 class="panel-title">
                             <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse<?= ($r+1) ?>" aria-expanded="true" aria-controls="collapseOne">
@@ -1331,6 +1331,10 @@ function validatesubmitorder()
   }
 }
 $( document ).ready(function() {
+var current_order_id =  '<?= $current_order_id; ?>';
+if(current_order_id > 0){
+  $("#runningdiv_"+current_order_id).css("border","1px solid red")
+}
 
 $('#merchant_coupon').typeahead({
                     ajax: 'applycouponautocomplete',

@@ -3029,7 +3029,7 @@ $runningPie = [];
     public function actionCurrentorders()
 	{
 				$sqlTableDetails = 'select o.ID,tn.ID tableId,tn.name,o.orderprocess,o.reg_date
-		,o.totalamount,current_order_id,o.ordertype,o.serviceboy_id from tablename tn left join orders o on tn.current_order_id = o.id 
+		,o.totalamount,current_order_id,o.ordertype,o.serviceboy_id from tablename tn inner join orders o on tn.ID = o.tablename 
 		where tn.merchant_id = \''.Yii::$app->user->identity->merchant_id.'\' and  orderprocess in(\'1\',\'2\') ';
 		$tableDetails = Yii::$app->db->createCommand($sqlTableDetails)->queryAll();
 				
