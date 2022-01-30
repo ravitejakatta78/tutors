@@ -492,6 +492,8 @@ class EnduserComponent extends Component {
 						$userarray['email'] =  trim($val['email']);
 						$userarray['mobile'] =  trim($val['mobile']);
 						$userarray['date_of_birth'] = trim($val['data_of_birth']);
+						$userarray['gender'] = trim($val['gender']);
+						$userarray['anniversary_date'] = trim($val['anniversary_date']);
 						
 						$sqlrow = "SELECT * FROM users WHERE email = '".$userarray['email']."' and ID <> '".$val['header_user_id']."'";
 						$row = Yii::$app->db->createCommand($sqlrow)->queryOne();
@@ -499,18 +501,14 @@ class EnduserComponent extends Component {
 						$sqlrow = "SELECT * FROM users WHERE mobile = '".$userarray['mobile']."' and ID <> '".$val['header_user_id']."'";
 						$row = Yii::$app->db->createCommand($sqlrow)->queryOne();
 							if(empty($row['ID'])){  
-						$sqlRes = 'update users set name = \''.$userarray['name'].'\',email=\''.$userarray['email'].'\',mobile=\''.$userarray['mobile'].'\' 
-						,date_of_birth = \''.$userarray['date_of_birth'].'\'
+						 $sqlRes = 'update users set name = \''.$userarray['name'].'\',email=\''.$userarray['email'].'\',mobile=\''.$userarray['mobile'].'\' 
+						,date_of_birth = \''.$userarray['date_of_birth'].'\',anniversary_date = \''.$userarray['anniversary_date'].'\'
+						,gender = \''.$userarray['gender'].'\'
 						where ID = \''.$userwherearray['ID'].'\'';
 								$result = Yii::$app->db->createCommand($sqlRes)->execute();
 		
-								if($result){ 
-											
-									$payload = array("status"=>'1',"text"=>"Account has been updated");
-								}else{
-											
-									$payload = array("status"=>'1',"text"=>$result);
-								}  
+								$payload = array("status"=>'1',"text"=>"Account has been updated");
+								 
 						}else{
 									
 					$payload = array("status"=>'0',"text"=>"Mobile already exists please try another");

@@ -1309,7 +1309,8 @@ class ServiceboyComponent extends Component{
 											}
 
 										$payload = array("status"=>'1',"merchantid"=>$merchantdetails['ID'],"table"=>$tabledetails['ID']
-										,"tablename"=>$tabledetails['name'],"store"=>$merchantdetails['storename'],"storetype"=>$merchantdetails['storetype']
+										,"tablename"=>$tabledetails['name'],'section_name' => $tabledetails->section['section_name']
+										,"store"=>$merchantdetails['storename'],"storetype"=>$merchantdetails['storetype']
 										,"servingtype"=>$merchantdetails['servingtype'],"verify"=>$merchantdetails['verify']
 										,"location"=>$merchantdetails['location'],"logo"=>$merchantlgo,"coverpic"=>$merchantcoverpic
 										,"productlist"=>$newProduclistArr,'categoryDetail'=>$categoryDetail,'configured_tip' => $merchantdetails['tip']);

@@ -45,7 +45,7 @@ class Users extends \yii\db\ActiveRecord
         return [
             [['unique_id', 'name', 'mobile', 'status', 'reg_date'], 'required'],
             [['password', 'mobile', 'status', 'push_id', 'profilepic', 'latitude', 'longitude'], 'string'],
-            [['coins'], 'integer'],
+            [['coins', 'gender'], 'integer'],
             [['mod_date', 'date_of_birth', 'anniversary_date'], 'safe'],
             [['unique_id', 'name', 'email'], 'string', 'max' => 50],
             [['otp'], 'string', 'max' => 10],
@@ -66,6 +66,7 @@ class Users extends \yii\db\ActiveRecord
             'email' => 'Email',
             'password' => 'Password',
             'mobile' => 'Mobile',
+            'gender' => 'Gender',
             'otp' => 'Otp',
             'status' => 'Status',
             'push_id' => 'Push ID',
