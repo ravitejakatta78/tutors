@@ -2801,12 +2801,18 @@ order by remain_coins desc limit '.$val['userCount'] ;
 		$room_reservation_types_ids = array_keys($room_reservation_types);
 		$room_reservation_types_ids_string = implode("','",$room_reservation_types_ids);
 
-        $sqlMerchants = 'select ID,user_id,unique_id,name,email,password,mobile,storetype,storename,address,state,city
-        ,location,concat(\'http://superpilot.in/dev/merchantimages/\',logo) logo,latitude,longitude,concat(\'http://superpilot.in/dev/merchantimages/\',qrlogo) qrlogo
-        ,concat(\'http://superpilot.in/dev/merchantimages/\',coverpic) coverpic,status,otp,recommend,verify,description,servingtype
-        ,plan,useraccess,scan_range
-        ,open_time,close_time,table_res_avail,owner_type,tax,tip,reg_date,mod_date,food_serve_type,subscription_date
-        ,allocated_msgs,used_msgs from merchant where status = \''.MyConst::TYPE_ACTIVE.'\' and storetype in (\''.$room_reservation_types_ids_string.'\')';
+        $sqlMerchants = 'select m.ID,m.user_id,m.unique_id,m.name,email,m.mobile,m.storetype,m.storename,m.address,m.state,m.city
+        ,m.location,concat(\'http://superpilot.in/dev/merchantimages/\',m.logo) logo,m.latitude,m.longitude,concat(\'http://superpilot.in/dev/merchantimages/\',m.qrlogo) qrlogo
+        ,concat(\'http://superpilot.in/dev/merchantimages/\',m.coverpic) coverpic,m.status,m.otp,m.recommend,m.verify,m.description,m.servingtype
+        ,m.plan,m.useraccess,m.scan_range
+        ,m.open_time,m.close_time,m.table_res_avail,m.owner_type,m.tax,m.tip,m.reg_date,m.mod_date
+		,m.food_serve_type,m.subscription_date
+        ,m.allocated_msgs,m.used_msgs 
+		, (case when uw.status is not null then true else false end)  wishlist
+		from merchant m 
+		left join user_whislist uw on m.ID = uw.merchant_id and uw.user_id = \''.$val['header_user_id'].'\' 
+		 
+		where m.status = \''.MyConst::TYPE_ACTIVE.'\' and m.storetype in (\''.$room_reservation_types_ids_string.'\')';
         $resMerchants = Yii::$app->db->createCommand($sqlMerchants)->queryAll();
         
         $resultMerchants = ArrayHelper::index($resMerchants, null, 'storetype');
@@ -3184,7 +3190,6 @@ order by remain_coins desc limit '.$val['userCount'] ;
 			$paytypearray[] = $paytypesarray;
 	    }
 		return	$payload = array('status'=>'1','payment_names' => $paytypearray);
-
 	}
 }
 ?>
