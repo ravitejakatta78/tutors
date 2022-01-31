@@ -1216,7 +1216,7 @@ class ServiceboyComponent extends Component{
 					->where(['ID'=>$merchantid, 'status'=>'1'])->asArray()->One();
 				if(($tabel_Det['current_order_id'] != 0 || $tabel_Det['current_order_id'] != null) && $merchantdetails['table_occupy_status'] == 1)	{
 				    $currentOrder = Orders::findOne($tabel_Det['current_order_id']);
-				    if($currentOrder['serviceboy_id'] != $val['header_user_id'] ){
+				    if($currentOrder['serviceboy_id'] != $val['header_user_id']){
 				        $payload = array("status"=>'0',"text"=>"Table is already occupied");
 					    return $payload;
 					    exit;
