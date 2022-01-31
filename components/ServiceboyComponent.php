@@ -756,7 +756,7 @@ class ServiceboyComponent extends Component{
 						$orderarray['paidstatus'] =  '0'; 
 						}
 						$sqlorderproducts = "select * from order_products where order_id = '".$orderlist['ID']."' 
-						and merchant_id = '".$orderlist['merchant_id']."' and user_id = '".$orderlist['user_id']."' order by inc desc";
+						and merchant_id = '".$orderlist['merchant_id']."'  order by inc desc";
 						$orderproducts = Yii::$app->db->createCommand($sqlorderproducts)->queryAll();
 						
 						if(count($orderproducts) > 0){
