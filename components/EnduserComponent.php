@@ -3095,7 +3095,17 @@ order by remain_coins desc limit '.$val['userCount'] ;
 	}	
 	public function coupondetails($val)
 	{
-	    
+	    if(!empty($val['merchant_id']))
+		{
+			$sqlmerchantcoupon = 'SELECT  * from merchant_coupon where  merchant_id = \''.$val['merchant_id'].'\'
+			and status = \'Active\' AND \''.date('Y-m-d').'\' between  date(fromdate) and date(todate)';
+			$resmerchantcoupon = YIi::$app->db->createCommand($sqlmerchantcoupon)->queryAll();
+			$payload = ["status"=>'1',"message"=>'Coupon Details','coupon_list' => $resmerchantcoupon];
+		}
+		else{
+            $payload = ["status"=>'0',"message"=>'Please Provide Merchant Details'];
+		}
+		return $payload;
 	}
 	public function addwhislist($val){
 		if(!empty($val['merchant_id']))
