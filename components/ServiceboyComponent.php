@@ -1214,9 +1214,10 @@ class ServiceboyComponent extends Component{
 				$tabel_Det = Tablename::findOne($tableid);
 				$merchantdetails = Merchant::find()
 					->where(['ID'=>$merchantid, 'status'=>'1'])->asArray()->One();
-				if(($tabel_Det['current_order_id'] != 0 || $tabel_Det['current_order_id'] != null) && $merchantdetails['table_occupy_status'] == 1)	{
+				if( ($tabel_Det['table_status'] == '1' && $tabel_Det['current_order_id'] > 0 && $merchantdetails['table_occupy_status'] == 1) || 
+				($merchantdetails['table_occupy_status'] == 2) )	{
 				    $currentOrder = Orders::findOne($tabel_Det['current_order_id']);
-				    if($currentOrder['serviceboy_id'] != $val['header_user_id']){
+				    if($currentOrder['serviceboy_id'] != $val['header_user_id'] && $merchantdetails['table_occupy_status'] == 1){
 				        $payload = array("status"=>'0',"text"=>"Table is already occupied");
 					    return $payload;
 					    exit;
