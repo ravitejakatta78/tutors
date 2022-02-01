@@ -534,7 +534,7 @@ class EnduserComponent extends Component {
 						  $customerdetails['name'] =  $row['name'];
 						  $customerdetails['email'] =  $row['email'];
 						  $customerdetails['mobile'] =  $row['mobile'];
-						  $customerdetails['date_of_birth'] = $row['data_of_birth'];
+						  $customerdetails['date_of_birth'] = $row['date_of_birth'];
 						  $customerdetails['gender'] = $row['gender'];
 						  $customerdetails['anniversary_date'] = $row['anniversary_date'];
 						
