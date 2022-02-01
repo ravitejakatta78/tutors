@@ -534,6 +534,10 @@ class EnduserComponent extends Component {
 						  $customerdetails['name'] =  $row['name'];
 						  $customerdetails['email'] =  $row['email'];
 						  $customerdetails['mobile'] =  $row['mobile'];
+						  $customerdetails['date_of_birth'] = $row['data_of_birth'];
+						  $customerdetails['gender'] = $row['gender'];
+						  $customerdetails['anniversary_date'] = $row['anniversary_date'];
+						
 						  $customerdetails['coins'] =  $row['coins'];
 						  $customerdetails['referral_code'] =  $row['referral_code'];
 						  $customerdetails['referral_content'] =  'Invite your friends & earn 25 rs each..!';
