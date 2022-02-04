@@ -1018,7 +1018,8 @@ class ServiceboyComponent extends Component{
 						//updateQuery($roderarray,'orders',$roderwharray);
 						$sqlUpdate = 'update orders set reorderprocess = \''.$roderarray['reorderprocess'].'\'
 						,orderprocess=\''.$roderarray['orderprocess'].'\',serviceboy_id=\''.$roderarray['serviceboy_id'].'\'
-						,paymenttype=\''.$roderarray['paymenttype'].'\',closed_by = \''.$roderarray['closed_by'].'\'  where ID =\''.$roderwharray['ID'].'\'';
+						,paymenttype=\''.$roderarray['paymenttype'].'\'
+						,closed_by = \''.$roderarray['closed_by'].'\',paidstatus = \''.$roderarray['paidstatus'].'\'  where ID =\''.$roderwharray['ID'].'\'';
 						$resUpdate = Yii::$app->db->createCommand($sqlUpdate)->execute();
 					
 					$sqlresult = "update order_products set reorder = '0' where order_id = '".$orderlist['ID']."'";
