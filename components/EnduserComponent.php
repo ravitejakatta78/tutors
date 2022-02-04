@@ -2666,7 +2666,8 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 public function contestlist($val){
 		if(!empty($val['header_user_id'])){
 			$sqlcontest = 'select ID,contest_id,contest_name,contest_start_date,contest_end_date,contest_area,contest_persons
-			,contest_participants,concat(\''.CONTEST_IMAGE.'\',contest_image) contest_image,created_on
+			,contest_participants,case when (contest_image is null or contest_image = "") then "" else concat(\''.CONTEST_IMAGE.'\',contest_image) end contest_image
+			,created_on
 			from contest where contest_end_date >= \''.date('Y-m-d').'\'';
 			$contest = Yii::$app->db->createCommand($sqlcontest)->queryAll();
 			if(count($contest) > 0){
