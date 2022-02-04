@@ -2388,6 +2388,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 			$orderarray['tax'] = $orderlist['tax'];
 			$orderarray['tip'] = $orderlist['tips'];
 			$orderarray['subscription'] = $orderlist['subscription'];
+			$orderarray['order_date'] = date('Y-m-d',strtotime($orderlist['reg_date']));
 
 			$orderproducts = OrderProducts::find()
 				->where(['order_id'=>$orderlist['ID'], 'merchant_id'=>$orderlist['merchant_id'], 'user_id'=>$orderlist['user_id']])
