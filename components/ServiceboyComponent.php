@@ -411,7 +411,7 @@ class ServiceboyComponent extends Component{
 			  $totalorders = $restotalorders['count'];
 			  $sqltodayorders = "SELECT sum(case when (orderprocess != '4' and orderprocess != '3') then 1 else 0 end) rununing_orders
 			  ,sum(case when orderprocess = '4' then 1 else 0 end) completed_orders,
-			  count(*) as count,sum(case when  (paymenttype = 'cash' or paymenttype = '1' and paidstatus = '1') then totalamount else 0 end) OfflinePay
+			  count(*) as count,sum(case when  (paymenttype = '1' and paidstatus = '1' and orderprocess != '3') then totalamount else 0 end) OfflinePay
 			  ,sum( case when (paymenttype = '1' and paidstatus = '1') then totalamount else 0 end) OnlinePay
 			  ,sum( case when (paymenttype = '3' or paymenttype = '4' and paidstatus = '1') then totalamount else 0 end) CounterPay
 			  ,sum(case when (orderprocess != '4' and orderprocess != '3' and paidstatus != '1' and  paidstatus != '2') then totalamount else 0 end) rununing_amount
