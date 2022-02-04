@@ -913,7 +913,7 @@ class EnduserComponent extends Component {
 						   } 
 						   } 
 						  $coinsarray['excerpt'] = $rewards['excerpt']; 
-						  $coinsarray['logo'] = REWARDS_IMAGES.$rewards['logo']; 
+						  $coinsarray['logo'] = !empty($rewards['logo']) ? REWARDS_IMAGES.$rewards['logo'] : ""; 
 						   $coinstotalarray[] =  $coinsarray;
 						  } 
 								$payload = array("status"=>'1',"text"=>$coinstotalarray);
