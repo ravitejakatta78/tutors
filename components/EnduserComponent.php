@@ -3175,10 +3175,10 @@ order by remain_coins desc limit '.$val['userCount'] ;
 		$room_reservation_types_ids = array_keys($room_reservation_types);
 		$room_reservation_types_ids_string = implode("','",$room_reservation_types_ids);
 
-		$sql = 'select *,case when coverpic is not null then concat(\'http://superpilot.in/dev/merchantimages/\',logo) else "" end logo
-		,case when coverpic is not null then concat(\'http://superpilot.in/dev/merchantimages/\',qrlogo) else "" end qrlogo
-        ,case when coverpic is not null then concat(\'http://superpilot.in/dev/merchantimages/\',coverpic) else "" end coverpic from user_whislist uw inner join users u on u.ID = uw.user_id
-		inner join merchant m on m.ID = uw.merchant_id where u.ID = \''.$val['header_user_id'].'\' ';
+		$sql = 'select *,case when (logo is null or logo = "") then "" else concat(\'http://superpilot.in/dev/merchantimages/\',logo) end logo
+			,case when (qrlogo is null or qrlogo = "") then "" else concat(\'http://superpilot.in/dev/merchantimages/\',qrlogo) end qrlogo
+			,case when (coverpic is null or coverpic = "")  then "" else concat(\'http://superpilot.in/dev/merchantimages/\',coverpic) end coverpic from user_whislist uw inner join users u on u.ID = uw.user_id
+			inner join merchant m on m.ID = uw.merchant_id where u.ID = \''.$val['header_user_id'].'\' ';
 		
 		$res = Yii::$app->db->createCommand($sql)->queryAll();
 
