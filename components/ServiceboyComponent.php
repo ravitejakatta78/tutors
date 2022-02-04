@@ -415,7 +415,7 @@ class ServiceboyComponent extends Component{
 			  ,sum( case when (paymenttype = '1' and paidstatus = '1') then totalamount else 0 end) OnlinePay
 			  ,sum( case when (paymenttype = '3' or paymenttype = '4' and paidstatus = '1') then totalamount else 0 end) CounterPay
 			  ,sum(case when (orderprocess != '4' and orderprocess != '3' and paidstatus != '1' and  paidstatus != '2') then totalamount else 0 end) rununing_amount
-			  ,sum(tips) tips
+			  ,\"0\" tips
 			  FROM orders WHERE merchant_id = '".$row['merchant_id']."' and serviceboy_id = '".$row['ID']."' 
 			  and reg_date>='".$date." 00:00:00' and reg_date<='".$date." 23:59:59'";
 			  $restodayorders = Yii::$app->db->createCommand($sqltodayorders)->queryOne();
