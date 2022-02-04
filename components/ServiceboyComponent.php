@@ -1014,6 +1014,7 @@ class ServiceboyComponent extends Component{
 						$roderarray['closed_by'] = $serviceboydetails['ID'];
 						$roderarray['serviceboy_id'] = $serviceboydetails['ID'];
 						$roderarray['paymenttype'] = $val['paymenttype'];
+						$roderarray['paidstatus'] = '1';
 						//updateQuery($roderarray,'orders',$roderwharray);
 						$sqlUpdate = 'update orders set reorderprocess = \''.$roderarray['reorderprocess'].'\'
 						,orderprocess=\''.$roderarray['orderprocess'].'\',serviceboy_id=\''.$roderarray['serviceboy_id'].'\'
