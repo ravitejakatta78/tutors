@@ -52,7 +52,7 @@ use yii\helpers\Html;
 	   <label class="control-label col-md-4">Discount Type</label>
 	   <div class="col-md-8">
 	   <?= $form->field($model, 'type')->dropdownlist(['amount'=>'Amount','percent'=>'Percentage']
-				  ,['prompt'=>'Select Discount Type','class'=>'merchantcoupon-type'])->label(false); ?>
+				  ,['prompt'=>'Select Discount Type','class'=>'merchantcoupon-type merchantcoupon-price'])->label(false); ?>
 	   </div></div>
 	</div>
 
@@ -61,7 +61,7 @@ use yii\helpers\Html;
 
 <div class="col-md-4">
 	   <div class="form-group row">
-	   <label class="control-label col-md-4">Max Amount of Discount</label>
+	   <label class="control-label col-md-4 maxamtdiscnt">Max Percentage of Discount</label>
 	   <div class="col-md-8">
 			      <?= $form->field($model, 'maxamt')->textinput(['class' => 'form-control','placeholder'=>'Max Amount of Discount'])->label(false); ?>
 	   </div></div>
@@ -190,6 +190,7 @@ $(document).on('change', '.merchantcoupon-price', function(){
     var merchantcoupon_type = $(".merchantcoupon-type").val();
     var merchantcoupon_price = $( this ).val();
     if(merchantcoupon_type == 'percent'){
+		$('.maxamtdiscnt').html('Max Percentage of Discount');
         if(merchantcoupon_price != '' && merchantcoupon_price > 100){
                        swal(
 				'Warning!',
@@ -199,6 +200,9 @@ $(document).on('change', '.merchantcoupon-price', function(){
 			$(".merchantcoupon-price").val('');
         }
     }
+	else{
+		$('.maxamtdiscnt').html('Max Amount of Discount');
+	}
 });
 
 </script>    

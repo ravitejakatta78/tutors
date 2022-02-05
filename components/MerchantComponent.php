@@ -625,5 +625,20 @@ class MerchantComponent extends Component{
         	    }
 	    }
 	}
+
+	public function applyCoupon($val){
+		$minOrderAmt = $val['couponDetails']['minorderamt'];
+		$maxOrderAmt = $val['couponDetails']['maxamt'];
+		$subTotalAmount = $val['sub_total_amount'];
+		$appliedCouponAmount = $val['applied_coupon_amount'];
+		
+		if($appliedCouponAmount < $minOrderAmt) {
+			$payload = ['status' => '0', 'message' => 'Order Amount Should More Than '.$minOrderAmt];	
+		}
+		else {
+			$payload = ['status' => '1', 'message' => 'Coupon Applied Successfully'];
+		}
+		return $payload;
+	}
 }
 ?>

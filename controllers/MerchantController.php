@@ -53,8 +53,7 @@ use app\models\PilotTable;
 use yii\helpers\ArrayHelper;
 
 
-
-define('SITE_URL','http://localhost');
+define('SITE_URL','http://superpilot.in/dev/');
 class MerchantController extends GoController
 {
 
@@ -1486,14 +1485,15 @@ $re_Order =     (int)$reorderCount['max_reorder'] + 1;
 		$pilotassign = $pilotassign ?? '';
 		$orderUpdate = Orders::findOne($id);
 //		$orderUpdate->serviceboy_id = $pilotassign ?? '';
-        if(isset($chageStatusId)){
+        if(!empty($chageStatusId)){
             $orderUpdate->orderprocess = $chageStatusId;    
         }
 		
-		if(isset($kdschange)){
+		
+		if(!empty($kdschange)){
 		    $orderUpdate->preparedate = date('Y-m-d H:i:s');
 		}
-		if(isset($cancelReason)){
+		if(!empty($cancelReason)){
 		    $orderUpdate->cancel_reason = $cancelReason;
 		}
 		$orderUpdate->save();
@@ -1567,15 +1567,18 @@ else{
 	}
 	public function actionCheckcouponcode(){
 	    extract($_REQUEST);
-		$sqlc = 'SELECT  code,concat(price,\'-\',type) price from merchant_coupon where code = \''.$id.'\' 
-		and merchant_id = \''.Yii::$app->user->identity->merchant_id.'\' and status = \'Active\' AND \''.date('Y-m-d').'\' between  date(fromdate) and date(todate)  ';
+		$sqlc = 'SELECT  * from merchant_coupon where code = \''.$id.'\' 
+		and merchant_id = \''.Yii::$app->user->identity->merchant_id.'\' 
+		and status = \'Active\' AND \''.date('Y-m-d').'\' between  date(fromdate) and date(todate)  ';
 		$sql = Yii::$app->db->createCommand($sqlc)->queryOne();
 		if(!empty($sql)){
-		    return 1;
+			$payload = Yii::$app->merchant->applyCoupon(['applied_coupon_amount' => $_REQUEST['discount_amount'],'couponDetails' => $sql,
+			'sub_total_amount' => $_REQUEST['sub_total_amount'] ]);
 		}
 		else{
-		    return 2;
+		    $payload = ['status' => '0','message' => 'Invalid Coupon Code'];
 		}
+		return json_encode($payload);
 	}
 	
 	public function actionAutocompleteingredient(){
@@ -2643,18 +2646,16 @@ if ($model->load(Yii::$app->request->post()) ) {
 		inner join product p on p.ID = od.product_id
 		inner join food_categeries fc on fc.ID = p.foodtype 
 	    left join food_category_types fct on fct.ID =  p.food_category_quantity
-		where -- (tb.current_order_id != \'0\' and tb.current_order_id is not null) and 
-		orderprocess = \'1\' and o.merchant_id = \''.Yii::$app->user->identity->merchant_id.'\' order by food_category,title_quantity';
+		where  
+		orderprocess = \'1\' and (o.preparedate is null or o.preparedate = "")   and o.merchant_id = \''.Yii::$app->user->identity->merchant_id.'\' order by food_category,title_quantity';
 		$res = Yii::$app->db->createCommand($sql)->queryAll();
-		$tableres = array_column($res,'tablename','tableid');
-		
+		$tableres = array_column($res,'tablename','table_order_id');
 
-		$tableorderidres = array_column($res,'order_id','tableid');
-		$tabletimeres = array_column($res,'reg_date','tableid');
+		$tabletimeres = array_column($res,'reg_date','table_order_id');
 		
 		asort($tabletimeres);
-		$tableorderidres = array_column($res,'table_order_id','tableid');
-		$resindex =  \yii\helpers\ArrayHelper::index($res, null, 'tableid');
+		$tableorderidres = array_column($res,'tableid','table_order_id');
+		$resindex =  \yii\helpers\ArrayHelper::index($res, null, 'table_order_id');
 
 		return $this->render('viewkds1',['tableres'=>$tableres,'tableorderidres'=>$tableorderidres
 		,'tabletimeres'=>$tabletimeres,'resindex'=>$resindex,'tableorderidres'=>$tableorderidres

@@ -728,7 +728,7 @@ foreach($secTableIndexArr as $sec_id => $tableDetails ) {
 
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" id="merchant_coupon_save" data-dismiss="modal">Save</button>
+        <button type="button" class="btn btn-default" id="merchant_coupon_save" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
@@ -1291,7 +1291,8 @@ function saveorder()
               $("#ttl_sub_amt").val($('.ttl-sub-amt').html());
               $("#ttl_tip").val($('#ttl-tip-amt').val());
               $("#ttl_amt").val($('#ttl_payble').html());
-              
+              $("#merchantcpn").val($('#merchant_coupon').val());
+
               var ttl_sub_amt = $("#ttl_sub_amt").val();
               if(isNaN(ttl_sub_amt)){
                    swal(
@@ -1348,44 +1349,58 @@ $('#merchant_coupon').typeahead({
 
 function displayResult(item) {
 				var couponArr = 	item.value.split("-");			
-        $("#merchantcpn").val($('#merchant_coupon').val());
+        
 
 				var coupontype = (couponArr[1]);
-				if(coupontype == 'percent'){
-				    
-					var popamt = parseInt($("#ttl_payble").html());
-					var discountamt = ((popamt * couponArr[0])/100).toFixed(2);
-					
-					$(".ttl-cpn-amt").html(discountamt);
-				//	$("#couponamounthidden").val(discountamt);
-
+				var popamt = parseInt($(".ttl-sub-amt").html());
+        if(coupontype == 'percent'){
+  			    var discountamt = ((popamt * couponArr[0])/100).toFixed(2);
+    				//	$("#couponamounthidden").val(discountamt);
 				}else{
-					$(".ttl-cpn-amt").html(couponArr[0]);
+          var discountamt = couponArr[0];
 					//$("#couponamounthidden").val(couponArr[0]);
-
 				}
-		
-        totlrealprice(1);
+
+        if(popamt < discountamt){
+            swal(
+                'Warning!',
+                'Coupon Amount Should Not Be Greater Than Order Amount!!',  
+                'warning'
+            );
+            $('#merchant_coupon').val('');
+            return false;
+        }
+        else{
+            $(".ttl-cpn-amt").html(discountamt);
+            checkCouponCode();
+        }
 			}
-			
-			$('#merchant_coupon_save').click(function(){
-                 var request = $.ajax({
+
+      function checkCouponCode()
+      {
+        var request = $.ajax({
                   url: "checkcouponcode",
                   type: "POST",
-                  data: {id : $('#merchant_coupon').val()},
+                  data: {'id' : $('#merchant_coupon').val(),'discount_amount' : $(".ttl-cpn-amt").html()
+                    ,'sub_total_amount' : $(".ttl-sub-amt").html()
+                  },
                 }).done(function(msg) {
-                    if(msg == 2)
+                  var res = JSON.parse(msg);
+                    if(res['status'] == '0')
                     {
-                         swal(
-				'Warning!',
-				'Invalid Coupon Code',  
-				'warning'
-			);
-			$('#merchant_coupon').val('');
+                        swal(
+                          'Warning!',
+                          res['message'],  
+                          'warning'
+                        );
+                        $('#merchant_coupon').val('');
+                        $(".ttl-cpn-amt").html(0);
                     }
-
                 });
-			});
+                totlrealprice(1);
+      }
+
+
 function changetable(id,name,current_order_id)
 {
 

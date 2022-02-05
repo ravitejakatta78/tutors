@@ -160,7 +160,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
 
 <div class="col-md-4">
 	   <div class="form-group row">
-	   <label class="control-label col-md-4">Max Amount of Discount</label>
+	   <label class="control-label col-md-4 maxamtdiscnt" >Max Percentage of Discount</label>
 	   <div class="col-md-8">
 			      <?= $form->field($model, 'maxamt')->textinput(['class' => 'form-control','placeholder'=>'Max Amount of Discount'])->label(false); ?>
 	   </div></div>
@@ -382,6 +382,7 @@ function percentagecheck(){
     var merchantcoupon_type = $("#merchantcoupon-type").val();
     var merchantcoupon_price = $("#merchantcoupon-price").val();
     if(merchantcoupon_type == 'percent'){
+		$('.maxamtdiscnt').html('Max Percentage of Discount');
         if(merchantcoupon_price != '' && merchantcoupon_price > 100){
                        swal(
 				'Warning!',
@@ -391,5 +392,8 @@ function percentagecheck(){
 			$("#merchantcoupon-price").val('');
         }
     }
+	else{
+		$('.maxamtdiscnt').html('Max Amount of Discount');
+	}
 }
 </script>

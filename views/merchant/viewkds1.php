@@ -33,45 +33,45 @@ $actionId = Yii::$app->controller->action->id;
 		  $color1 = 'color1';
 		  $color2 = 'color2';
 		  //echo "<pre>";print_r($tabletimeres);exit;
-		  foreach($tabletimeres as $tableid => $tabletime) { ?>
+		  foreach($tabletimeres as $orderid => $tabletime) { ?>
 		  	<div class="col-md-4">
-			<input type="hidden" value="<?= $tableorderidres[$tableid];?>" id="table_order_id_<?= $tableid; ?>">
+			<input type="hidden" value="<?= $tableres[$orderid];?>" id="table_id_<?= $orderid; ?>">
 
-		  		<div style="cursor: pointer;" class="kitchen-table-head <?php if($clr % 2 == 0) { echo $color1; }else { echo $color2; }  ?> col-md-12" id="<?=$tableid ?>">
+		  		<div style="cursor: pointer;" class="kitchen-table-head <?php if($clr % 2 == 0) { echo $color1; }else { echo $color2; }  ?> col-md-12" id="<?= $orderid ?>">
 		  			
 		  			<div class="float-left">
 		  				<div class="time"><?= date('h:i A',strtotime($tabletime));?> <span class="badge badge-dark">Online</span></div>
-		  				<div class="tableno">Table: <?= $tableres[$tableid] ?? $tableid ; ?></div>
+		  				<div class="tableno">Table: <?= $tableres[$orderid] ?? $orderid ; ?></div>
 		  			</div>
 		  			<div class="float-right">
 		  				<div class="time">Pilot</div>
-		  				<div class="tableno">#<?=substr($tableorderidres[$tableid],-6) ?></div>
+		  				<div class="tableno">#<?=substr($tableorderidres[$orderid],-6) ?></div>
 		  			</div>
 		  		</div>
 		  		<div class="kitchen-table-body <?php if($clr % 2 == 0) { echo $color1; }else { echo $color2; }  ?> col-md-12">
 		  			<?php 
 					//echo "<pre>";print_r($resindex[$tableid]);exit;
-					for($i=0;$i<count($resindex[$tableid]);$i++) { ?>
-					<div class="row" onclick="productDeliver('<?= $resindex[$tableid][$i]['order_product_id'];?>')">
+					for($i=0;$i<count($resindex[$orderid]);$i++) { ?>
+					<div class="row" onclick="productDeliver('<?= $resindex[$orderid][$i]['order_product_id'];?>')">
 		  				<div class="col-md-2">
 		  					<div class="ktchn-qty">
-			  					<?= $resindex[$tableid][$i]['orderCount'].'x' ?>
+			  					<?= $resindex[$orderid][$i]['orderCount'].'x' ?>
 			  				</div>
 		  				</div>
 		  				<div class="col-md-8">
 		  					<div class="ktchn-title">
-		  						<?= $resindex[$tableid][$i]['title_quantity'] ;?>
+		  						<?= $resindex[$orderid][$i]['title_quantity'] ;?>
 		  					</div>
 
 		  				</div>
-						<?php if(!empty($resindex[$tableid][$i]['item_deliver_status'])) { ?>
-						<div class="col-md-2" id="<?= $resindex[$tableid][$i]['order_product_id'];?>">
+						<?php if(!empty($resindex[$orderid][$i]['item_deliver_status'])) { ?>
+						<div class="col-md-2" id="<?= $resindex[$orderid][$i]['order_product_id'];?>">
 						<i class="fa fa-check color-green"></i>
 						</div>							
 						<?php } ?>
 
 		  			</div>
-					<?php if(count($resindex[$tableid]) - 1 != $i) { ?>
+					<?php if(count($resindex[$orderid]) - 1 != $i) { ?>
 		  			<div class="divider"></div>
 					<?php } } ?>
 		  			
@@ -151,12 +151,12 @@ $(".kitchen-table-head").click(function(){
 		    })
 		    	.then((result) => {
 					if (result.value) {
-	var id = $("#table_order_id_"+this.id).val();			
+	var tableId = $("#table_id_"+this.id).val();			
 	
 						var request = $.ajax({
   url: "tableorderstatuschange",
   type: "POST",
-  data: {tableId : this.id,id:id,kdschange:1},
+  data: { id : this.id,tableId:tableId,kdschange:1,chageStatusId:1},
 }).done(function(msg) {
 	location.reload();
 });
