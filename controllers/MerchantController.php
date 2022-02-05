@@ -2641,7 +2641,7 @@ if ($model->load(Yii::$app->request->post()) ) {
 		,fc.food_category,o.reg_date
 		,case when food_type_name is not null then concat(title ,\' (\' , food_type_name , \')\') else title end  title_quantity
 		,od.ID order_product_id,od.item_deliver_status
-		from  orders o left join  tablename tb  on o.ID = tb.current_order_id 
+		from  orders o left join  tablename tb  on o.tablename = tb.ID 
 		inner join order_products od on o.ID = od.order_id 
 		inner join product p on p.ID = od.product_id
 		inner join food_categeries fc on fc.ID = p.foodtype 

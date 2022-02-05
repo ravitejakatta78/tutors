@@ -632,7 +632,7 @@ class MerchantComponent extends Component{
 		$subTotalAmount = $val['sub_total_amount'];
 		$appliedCouponAmount = $val['applied_coupon_amount'];
 		
-		if($appliedCouponAmount < $minOrderAmt) {
+		if($subTotalAmount < $minOrderAmt) {
 			$payload = ['status' => '0', 'message' => 'Order Amount Should More Than '.$minOrderAmt];	
 		}
 		else {

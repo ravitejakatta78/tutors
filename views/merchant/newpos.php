@@ -1396,8 +1396,11 @@ function displayResult(item) {
                         $('#merchant_coupon').val('');
                         $(".ttl-cpn-amt").html(0);
                     }
+                    else{
+                      totlrealprice(1);
+                    }
                 });
-                totlrealprice(1);
+                
       }
 
 
