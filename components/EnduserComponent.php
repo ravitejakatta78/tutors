@@ -2278,6 +2278,9 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 						$orderarray['preparedate'] =  $orderlist['preparedate'];
 						$orderarray['instructions'] =  $orderlist['instructions'];
 						$orderarray['discount_number'] =  $orderlist['discount_number'];
+						$orderarray['ordertype'] = $orderlist['ordertype'] == 2 ? 'Offline' : 'Online';
+						$orderarray['order_date'] = date('Y-m-d',strtotime($orderlist['reg_date']));
+						
 						$minutes = $orderlist['preparetime'];
 						if(!empty($orderlist['preparetime']) && $orderlist['preparetime'] > '0' && $orderlist['orderprocess'] == '1' && !empty($orderlist['preparedate'])){
 							$datetime1 = time();
