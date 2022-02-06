@@ -3138,17 +3138,20 @@ order by remain_coins desc limit '.$val['userCount'] ;
 				$newModel->updated_on = date('Y-m-d H:i:s');
 				$newModel->updated_by = $val['header_user_id'];
 				$newModel->save();
+				$message = 'Whislist Added Successfully!!';
 			}
 			else{
 				if($model->status == 1) {
 					$model->status = 2;	
+					$message = 'Unwhislisted Successfully';
 				}
 				else{
 					$model->status = 1;
+					$message = 'Whislist Added Successfully!!';
 				}
 				$model->save();
 			}
-			$payload = ["status"=>'1', "message" => 'Whislist Added Successfully!!'];
+			$payload = ["status"=>'1', "message" => $message];
 		}
 		else{
             $payload = ["status"=>'0',"message"=>'Please Provide Merchant Details'];
@@ -3188,8 +3191,9 @@ order by remain_coins desc limit '.$val['userCount'] ;
 
 		$sql = 'select *,case when (logo is null or logo = "") then "" else concat(\'http://superpilot.in/dev/merchantimages/\',logo) end logo
 			,case when (qrlogo is null or qrlogo = "") then "" else concat(\'http://superpilot.in/dev/merchantimages/\',qrlogo) end qrlogo
-			,case when (coverpic is null or coverpic = "")  then "" else concat(\'http://superpilot.in/dev/merchantimages/\',coverpic) end coverpic from user_whislist uw inner join users u on u.ID = uw.user_id
-			inner join merchant m on m.ID = uw.merchant_id where u.ID = \''.$val['header_user_id'].'\' ';
+			,case when (coverpic is null or coverpic = "")  then "" else concat(\'http://superpilot.in/dev/merchantimages/\',coverpic) end coverpic 
+			from user_whislist uw inner join users u on u.ID = uw.user_id
+			inner join merchant m on m.ID = uw.merchant_id where u.ID = \''.$val['header_user_id'].'\' and uw.status = \'1\' ';
 		
 		$res = Yii::$app->db->createCommand($sql)->queryAll();
 
