@@ -2817,8 +2817,11 @@ order by remain_coins desc limit '.$val['userCount'] ;
 		$room_reservation_types_ids_string = implode("','",$room_reservation_types_ids);
 
         $sqlMerchants = 'select m.ID,m.user_id,m.unique_id,m.name,email,m.mobile,m.storetype,m.storename,m.address,m.state,m.city
-        ,m.location,concat(\'http://superpilot.in/dev/merchantimages/\',m.logo) logo,m.latitude,m.longitude,concat(\'http://superpilot.in/dev/merchantimages/\',m.qrlogo) qrlogo
-        ,concat(\'http://superpilot.in/dev/merchantimages/\',m.coverpic) coverpic,m.status,m.otp,m.recommend,m.verify,m.description,m.servingtype
+        ,m.location
+		,case when (m.logo is null or m.logo = "") then "" else concat(\'http://superpilot.in/dev/merchantimages/\',m.logo) end logo
+		,case when (m.qrlogo is null or m.qrlogo = "") then "" else concat(\'http://superpilot.in/dev/merchantimages/\',m.qrlogo) end qrlogo
+		,case when (m.coverpic is null or m.coverpic = "")  then "" else concat(\'http://superpilot.in/dev/merchantimages/\',m.coverpic) end coverpic
+		,m.latitude,m.longitude,m.status,m.otp,m.recommend,m.verify,m.description,m.servingtype
         ,m.plan,m.useraccess,m.scan_range
         ,m.open_time,m.close_time,m.table_res_avail,m.owner_type,m.tax,m.tip,m.reg_date,m.mod_date
 		,m.food_serve_type,m.subscription_date
