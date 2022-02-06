@@ -34,7 +34,7 @@ class ServiceboyNotifications extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['merchant_id', 'serviceboy_id', 'order_id', 'title', 'message', 'ordertype', 'seen', 'reg_date'], 'required'],
+            [['merchant_id', 'order_id', 'title', 'message', 'seen', 'reg_date'], 'required'],
             [['title', 'message', 'seen'], 'string'],
             [['mod_date'], 'safe'],
             [['merchant_id', 'serviceboy_id', 'order_id'], 'string', 'max' => 30],

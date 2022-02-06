@@ -18,6 +18,7 @@ class MyConst
 	
 	const ROOM_RESERVATION_TYPES = ['4' => 'Hotels','6' => 'Service Apartments' , '7' => 'P.G' ,'8' => 'Resorts'];
 	const TASTE_CATEGORIES = ['1' => 'Spicy','2' => 'Sweet','3' => 'Normal'];
+	const PAYMENT_METHODS = ['1'=>'Cash On Dine','2'=>'Online Payment','3'=>'UPI Scanner','4'=>'Card Swipe'];
 }
 
 ?>

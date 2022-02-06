@@ -15,6 +15,7 @@ use app\models\Tablename;
 use app\models\CoinsTransactions;
 use app\models\OrderPushPilot;
 use app\models\OrderRejections;
+use app\models\MerchantNotifications;
 use yii\helpers\ArrayHelper;
 
  date_default_timezone_set("asia/kolkata");
@@ -794,6 +795,7 @@ class ServiceboyComponent extends Component{
 					$preparetime = $val['preparetime'];
 
 					$orderlist = Orders::findOne($orderid);
+					$tableDetails = Tablename::findOne($orderlist['tablename']);
 					if(!empty($orderlist)){
 						$orderlist['serviceboy_id'] = str_replace('""', NULL, $orderlist['serviceboy_id']);
 						if(empty($orderlist['serviceboy_id'])){
@@ -809,7 +811,16 @@ class ServiceboyComponent extends Component{
 						,preparetime = \''.$roderarray['preparetime'].'\',serviceboy_id = \''.$roderarray['serviceboy_id'].'\'
 						where ID = \''.$roderwharray['ID'].'\'';
 						$result = Yii::$app->db->createCommand($sqlUpdate)->execute();
-					
+							if(!empty($roderarray['preparetime']) && $roderarray['preparetime'] > 0 && empty($orderlist['preparetime'])) {
+								$merchantNotidication = new MerchantNotifications;
+								$merchantNotidication->merchant_id = $orderlist['merchant_id'];
+								$merchantNotidication->message = 'Order '.$orderlist['order_id'].' on  '.$tableDetails['name'].'-'.$tableDetails->section['section_name'].' is <br> 
+								Preparing in '.$roderarray['preparetime']. ' mins';
+								$merchantNotidication->seen = '0';
+								$merchantNotidication->created_on = date('Y-m-d H:i:s');
+								$merchantNotidication->created_by = $val['header_user_id'];
+								$merchantNotidication->save();
+							}
 						$userdetails = Users::findOne($orderlist['user_id']);
 						if(!empty($userdetails['push_id'])){	
 						$title = 'Your order has been accepted';
@@ -825,18 +836,30 @@ class ServiceboyComponent extends Component{
 						and loginstatus = \'1\' and push_id is not null and ID != \''.$val['header_user_id'].'\' order by ID desc';
 						$serviceboyarray = Yii::$app->db->createCommand($sqlserviceboyarray)->queryAll();
 						
-											if(!empty($serviceboyarray)){
-												$stitle = 'Order Conformation';
-												$smessage = $orderlist['order_id'].' is accepted by '.Utility::serviceboy_details($roderarray['serviceboy_id'],'name');
-												$simage = '';
-												foreach($serviceboyarray as $serviceboy){ 
-													Utility::sendNewFCM($serviceboy['push_id'],$stitle,$smessage,$simage,null,null,$orderid); 
-												}
-											}
+								if(!empty($serviceboyarray)){
+									$stitle = 'Order Conformation';
+									$smessage = $orderlist['order_id'].' is accepted by '.Utility::serviceboy_details($roderarray['serviceboy_id'],'name');
+									$simage = '';
+									foreach($serviceboyarray as $serviceboy){ 
+										Utility::sendNewFCM($serviceboy['push_id'],$stitle,$smessage,$simage,null,null,$orderid); 
+									}
+								}
+								
+								$merchantNotidication = new MerchantNotifications;
+								$merchantNotidication->merchant_id = $orderlist['merchant_id'];
+								$merchantNotidication->message = 'Order '.$orderlist['order_id'].' on  '.$tableDetails['name'].'-'.$tableDetails->section['section_name'].' <br> is Accepted';
+								$merchantNotidication->seen = '0';
+								$merchantNotidication->created_on = date('Y-m-d H:i:s');
+								$merchantNotidication->created_by = $val['header_user_id'];
+								$merchantNotidication->save();
 						
 								$payload = array('status'=>'1','message'=>'Order has been accepted');
 						}else{
 						$smessage = $orderlist['order_id'].' is accepted by '.Utility::serviceboy_details($orderlist['serviceboy_id'],'name');
+						
+
+						
+						
 						$payload = array('status'=>'1','message'=>$smessage);
 						}
 					}else{
@@ -846,10 +869,20 @@ class ServiceboyComponent extends Component{
 	}
 	public function serveorder($val){
 	    			$orderid = $val['orderid'];
-	    			$order_details = \app\models\Orders::findOne($orderid);
+	    			$order_details = Orders::findOne($orderid);
+					$tableDetails = Tablename::findOne($order_details['tablename']);
 	    			if(!empty($order_details)){
 	    			    $order_details->orderprocess = '2';
 	    			    $order_details->save();
+						
+						$merchantNotidication = new MerchantNotifications;
+						$merchantNotidication->merchant_id = $order_details['merchant_id'];
+						$merchantNotidication->message = 'Order '.$order_details['order_id'].' on  '.$tableDetails['name'].'-'.$tableDetails->section['section_name'].' <br> is Served';
+						$merchantNotidication->seen = '0';
+						$merchantNotidication->created_on = date('Y-m-d H:i:s');
+						$merchantNotidication->created_by = $val['header_user_id'];
+						$merchantNotidication->save();
+
 								$payload = array('status'=>'1','message'=>'Order Served Successfully');
 	    			    
 	    			}else{
@@ -866,6 +899,7 @@ class ServiceboyComponent extends Component{
 					$preparetime = $val['preparetime'];
 	
 					$orderlist = Orders::findOne($orderid);
+					$tableDetails = Tablename::findOne($orderlist['tablename']);
 					if(!empty($orderlist)){
 					    if(!empty($preparetime)){
 
@@ -878,6 +912,15 @@ class ServiceboyComponent extends Component{
 						     Utility::sendNewFCM($userdetails['push_id'],$title,$message,null,null,null,$orderlist['ID']);
 
 						 }
+
+						 		$merchantNotidication = new MerchantNotifications;
+								$merchantNotidication->merchant_id = $orderlist['merchant_id'];
+								$merchantNotidication->message = 'Order '.$orderlist['order_id'].' on  '.$tableDetails['name'].'-'.$tableDetails->section['section_name'].' is <br> 
+								Preparing in '.$preparetime. ' mins';
+								$merchantNotidication->seen = '0';
+								$merchantNotidication->created_on = date('Y-m-d H:i:s');
+								$merchantNotidication->created_by = $val['header_user_id'];
+								$merchantNotidication->save();
 								$payload = array('status'=>'1','message'=>'Preparation time updated successfully');
 					    
 					        
@@ -897,13 +940,23 @@ class ServiceboyComponent extends Component{
 					$orderid = $val['orderid'];
 					$preparedate = $val['preparedate'];
 					$orderlist = Orders::findOne($orderid);
+					$tableDetails = Tablename::findOne($orderlist['tablename']);
 					if(!empty($orderlist)){
 					    if(!empty($preparedate)){
 
 					     $sqlUpdate = 'update orders set preparedate = \''.$preparedate.'\'	where ID = \''.$orderid.'\'';
 						 $result = Yii::$app->db->createCommand($sqlUpdate)->execute();
 						 
-								$payload = array('status'=>'1','message'=>'Preparation date updated successfully');
+						 $merchantNotidication = new MerchantNotifications;
+						 $merchantNotidication->merchant_id = $orderlist['merchant_id'];
+						 $merchantNotidication->message = 'Order '.$orderlist['order_id'].' on  '.$tableDetails['name'].'-'.$tableDetails->section['section_name'].' is <br> 
+						 Prepared';
+						 $merchantNotidication->seen = '0';
+						 $merchantNotidication->created_on = date('Y-m-d H:i:s');
+						 $merchantNotidication->created_by = $val['header_user_id'];
+						 $merchantNotidication->save();
+
+						$payload = array('status'=>'1','message'=>'Preparation date updated successfully');
 					    
 					        
 					    }
@@ -941,7 +994,7 @@ class ServiceboyComponent extends Component{
 		$date = date('Y-m-d');
 					$orderid = $val['orderid'];
 					$orderlist = Orders::findOne($orderid);
-
+					$tableUpdate = Tablename::findOne($orderlist['tablename']);
 					if(!empty($orderlist)){ 
                             $sqlorderpush = "select sum(case when status = 3 then 1 else 0 end) reject_count,count(ID)  order_sent_count from order_push_pilot where merchant_id = '".$orderlist['merchant_id']."' and order_id = '".$orderlist['ID']."'";
                             $resorderpush = Yii::$app->db->createCommand($sqlorderpush)->queryOne();
@@ -965,14 +1018,22 @@ class ServiceboyComponent extends Component{
 							}
 							$table_status = null;
 			                $current_order_id = 0;
-	                        $tableUpdate = Tablename::findOne($orderlist['tablename']);
+
 							$tableUpdate->table_status = $table_status;
 		                    $tableUpdate->current_order_id = $current_order_id;
 		                	$tableUpdate->save();
 		                	    
-		                	
+							$merchantNotidication = new MerchantNotifications;
+							$merchantNotidication->merchant_id = $orderlist['merchant_id'];
+							$merchantNotidication->message = 'Order '.$orderlist['order_id'].' on  '.$tableUpdate['name'].'-'.$tableUpdate->section['section_name'].' is <br> Cancelled' ;
+							$merchantNotidication->seen = '0';
+							$merchantNotidication->created_on = date('Y-m-d H:i:s');
+							$merchantNotidication->created_by = $val['header_user_id'];
+							$merchantNotidication->save();
+
 							$payload = array('status'=>'1','message'=>'Order has been Cancelled');
-	                        }else if(!empty($sqlorderpush) &&  ($resorderpush['reject_count']+1) == $resorderpush['order_sent_count'] && $val['cancelconfirm'] == 2){
+	                        }
+							else if(!empty($sqlorderpush) &&  ($resorderpush['reject_count']+1) == $resorderpush['order_sent_count'] && $val['cancelconfirm'] == 2){
 					            
 					            $payload = array('status'=>'1','message'=>'If we reject the order it will auto cancel !!');
 					    }
@@ -992,9 +1053,18 @@ class ServiceboyComponent extends Component{
                                     $orderrejmodel->created_on = date('Y-m-d H:i:s');
                                     $orderrejmodel->reg_date = date('Y-m-d');
                                     $orderrejmodel->save();
-        							$payload = array('status'=>'1','message'=>'Order has been Rejected');
 
+									$merchantNotidication = new MerchantNotifications;
+									$merchantNotidication->merchant_id = $orderlist['merchant_id'];
+									$merchantNotidication->message = 'New Order '.$orderlist['order_id'].' received on  '.$tableUpdate['name'].'-'.$tableUpdate->section['section_name'].' is <br> rejected by '.$serviceboydetails['name'];
+									$merchantNotidication->seen = '0';
+									$merchantNotidication->created_on = date('Y-m-d H:i:s');
+									$merchantNotidication->created_by = $val['header_user_id'];
+									$merchantNotidication->save();
+
+									$payload = array('status'=>'1','message'=>'Order has been Rejected');
 					    }
+
 					}else{
 					$payload = array('status'=>'0','message'=>'Order not found!!');
 					}
@@ -1006,6 +1076,7 @@ class ServiceboyComponent extends Component{
 		$date = date('Y-m-d');
 					$orderid = $val['orderid'];
 					$orderlist = Orders::findOne($orderid);
+					$tableDetails = Tablename::findOne($orderlist['tablename']);
 					if(!empty($orderlist)){ 
 						$roderarray = $roderwharray=  array();
 						$roderwharray['ID'] = $orderid;  
@@ -1063,6 +1134,15 @@ class ServiceboyComponent extends Component{
 		                    $tableUpdate->current_order_id = $current_order_id;
 		                	$tableUpdate->save();
 							
+
+							$merchantNotidication = new MerchantNotifications;
+							$merchantNotidication->merchant_id = $orderlist['merchant_id'];
+							$merchantNotidication->message = 'Order '.$orderlist['order_id'].' on  '.$tableDetails['name'].'-'.$tableDetails->section['section_name'].' <br> is Completed';
+							$merchantNotidication->seen = '0';
+							$merchantNotidication->created_on = date('Y-m-d H:i:s');
+							$merchantNotidication->created_by = $val['header_user_id'];
+							$merchantNotidication->save();
+
 						$payload = array('status'=>'1','message'=>'Order has been delivered.');
 						 
 					}else{
@@ -1075,6 +1155,7 @@ class ServiceboyComponent extends Component{
 		$serviceboydetails = Serviceboy::findOne($val['header_user_id']);
 		$orderid = $val['orderid'];
 					$orderlist = Orders::findOne($orderid);
+					$tableDetails = Tablename::findOne($orderlist['tablename']);
 					if(!empty($orderlist)){ 
 						$roderarray = $roderwharray=  array();
 						$roderwharray['ID'] = $orderid;  
@@ -1098,6 +1179,16 @@ class ServiceboyComponent extends Component{
 						$image = '';
 						Utility::sendNewFCM($userdetails['push_id'],$title,$message,$image,null,null,$orderid);			
 						}
+						$merchantNotidication = new MerchantNotifications;
+						$merchantNotidication->merchant_id = $orderlist['merchant_id'];
+						$merchantNotidication->message = \app\helpers\MyConst::PAYMENT_METHODS[$orderlist['paymenttype']].' Payment of Rs. '.$orderlist['totalamount'].'<br> 
+						received on Order '.$orderlist['order_id'].' of '.$tableDetails['name'].'-'.$tableDetails->section['section_name'];
+						$merchantNotidication->seen = '0';
+						$merchantNotidication->created_on = date('Y-m-d H:i:s');
+						$merchantNotidication->created_by = $val['header_user_id'];
+						$merchantNotidication->save();
+
+
 							$payload = array('status'=>'1','message'=>'Payment status updated.');
 					}else{
 					$payload = array('status'=>'0','message'=>'Order not found!!');
@@ -1468,20 +1559,15 @@ class ServiceboyComponent extends Component{
 											}
 											}
 
-											$notificaitonarary = array();
-											$notificaitonarary['merchant_id'] = $merchantid;
-											$notificaitonarary['serviceboy_id'] = $val['serviceboy_id'];
-											$notificaitonarary['order_id'] = $orderdetails['ID'];
-											$notificaitonarary['title'] = 'New Order';
-											$notificaitonarary['message'] = 'New Order request from '.$userdetails['name']." with order id ".$orderdetails['order_id'];
-											$notificaitonarary['ordertype'] = 'new';
-											$notificaitonarary['seen'] = '0';
-											$serviceBoyNotiModel = new  \app\models\ServiceboyNotifications;
-											$serviceBoyNotiModel->attributes = $notificaitonarary;
-											$serviceBoyNotiModel->reg_date = date('Y-m-d H:i:s');
-											$serviceBoyNotiModel->mod_date = date('Y-m-d H:i:s');
-											$serviceBoyNotiModel->save();
-											$tableUpdate = \app\models\Tablename::findOne($val['table']);
+											$merchantNotidication = new MerchantNotifications;
+											$merchantNotidication->merchant_id = $orderdetails['merchant_id'];
+											$merchantNotidication->message = 'New Order '.$orderdetails['order_id'].' received on  '.$tabel_Det['name'].'-'.$tabel_Det->section['section_name'];
+											$merchantNotidication->seen = '0';
+											$merchantNotidication->created_on = date('Y-m-d H:i:s');
+											$merchantNotidication->created_by = $val['header_user_id'];
+											$merchantNotidication->save();
+											
+											$tableUpdate = Tablename::findOne($val['table']);
 						                    $tableUpdate->table_status = '1';
 						                    $tableUpdate->current_order_id = $orderdetails['ID'];
 						                    if($tableUpdate->validate()){
@@ -1517,7 +1603,9 @@ class ServiceboyComponent extends Component{
 
 							$orderdetails = Orders::findOne($orderid);
 							$userdetails = Users::findOne($orderdetails['user_id']);
-
+							$tabledetails = Tablename::findOne($orderdetails['tablename']);
+							$serviceboyDetails = Serviceboy::findOne($orderdetails['serviceboy_id']);
+							
 							$orderamount = trim($val['totalamount']);
 							$totalamount = number_format($orderamount, 2, '.', ',');
 							
@@ -1546,7 +1634,8 @@ class ServiceboyComponent extends Component{
 							$userarray['instructions'] = !empty($val['instructions']) ? $val['instructions'] : $orderdetails['instructions'];
 							$userwwherearray['ID'] = $orderid; 
 							//$result = updateQuery($userarray,"orders",$userwwherearray);
-							$result = \app\models\Orders::findOne($orderid);
+							$result = Orders::findOne($orderid);
+
 							//echo "<pre>";print_r($userarray);exit;
 							$result->attributes = $userarray;
 							if($result->save()){
@@ -1605,35 +1694,38 @@ class ServiceboyComponent extends Component{
 										$orderProdModel->attributes = $productscount;
 										$orderProdModel->reg_date = date('Y-m-d H:i:s');
 										$orderProdModel->save();
-									$x++; }
-	
+										if($i == 0){
+											$merchantNotidication = new \app\models\MerchantNotifications;
+											$merchantNotidication->merchant_id = $orderdetails['merchant_id'];
+											$merchantNotidication->message = 'Items added to '.$orderdetails['order_id'].' on  '.$tabledetails['name'].'-'.$tabledetails->section['section_name'].' <br> by '.$serviceboyDetails['name'];
+											$merchantNotidication->seen = '0';
+											$merchantNotidication->created_on = date('Y-m-d H:i:s');
+											$merchantNotidication->created_by = $val['header_user_id'];
+											$merchantNotidication->save();
+											
 											$title = 'Order Items has been added!!';
 											$message = "Hi ".$userdetails['name'].", Your order has been placed. ".$orderdetails['order_id']." is your line Please Wait for your turn Thank you.";
 											$image = '';
 											//Yii::$app->merchant->send_sms($userdetails['mobile'],$message);
 											if(!empty($userdetails['push_id'])){
 												Utility::sendNewFCM($userdetails['push_id'],$title,$message,$image,null,null,$orderdetails['ID']);
-											} 
-											$servicepushid = Utility::serviceboy_details($orderdetails['serviceboy_id'],'push_id');
-											if(!empty($servicepushid)){
+											}
+											
+											
+											if(!empty($serviceboyDetails['push_id'])){
 												$stitle = 'Order items have been added.';
 												$smessage = 'Order received please check the app for information.';
 												$simage = ''; 
-													Utility::sendNewFCM($servicepushid,$stitle,$smessage,$simage,'6',null,$orderdetails['ID']); 
+													Utility::sendNewFCM($serviceboyDetails['push_id'],$stitle,$smessage,$simage,'6',null,$orderdetails['ID']); 
 											}
-											$notificaitonarary = array();
-											$notificaitonarary['merchant_id'] = $merchantid;
-											$notificaitonarary['serviceboy_id'] = $orderdetails['serviceboy_id'];
-											$notificaitonarary['order_id'] = $orderdetails['ID'];
-											$notificaitonarary['title'] = 'Reorder Request';
-											$notificaitonarary['message'] = 'Reorder Order request from '.$userdetails['name']." with order id ".$orderdetails['order_id'];
-											$notificaitonarary['seen'] = '0';
-											$notificaitonarary['ordertype'] = 'reorder';
-											//insertQuery($notificaitonarary,'serviceboy_notifications');
-											$serviceBoyNotiModel = new  \app\models\ServiceboyNotifications;
-											$serviceBoyNotiModel->attributes = $notificaitonarary;
-											$serviceBoyNotiModel->reg_date = date('Y-m-d H:i:s');
-											$serviceBoyNotiModel->save();
+										
+										}
+										
+									$x++; }
+	
+											 
+											
+
 										$payload = array("status"=>'1',"id"=>$orderdetails['ID'],"message"=>"Order Updated successfully");
 									
 								}

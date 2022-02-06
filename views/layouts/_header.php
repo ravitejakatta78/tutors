@@ -2,7 +2,8 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 $merchant_id = Yii::$app->user->identity->merchant_id;
-$sqlMerchantNotifications = 'select * from merchant_notifications where merchant_id=\''.$merchant_id.'\' and seen=\'0\' order by created_on';
+$sqlMerchantNotifications = 'select * from merchant_notifications where merchant_id=\''.$merchant_id.'\'
+ and seen=\'0\' order by created_on desc limit 5 ';
 $merchantNotifications = Yii::$app->db->createCommand($sqlMerchantNotifications)->queryAll();
 $merchantDet = \app\models\Merchant::findOne($merchant_id);
 ?>
@@ -40,7 +41,7 @@ $merchantDet = \app\models\Merchant::findOne($merchant_id);
                         <i class="fa fa-bell-o"></i>
                         <span class="badge bg-red badge-corner"><?= count($merchantNotifications); ?></span>
                     </a>
-                  <ul aria-labelledby="notifications" class="dropdown-menu" style="max-height: 300px;  overflow-y: auto;  overflow-x: hidden; min-width: 210px;">
+                  <ul aria-labelledby="notifications" class="dropdown-menu" style="max-height: 300px; width: 500px; overflow-y: auto;  overflow-x: hidden; min-width: 210px;">
                       <?php foreach($merchantNotifications as $merchantNoti){ ?>
                           <li>
                             <a rel="nofollow" href="#" class="dropdown-item"> 

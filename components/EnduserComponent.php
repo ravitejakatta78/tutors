@@ -1493,9 +1493,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 									 //   exit;
 									}
 
-									$tabledetails = Tablename::find()
-									->where(['merchant_id'=>$merchantdetails['ID'], 'ID'=>$tableid, 'status'=>'1'])
-									->asArray()->One();
+									$tabledetails = Tablename::findOne($tableid);
 									if(!empty($tabledetails)){
 										$sqlmerchantproductsarray = 'select p.*, section_item_price, section_item_sale_price, food_type_name
 										,  food_category, food_section_name , fs.ID food_section_id
@@ -1590,7 +1588,6 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 												$newProduclistArr[$pr]['items'] =$catItems;
 												$pr++;
 											} */
-
 
 
 										$payload = array("status"=>'1', "merchantid"=>$merchantdetails['ID'], "table"=>$tabledetails['ID']
@@ -1784,22 +1781,34 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 													$orderpushmodel->reg_date = date('Y-m-d H:i:s');
 													$orderpushmodel->mod_date = date('Y-m-d H:i:s');
 													$orderpushmodel->save();
+												
+													$notificaitonarary = array();
+													$notificaitonarary['merchant_id'] = $merchantid;
+													$notificaitonarary['serviceboy_id'] = $serviceboy['ID'];
+													$notificaitonarary['order_id'] = (string)$orderdetails['ID'];
+													$notificaitonarary['title'] = 'New Order';
+													$notificaitonarary['message'] = 'New Order '.$orderdetails['order_id'].' received on  '.$tabel_Det['name'].'-'.$tabel_Det->section['section_name'];
+													$notificaitonarary['ordertype'] = 'new';
+													$notificaitonarary['seen'] = '0';
+													
+													$serviceBoyNotiModel = new  ServiceboyNotifications;
+													$serviceBoyNotiModel->attributes = $notificaitonarary;
+													$serviceBoyNotiModel->reg_date = date('Y-m-d H:i:s');
+													$serviceBoyNotiModel->mod_date = date('Y-m-d H:i:s');
+													$serviceBoyNotiModel->save();
+														
+												
 												}
+
+												$merchantNotidication = new \app\models\MerchantNotifications;
+												$merchantNotidication->merchant_id = $merchantid;
+												$merchantNotidication->message = 'New Order '.$orderdetails['order_id'].' received on  '.$tabel_Det['name'].'-'.$tabel_Det->section['section_name'];
+												$merchantNotidication->seen = '0';
+												$merchantNotidication->created_on = date('Y-m-d H:i:s');
+												$merchantNotidication->created_by = $val['header_user_id'];
+												$merchantNotidication->save();
 											}
-											$notificaitonarary = array();
-											$notificaitonarary['merchant_id'] = $merchantid;
-											$notificaitonarary['serviceboy_id'] = '0';
-											$notificaitonarary['order_id'] = $orderdetails['ID'];
-											$notificaitonarary['title'] = 'New Order';
-											$notificaitonarary['message'] = 'New Order request from '.$userdetails['name']." with order id ".$orderdetails['order_id'];
-											$notificaitonarary['ordertype'] = 'new';
-											$notificaitonarary['seen'] = '0';
-											
-											$serviceBoyNotiModel = new  ServiceboyNotifications;
-											$serviceBoyNotiModel->attributes = $notificaitonarary;
-											$serviceBoyNotiModel->reg_date = date('Y-m-d h:i:s');
-											$serviceBoyNotiModel->mod_date = date('Y-m-d h:i:s');
-											$serviceBoyNotiModel->save();
+
 											
 											$tableUpdate = Tablename::findOne($table);
 						                    $tableUpdate->table_status = '1';
