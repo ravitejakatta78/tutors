@@ -2827,7 +2827,8 @@ order by remain_coins desc limit '.$val['userCount'] ;
 		from merchant m 
 		left join user_whislist uw on m.ID = uw.merchant_id and uw.user_id = \''.$val['header_user_id'].'\' 
 		 
-		where m.status = \''.MyConst::TYPE_ACTIVE.'\' and m.storetype in (\''.$room_reservation_types_ids_string.'\')';
+		where m.status = \''.MyConst::TYPE_ACTIVE.'\' 
+		and m.storetype in (\''.$room_reservation_types_ids_string.'\') and uw.status = \'1\'';
         $resMerchants = Yii::$app->db->createCommand($sqlMerchants)->queryAll();
         
         $resultMerchants = ArrayHelper::index($resMerchants, null, 'storetype');
