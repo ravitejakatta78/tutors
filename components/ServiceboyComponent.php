@@ -469,51 +469,42 @@ class ServiceboyComponent extends Component{
 	{
 		$serviceboydetails = Serviceboy::findOne($val['header_user_id']);
 		$date = date('Y-m-d');  
-					$sqlorderlistarray = "select * from serviceboy_notifications where merchant_id = '".$serviceboydetails['merchant_id']."' and serviceboy_id = '".$serviceboydetails['ID']."' and reg_date >= '".$date." 00:00:00' and reg_date <= '".$date." 23:59:59' 
-					union select * from serviceboy_notifications where merchant_id = '".$serviceboydetails['merchant_id']."' and reg_date >= '".$date." 00:00:00' and reg_date <= '".$date." 23:59:59' 
-					and ordertype = 'new' and serviceboy_id = '0' order by ID desc";
-					$orderlistarray = Yii::$app->db->createCommand($sqlorderlistarray)->queryAll();
-					$sqlunseennotifications = "select ID from serviceboy_notifications where merchant_id = '".$serviceboydetails['merchant_id']."' and serviceboy_id = '".$serviceboydetails['ID']."' and seen = '0' and reg_date >= '".$date." 00:00:00' and reg_date <= '".$date." 23:59:59' 
-					union  select ID from serviceboy_notifications where merchant_id = '".$serviceboydetails['merchant_id']."' and seen = '0' 
-					and reg_date >= '".$date." 00:00:00' and reg_date <= '".$date." 23:59:59' and ordertype = 'new' and serviceboy_id = '0'";
-					$unseennotifications = Yii::$app->db->createCommand($sqlunseennotifications)->queryAll();
+		$sqlnotifications = "select * from serviceboy_notifications 
+					where merchant_id = '".$serviceboydetails['merchant_id']."' 
+					and serviceboy_id = '".$serviceboydetails['ID']."' 
+					and seen = '0' and reg_date >= '".$date." 00:00:00' 
+					and reg_date <= '".$date." 23:59:59'";
+		$notifications = Yii::$app->db->createCommand($sqlnotifications)->queryAll();
 					
-					$unseennotifications = !empty($unseennotifications) ? count($unseennotifications) : 0;
-					if(!empty($orderlistarray)){
-					$orderarray = $totalordersarray = array();
-					foreach($orderlistarray as $orderlist){
-						$totalproductaarray = array();
-						$orderarray['id'] =  $orderlist['ID'];
-						$orderarray['order_id'] =  $orderlist['order_id'];
-						$orderarray['title'] =  $orderlist['title']; 
-						$orderarray['message'] =  $orderlist['message']; 
-						$orderarray['seen'] =  $orderlist['seen'];  
-						$orderarray['regdate'] =  date('d M Y H:i:s',strtotime($orderlist['reg_date'])); 
-					$totalordersarray[] = $orderarray;
-					}
-				 	$payload = array('status'=>'1','count'=>$unseennotifications,'orders'=>$totalordersarray);  
-					}else{
-					$payload = array('status'=>'0','message'=>'Notification not found!!');
-					}
+		$countnotifications = !empty($notifications) ? count($notifications) : 0;
+		if(!empty($notifications)){
+			$orderarray = $totalordersarray = array();
+			foreach($notifications as $orderlist){
+				$totalproductaarray = array();
+				$orderarray['id'] =  $orderlist['ID'];
+				$orderarray['order_id'] =  $orderlist['order_id'];
+				$orderarray['title'] =  $orderlist['title']; 
+				$orderarray['message'] =  $orderlist['message']; 
+				$orderarray['seen'] =  $orderlist['seen'];  
+				$orderarray['regdate'] =  date('d M Y H:i:s',strtotime($orderlist['reg_date'])); 
+				$totalordersarray[] = $orderarray;
+			}
+			$payload = array('status'=>'1','count'=>$countnotifications,'notifications'=>$totalordersarray);  
+		}else{
+			$payload = array('status'=>'0','message'=>'Notification not found!!');
+		}
 		return $payload;
 	}
 	public function seenstatus($val){
 		$serviceboydetails = Serviceboy::findOne($val['header_user_id']);
 		if(!empty($serviceboydetails['ID'])&&!empty($serviceboydetails['merchant_id'])){
-					$sqlresult =	"update serviceboy_notifications set seen = '1' where merchant_id = '".$serviceboydetails['merchant_id']."' and ordertype = 'new'";
-					$resultupdate = Yii::$app->db->createCommand($sqlresult)->execute();
 					$sqlresult1 =	"update serviceboy_notifications set seen = '1' where serviceboy_id = '".$serviceboydetails['ID']."'"; 
 					$result = Yii::$app->db->createCommand($sqlresult1)->execute();
-					
-					
-					  
-						$payload = array('status'=>'1','message'=>'Data Updated');
-						
-					 }else{
-					$payload = array('status'=>'0','message'=>'Service boy not found.');
-					 }
-					 
-					 return $payload;
+					$payload = array('status'=>'1','message'=>'Data Updated');
+		 }else{
+				$payload = array('status'=>'0','message'=>'Service boy not found.');
+		 }
+		 return $payload;
 	}
 	public function neworders($val){
 		$serviceboydetails = Serviceboy::findOne($val['header_user_id']);
