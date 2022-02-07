@@ -638,6 +638,9 @@ class MerchantComponent extends Component{
 		else {
 			$payload = ['status' => '1', 'message' => 'Coupon Applied Successfully'];
 		}
+		if($maxOrderAmt < $appliedCouponAmount) {
+			$payload = ['status' => '2', 'message' => 'Coupon Applied Successfully', 'cpnAmt' => $maxOrderAmt];	
+		}
 		return $payload;
 	}
 }

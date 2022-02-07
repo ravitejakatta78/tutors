@@ -1406,6 +1406,10 @@ function displayResult(item) {
                         $('#merchant_coupon').val('');
                         $(".ttl-cpn-amt").html(0);
                     }
+                    else if(res['status'] == '2'){
+                      $(".ttl-cpn-amt").html(res['cpnAmt']);
+                      totlrealprice(1);
+                    } 
                     else{
                       totlrealprice(1);
                     }
