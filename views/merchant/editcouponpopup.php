@@ -61,7 +61,7 @@ use yii\helpers\Html;
 
 <div class="col-md-4">
 	   <div class="form-group row">
-	   <label class="control-label col-md-4 maxamtdiscnt">Max Percentage of Discount</label>
+	   <label class="control-label col-md-4">Max Amount of Discount</label>
 	   <div class="col-md-8">
 			      <?= $form->field($model, 'maxamt')->textinput(['class' => 'form-control','placeholder'=>'Max Amount of Discount'])->label(false); ?>
 	   </div></div>
@@ -93,7 +93,7 @@ use yii\helpers\Html;
 
 <div class="col-md-4">
 	   <div class="form-group row">
-	   <label class="control-label col-md-4">Amount of Discount</label>
+	   <label class="control-label col-md-4 updateamtdiscnt">Amount of Discount</label>
 	   <div class="col-md-8">
 			      <?= $form->field($model, 'price')->textinput(['class' => 'form-control merchantcoupon-price','placeholder'=>'Amount Of Discount'])->label(false); ?>
 	   </div></div>
@@ -161,7 +161,13 @@ use yii\helpers\Html;
 <?php
 $script = <<< JS
     $('#tblAddRow1').DataTable();
-		$('select').select2();
+	$('select').select2();
+	var merchantcoupon_type = $(".merchantcoupon-type").val();
+    if(merchantcoupon_type == 'percent'){
+		$('.updateamtdiscnt').html('Percentage of Discount');
+	}else{
+		$('.updateamtdiscnt').html('Amount of Discount');
+	}	
 JS;
 $this->registerJs($script);
 ?>
@@ -190,7 +196,7 @@ $(document).on('change', '.merchantcoupon-price', function(){
     var merchantcoupon_type = $(".merchantcoupon-type").val();
     var merchantcoupon_price = $( this ).val();
     if(merchantcoupon_type == 'percent'){
-		$('.maxamtdiscnt').html('Max Percentage of Discount');
+		$('.updateamtdiscnt').html('Percentage of Discount');
         if(merchantcoupon_price != '' && merchantcoupon_price > 100){
                        swal(
 				'Warning!',
@@ -201,9 +207,11 @@ $(document).on('change', '.merchantcoupon-price', function(){
         }
     }
 	else{
-		$('.maxamtdiscnt').html('Max Amount of Discount');
+		$('.updateamtdiscnt').html('Amount of Discount');
 	}
 });
+
+
 
 </script>    
         

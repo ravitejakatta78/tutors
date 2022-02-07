@@ -1348,32 +1348,42 @@ $('#merchant_coupon').typeahead({
               
 
 function displayResult(item) {
-				var couponArr = 	item.value.split("-");			
-        
+        if($("#usermobile").val() != ''){
+          var couponArr = 	item.value.split("-");			
+          var coupontype = (couponArr[1]);
+          var popamt = parseInt($(".ttl-sub-amt").html());
+          if(coupontype == 'percent'){
+              var discountamt = ((popamt * couponArr[0])/100).toFixed(2);
+              //	$("#couponamounthidden").val(discountamt);
+          }else{
+            var discountamt = couponArr[0];
+            //$("#couponamounthidden").val(couponArr[0]);
+          }
 
-				var coupontype = (couponArr[1]);
-				var popamt = parseInt($(".ttl-sub-amt").html());
-        if(coupontype == 'percent'){
-  			    var discountamt = ((popamt * couponArr[0])/100).toFixed(2);
-    				//	$("#couponamounthidden").val(discountamt);
-				}else{
-          var discountamt = couponArr[0];
-					//$("#couponamounthidden").val(couponArr[0]);
-				}
-
-        if(popamt < discountamt){
-            swal(
-                'Warning!',
-                'Coupon Amount Should Not Be Greater Than Order Amount!!',  
-                'warning'
-            );
-            $('#merchant_coupon').val('');
-            return false;
+          if(popamt < discountamt){
+              swal(
+                  'Warning!',
+                  'Coupon Amount Should Not Be Greater Than Order Amount!!',  
+                  'warning'
+              );
+              $('#merchant_coupon').val('');
+              return false;
+          }
+          else{
+              $(".ttl-cpn-amt").html(discountamt);
+              checkCouponCode();
+          }
         }
         else{
-            $(".ttl-cpn-amt").html(discountamt);
-            checkCouponCode();
-        }
+          swal(
+                  'Warning!',
+                  'Please Enter User Details To Get The Coupon Discount!!',  
+                  'warning'
+              );
+              $('#merchant_coupon').val('');
+              return false;
+        }      
+        
 			}
 
       function checkCouponCode()
@@ -1647,9 +1657,9 @@ function isFoodPrepared(orderid){
 						var request = $.ajax({
                           url: "tableorderstatuschange",
                           type: "POST",
-                          data: {tableId : this.id,id:orderid,kdschange:1},
+                          data: {tableId : tableid,id:orderid,kdschange:1},
                         }).done(function(msg) {
-                    		window.location.replace("newpos?tableid="+tableid+"&tableName="+$tableName+"&current_order_id="+orderid);
+                    		//window.location.replace("newpos?tableid="+tableid+"&tableName="+$tableName+"&current_order_id="+orderid);
                         });
 					} else if (result.dismiss === 'cancel') {
 					    

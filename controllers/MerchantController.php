@@ -47,6 +47,7 @@ use app\models\OrderProducts;
 use app\models\IngredientStockRegister;
 use app\models\TableReservations;
 use app\models\AllocatedRooms;
+use app\models\ServiceboyNotifications;
 use yii\db\Query;
 use app\models\Users;
 use app\models\PilotTable;
@@ -1484,30 +1485,49 @@ $re_Order =     (int)$reorderCount['max_reorder'] + 1;
 		extract($_POST);
 		$pilotassign = $pilotassign ?? '';
 		$orderUpdate = Orders::findOne($id);
-//		$orderUpdate->serviceboy_id = $pilotassign ?? '';
+		$tableUpdate = Tablename::findOne($tableId);
+
+		//		$orderUpdate->serviceboy_id = $pilotassign ?? '';
         if(!empty($chageStatusId)){
             $orderUpdate->orderprocess = $chageStatusId;    
         }
+		else{
+			$chageStatusId = $orderUpdate->orderprocess; 
+		}
 		
 		
 		if(!empty($kdschange)){
 		    $orderUpdate->preparedate = date('Y-m-d H:i:s');
+			if(!empty($orderUpdate['serviceboy_id'])){
+				$serviceboyarray = Serviceboy::findOne($orderUpdate['serviceboy_id']);
+
+				$notificaitonarary = array();
+				$notificaitonarary['merchant_id'] = $orderUpdate['merchant_id'];
+				$notificaitonarary['serviceboy_id'] = $orderUpdate['serviceboy_id'];
+				$notificaitonarary['order_id'] = (string)$id;
+				$notificaitonarary['title'] = 'Prepared Order';
+				$notificaitonarary['message'] = 'Order '.$orderUpdate['order_id'].' on '.$tableUpdate['name'].'-'.$tableUpdate->section['section_name'].' is Prepared';
+				$notificaitonarary['ordertype'] = 'prepared';
+				$notificaitonarary['seen'] = '0';
+								
+				$serviceBoyNotiModel = new  ServiceboyNotifications;
+				$serviceBoyNotiModel->attributes = $notificaitonarary;
+				$serviceBoyNotiModel->reg_date = date('Y-m-d H:i:s');
+				$serviceBoyNotiModel->mod_date = date('Y-m-d H:i:s');
+				if(!$serviceBoyNotiModel->save()){
+					print_r($serviceBoyNotiModel->getErrors());exit;
+				}
+
+			}
 		}
 		if(!empty($cancelReason)){
 		    $orderUpdate->cancel_reason = $cancelReason;
 		}
 		$orderUpdate->save();
 		
-		if($pilotassign != ''){
-			$serviceboyarray = Serviceboy::findOne($pilotassign);
-			$stitle = 'New order.';
-			$smessage = 'New order received please check the app for information.';
-			$simage = '';
-			
-			Utility::sendFCM($serviceboyarray['push_id'],$stitle,$smessage,$simage);	
-		}
 		
-		$tableUpdate = Tablename::findOne($tableId);
+		
+
 		if(!empty($tableUpdate) || $tableId == 'PARCEL'){
 			
 		
@@ -3113,6 +3133,46 @@ $runningPie = [];
 			$orderDet->ordercompany = $orderorigin;
 			$orderDet->closed_by = Yii::$app->user->identity->merchant_id;
 			$orderDet->save();
+
+			if(!empty($orderDet['serviceboy_id'])){
+				
+				$notificaitonarary = array();
+				$notificaitonarary['merchant_id'] = $orderDet['merchant_id'];
+				$notificaitonarary['serviceboy_id'] = $orderDet['serviceboy_id'];
+				$notificaitonarary['order_id'] = (string)$id;
+				$notificaitonarary['title'] = 'Complete Order';
+				$notificaitonarary['message'] = 'Order '.$orderDet['order_id'].' on '.$tableUpdate['name'].'-'.$tableUpdate->section['section_name'].' is Completed';
+				$notificaitonarary['ordertype'] = 'complete';
+				$notificaitonarary['seen'] = '0';
+								
+				$serviceBoyNotiModel = new  ServiceboyNotifications;
+				$serviceBoyNotiModel->attributes = $notificaitonarary;
+				$serviceBoyNotiModel->reg_date = date('Y-m-d H:i:s');
+				$serviceBoyNotiModel->mod_date = date('Y-m-d H:i:s');
+				$serviceBoyNotiModel->save();
+
+
+				$notificaitonarary = array();
+				$notificaitonarary['merchant_id'] = $orderDet['merchant_id'];
+				$notificaitonarary['serviceboy_id'] = $orderDet['serviceboy_id'];
+				$notificaitonarary['order_id'] = (string)$id;
+				$notificaitonarary['title'] = 'Paid Order';
+				$notificaitonarary['message'] =  \app\helpers\MyConst::PAYMENT_METHODS[$orderpaymethod].' Payment of Rs. '.$orderDet['totalamount'].'  
+				received on Order '.$orderDet['order_id'].' of '.$tableUpdate['name'].'-'.$tableUpdate->section['section_name'];
+				$notificaitonarary['ordertype'] = 'Payment';
+				$notificaitonarary['seen'] = '0';
+								
+				$serviceBoyNotiModel = new  ServiceboyNotifications;
+				$serviceBoyNotiModel->attributes = $notificaitonarary;
+				$serviceBoyNotiModel->reg_date = date('Y-m-d H:i:s');
+				$serviceBoyNotiModel->mod_date = date('Y-m-d H:i:s');
+				$serviceBoyNotiModel->save();
+
+
+
+			}
+			
+
 			$transaction->commit();
 			$arr = ['order_id' => $orderDet['ID']];
 			//$stockded = Yii::$app->merchant->deductstockfrominventory($arr);
@@ -4269,6 +4329,9 @@ if(!empty($user_mobile)){
 				
 				return $this->redirect(['merchant/newpos','tableid'=>$tableid,'tableName'=>$table_det['name'],'current_order_id'=>0  ]);
 			}
+
+			$orderDetails = Orders::findOne($current_order_id);
+
 			$orderData['order_id'] =  $current_order_id;
 			$_POST['productprice'] = $pricetot;
 			$orderData['user_id'] = $user_id ?? '';
@@ -4292,6 +4355,25 @@ if(!empty($user_mobile)){
 			$this->re_order($orderData);
 			$cur_order_id = $current_order_id;
 			$order_status = 'Order updated successfully';
+
+			if($pilotid != '' && empty($orderDetails['serviceboy_id'])){
+				$notificaitonarary = array();
+				$notificaitonarary['merchant_id'] = $orderDetails['merchant_id'];
+				$notificaitonarary['serviceboy_id'] = $pilotid;
+				$notificaitonarary['order_id'] = (string)$orderDetails['ID'];
+				$notificaitonarary['title'] = 'New Order';
+				$notificaitonarary['message'] = 'Order '.$orderDetails['order_id'].' is assigned to you with Accepted Status';
+				$notificaitonarary['ordertype'] = 'new';
+				$notificaitonarary['seen'] = '0';
+								
+				$serviceBoyNotiModel = new  ServiceboyNotifications;
+				$serviceBoyNotiModel->attributes = $notificaitonarary;
+				$serviceBoyNotiModel->reg_date = date('Y-m-d H:i:s');
+				$serviceBoyNotiModel->mod_date = date('Y-m-d H:i:s');
+				$serviceBoyNotiModel->save();
+	
+			}
+			
 		}
 		else{
 			if($table_det['table_status'] == '1' && $merchant_details['table_occupy_status'] == 1) {
@@ -4322,6 +4404,8 @@ if(!empty($user_mobile)){
 		$order_status = 'Order created successfully';
 		if(!empty($pilotid)){
 			$serviceboyarray = Serviceboy::findOne($pilotid);
+			$orderdetails = Orders::findOne($cur_order_id);
+
 			$stitle = 'New order.';
 			$smessage = 'New order received please check the app for information.';
 			$simage = '';
@@ -4331,7 +4415,23 @@ if(!empty($user_mobile)){
 			}
 			$notificationdet = ['type' => 'NEW_ORDER','orderamount' => $order_det['totalamount'],'username' => !empty(@$userdetails['name']) ? $userdetails['name'] : null];
 			Utility::sendNewFCM($serviceboyarray['push_id'],$stitle,$smessage,$simage,'6',null,$order_det['ID'],$notificationdet);
-	}
+			
+			$notificaitonarary = array();
+			$notificaitonarary['merchant_id'] = $orderdetails['merchant_id'];
+			$notificaitonarary['serviceboy_id'] = $pilotid;
+			$notificaitonarary['order_id'] = (string)$orderdetails['ID'];
+			$notificaitonarary['title'] = 'New Order';
+			$notificaitonarary['message'] = 'Order '.$orderdetails['order_id'].' is assigned to you with Accepted Status';
+			$notificaitonarary['ordertype'] = 'new';
+			$notificaitonarary['seen'] = '0';
+							
+			$serviceBoyNotiModel = new  ServiceboyNotifications;
+			$serviceBoyNotiModel->attributes = $notificaitonarary;
+			$serviceBoyNotiModel->reg_date = date('Y-m-d H:i:s');
+			$serviceBoyNotiModel->mod_date = date('Y-m-d H:i:s');
+			$serviceBoyNotiModel->save();
+		}
+
 		}
 		Yii::$app->getSession()->setFlash('success', [
 			'title' => 'Order',
@@ -4761,7 +4861,25 @@ $catModel = AllocatedRooms::findOne($resUpdate['room_alocated']);
 	{
 	    $orderid = $_POST['orderid'];
 	    $model =Orders::findOne($orderid);
-        $model->orderprocess = $_POST['orderstatus'];
+        $tableDetails = Tablename::findOne($model['tablename']);
+		$model->orderprocess = $_POST['orderstatus'];
+
+		if(!empty($model['serviceboy_id']) && $_POST['orderstatus'] == '2'){
+			$notificaitonarary = array();
+			$notificaitonarary['merchant_id'] = $model['merchant_id'];
+			$notificaitonarary['serviceboy_id'] = $model['serviceboy_id'];
+			$notificaitonarary['order_id'] = (string)$orderid;
+			$notificaitonarary['title'] = 'Serve Order';
+			$notificaitonarary['message'] = 'Order '.$model['order_id'].' on '.$tableDetails['name'].'-'.$tableDetails->section['section_name'].' is Served';
+			$notificaitonarary['ordertype'] = 'serve';
+			$notificaitonarary['seen'] = '0';
+							
+			$serviceBoyNotiModel = new  ServiceboyNotifications;
+			$serviceBoyNotiModel->attributes = $notificaitonarary;
+			$serviceBoyNotiModel->reg_date = date('Y-m-d H:i:s');
+			$serviceBoyNotiModel->mod_date = date('Y-m-d H:i:s');
+			$serviceBoyNotiModel->save();
+		}
         $model->save();
 	
 	    return 1;
@@ -4772,11 +4890,30 @@ $catModel = AllocatedRooms::findOne($resUpdate['room_alocated']);
 	    $orderid = $_POST['orderid'];
 	    $preptime = $_POST['preptime'];
 	    $model = Orders::findOne($orderid);
+		$tableDetails = Tablename::findOne($model['tablename']);
+
         $model->preparetime = $preptime;
 		$model->mod_date = date('Y-m-d H:i:s');
         if(!$model->save()){
             print_r($model->getErrors());
         }
+		if(!empty($model['serviceboy_id'])){
+			$notificaitonarary = array();
+			$notificaitonarary['merchant_id'] = $model['merchant_id'];
+			$notificaitonarary['serviceboy_id'] = $model['serviceboy_id'];
+			$notificaitonarary['order_id'] = (string)$orderid;
+			$notificaitonarary['title'] = 'Prepartion of Order';
+			$notificaitonarary['message'] = 'Order '.$model['order_id'].' on '.$tableDetails['name'].'-'.$tableDetails->section['section_name'].' as preparing in '.$preptime.' mins';
+			$notificaitonarary['ordertype'] = 'preparation';
+			$notificaitonarary['seen'] = '0';
+							
+			$serviceBoyNotiModel = new  ServiceboyNotifications;
+			$serviceBoyNotiModel->attributes = $notificaitonarary;
+			$serviceBoyNotiModel->reg_date = date('Y-m-d H:i:s');
+			$serviceBoyNotiModel->mod_date = date('Y-m-d H:i:s');
+			$serviceBoyNotiModel->save();
+		}
+	
 	
 	    return 1;
 	}

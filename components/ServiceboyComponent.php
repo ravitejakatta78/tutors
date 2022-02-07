@@ -16,6 +16,7 @@ use app\models\CoinsTransactions;
 use app\models\OrderPushPilot;
 use app\models\OrderRejections;
 use app\models\MerchantNotifications;
+use app\models\ServiceboyNotifications;
 use yii\helpers\ArrayHelper;
 
  date_default_timezone_set("asia/kolkata");
@@ -1052,6 +1053,21 @@ class ServiceboyComponent extends Component{
 									$merchantNotidication->created_on = date('Y-m-d H:i:s');
 									$merchantNotidication->created_by = $val['header_user_id'];
 									$merchantNotidication->save();
+
+									$notificaitonarary = array();
+									$notificaitonarary['merchant_id'] = $orderlist['merchant_id'];
+									$notificaitonarary['serviceboy_id'] = $val['header_user_id'];
+									$notificaitonarary['order_id'] = (string)$orderid;
+									$notificaitonarary['title'] = 'Reject Order';
+									$notificaitonarary['message'] = 'You Rejected the Order '.$orderlist['order_id'].' as '.$val['cancel_reason'];
+									$notificaitonarary['ordertype'] = 'reject';
+									$notificaitonarary['seen'] = '0';
+													
+									$serviceBoyNotiModel = new  ServiceboyNotifications;
+									$serviceBoyNotiModel->attributes = $notificaitonarary;
+									$serviceBoyNotiModel->reg_date = date('Y-m-d H:i:s');
+									$serviceBoyNotiModel->mod_date = date('Y-m-d H:i:s');
+									$serviceBoyNotiModel->save();
 
 									$payload = array('status'=>'1','message'=>'Order has been Rejected');
 					    }
