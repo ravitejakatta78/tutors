@@ -1393,6 +1393,7 @@ function displayResult(item) {
                   type: "POST",
                   data: {'id' : $('#merchant_coupon').val(),'discount_amount' : $(".ttl-cpn-amt").html()
                     ,'sub_total_amount' : $(".ttl-sub-amt").html()
+                    , 'mobile_number' : $("#usermobile").val(), 'username' : $("#username").val()  
                   },
                 }).done(function(msg) {
                   var res = JSON.parse(msg);

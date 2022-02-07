@@ -159,32 +159,38 @@ class MerchantComponent extends Component{
         }
     }
     public function userCreation($customer_mobile,$customer_name ='',$email='',$dob='',$occupation = ''){
-		$modelUser = new \app\models\Users;
-		$sqlprevuser = 'select MAX(ID) as id from users';
-		$prevuser = Yii::$app->db->createCommand($sqlprevuser)->queryOne();
-		$newid = $prevuser['id']+1;
-			$modelUser->unique_id = 'FDQ'.sprintf('%06d',$newid);
-			$modelUser->name = ucwords($customer_name);
-			$modelUser->mobile = trim($customer_mobile);
-			if(!empty($email)){
-			$modelUser->email =   $email;  
-			}
-			if(!empty($dob)){
-			$modelUser->date_of_birth =   $dob;  
-			}
-			
-			$modelUser->password = password_hash('112233',PASSWORD_DEFAULT); 	
-			$modelUser->status = '1';
-			$modelUser->referral_code = 'REFFDQ'.$newid;
-			$modelUser->reg_date = date('Y-m-d h:i:s');
-			if($modelUser->validate()){
-			$modelUser->save();	
-			}
-			else{
-			print_r($modelUser->getErrors());exit;	
-			}
-			
-			return $modelUser['ID']; 
+		$userCheckDet = \app\models\Users::find()->where(['mobile' => $customer_mobile])->asArray()->One();
+		if(empty($userCheckDet)){
+			$modelUser = new \app\models\Users;
+			$sqlprevuser = 'select MAX(ID) as id from users';
+			$prevuser = Yii::$app->db->createCommand($sqlprevuser)->queryOne();
+			$newid = $prevuser['id']+1;
+				$modelUser->unique_id = 'FDQ'.sprintf('%06d',$newid);
+				$modelUser->name = ucwords($customer_name);
+				$modelUser->mobile = trim($customer_mobile);
+				if(!empty($email)){
+				$modelUser->email =   $email;  
+				}
+				if(!empty($dob)){
+				$modelUser->date_of_birth =   $dob;  
+				}
+				
+				$modelUser->password = password_hash('112233',PASSWORD_DEFAULT); 	
+				$modelUser->status = '1';
+				$modelUser->referral_code = 'REFFDQ'.$newid;
+				$modelUser->reg_date = date('Y-m-d h:i:s');
+				if($modelUser->validate()){
+				$modelUser->save();	
+				}
+				else{
+				print_r($modelUser->getErrors());exit;	
+				}
+				
+				return $modelUser['ID'];
+		}
+		else{
+			return $userCheckDet['ID'];
+		}
 	}
 	public function send_sms($mobile,$message){
 	    $merchantId = Yii::$app->user->identity->merchant_id;
@@ -631,15 +637,25 @@ class MerchantComponent extends Component{
 		$maxOrderAmt = $val['couponDetails']['maxamt'];
 		$subTotalAmount = $val['sub_total_amount'];
 		$appliedCouponAmount = $val['applied_coupon_amount'];
+		$userid = $this->userCreation($val['mobile_number'],$val['username']);
+		$sqlOrders = 'select * from orders where date(reg_date) between \''.date('Y-m-d',strtotime($val['couponDetails']['fromdate'])).'\' 
+		and \''.date('Y-m-d',strtotime($val['couponDetails']['todate'])).'\' 
+		and merchant_id = \''.$val['merchant_id'].'\' and coupon = \''.$val['couponDetails']['code'].'\'
+		 and user_id = \''.$userid.'\' ';
+		$resOrders = Yii::$app->db->createCommand($sqlOrders)->queryAll(); 
+
 		
-		if($subTotalAmount < $minOrderAmt) {
+		if(!empty($resOrders) && $val['couponDetails']['purpose'] == 'Single'){
+			$payload = ['status' => '0', 'message' => 'Coupon Code had alreay used by this user'];
+		}
+		else if($subTotalAmount < $minOrderAmt) {
 			$payload = ['status' => '0', 'message' => 'Order Amount Should More Than '.$minOrderAmt];	
+		}
+		else if($maxOrderAmt < $appliedCouponAmount) {
+			$payload = ['status' => '2', 'message' => 'Coupon Applied Successfully', 'cpnAmt' => $maxOrderAmt];	
 		}
 		else {
 			$payload = ['status' => '1', 'message' => 'Coupon Applied Successfully'];
-		}
-		if($maxOrderAmt < $appliedCouponAmount) {
-			$payload = ['status' => '2', 'message' => 'Coupon Applied Successfully', 'cpnAmt' => $maxOrderAmt];	
 		}
 		return $payload;
 	}

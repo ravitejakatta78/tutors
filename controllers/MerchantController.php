@@ -1593,7 +1593,10 @@ else{
 		$sql = Yii::$app->db->createCommand($sqlc)->queryOne();
 		if(!empty($sql)){
 			$payload = Yii::$app->merchant->applyCoupon(['applied_coupon_amount' => $_REQUEST['discount_amount'],'couponDetails' => $sql,
-			'sub_total_amount' => $_REQUEST['sub_total_amount'] ]);
+			'sub_total_amount' => $_REQUEST['sub_total_amount']
+			,'merchant_id' => Yii::$app->user->identity->merchant_id
+			,'mobile_number' => $_REQUEST['mobile_number'], 'username' => $_REQUEST['username']
+		]);
 		}
 		else{
 		    $payload = ['status' => '0','message' => 'Invalid Coupon Code'];
