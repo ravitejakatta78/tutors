@@ -1556,15 +1556,24 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 										$itemCategoryImagePath = SITE_URL.'merchant_docs/'.$merchantid.'/'.'item_category/';
 										    $sqlcategoryDetail = 'select 0 foodtype, \'Recommended\' food_category 
 											,null category_img
-											,count(foodtype) itemcount  from product where merchant_id = \''.$merchantid.'\'
+											,count(foodtype) itemcount  from product where merchant_id = \''.$merchantid.'\' ';
+											
+
+											if(!empty($val["isVeg"])){
+												$sqlcategoryDetail .= ' and item_type = \''.$val['isVeg'].'\' ';
+										 	}
                                                         
-                                                        union all
+											$sqlcategoryDetail .= '  union all
 														select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category end as food_category
                                                         ,concat(\''.$itemCategoryImagePath.'\',category_img) category_img
 														,count(foodtype) itemcount  from product p
                                                         left join food_categeries fc on fc.id = p.foodtype
-                                                        where p.merchant_id = \''.$merchantid.'\'
-                                                        group by foodtype';
+                                                        where p.merchant_id = \''.$merchantid.'\' ';
+														
+														if(!empty($val["isVeg"])){
+															$sqlcategoryDetail .= ' and p.item_type = \''.$val['isVeg'].'\' ';
+														}
+														$sqlcategoryDetail .= '  group by foodtype';
 											$categoryDetail = Yii::$app->db->createCommand($sqlcategoryDetail)->queryAll();
 							            	$getproductsreindex = ArrayHelper::index($getproducts, null, 'food_category');
 											$getSections = array_values(array_unique(array_column($getproducts,'food_section_name')));
