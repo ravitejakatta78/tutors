@@ -472,13 +472,6 @@ if(!empty($notificationdet)){
 	"registration_ids" => [
 	$id
 	],
-	"notification" => [
-		"title" => $title,
-        "body" => $message,
-        "image" => "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg",
-        "mutable_content" => true,
-        "sound" => "Tri-tone"
-	],
 	"data" => [
         "click_action" => "FLUTTER_NOTIFICATION_CLICK",
         "type" => !empty($notificationdet['type']) ? $notificationdet['type'] : "" ,

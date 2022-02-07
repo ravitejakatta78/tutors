@@ -2683,8 +2683,11 @@ if ($model->load(Yii::$app->request->post()) ) {
 	}
   public function actionTesting()
   {
-    $id = 'e1UxqnjJTLK3eQcFN2ygwf:APA91bGPqvSsX8YPUFjIEdG8NUn1MbaWRax41vTnlQixoyUA8h6gkLuP6VignxEVJT1cCVIVAWeMQZQaqOwjQ0-040l4lYo3hdyJjpv_PqdEap24bD42uO9QmPmZ1gJwU9lrkIPJVYdD';
-	  \app\helpers\Utility::sendNewFCM($id,'Hi',"First Notification");
+	$notificationdet = ['type' => 'NEW_ORDER','orderamount' => 200
+	,'username' => 'Ravi','tablename' => 'TABLE 0'];
+    $id = 'c4YeKBaFQ3OI5-PVp1lFZp:APA91bGbeD_4CJgNBt3bpDIpfx18DEflsbra0Hv8htpFn1J0VrAkWdoNn7PWL6Bg9VV6uKPFU37utVqasN04MDXWJuzQ5TTVo24U6kXcoTwV0fR8fjC8vrnLEWErAvc-qC4HoX3wMMBo';
+	  \app\helpers\Utility::sendNewFCM($id,'Hi',"First Notification","",'6',null,'1',$notificationdet);
+
   }
     public function actionTableorderproductdeliver()
 	{
