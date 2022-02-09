@@ -987,7 +987,10 @@ class ServiceboyComponent extends Component{
 					$orderid = $val['orderid'];
 					$orderlist = Orders::findOne($orderid);
 					$tableUpdate = Tablename::findOne($orderlist['tablename']);
-					if(!empty($orderlist)){ 
+					if(!empty($orderlist)){
+						if($orderlist['orderprocess'] != '3'){
+
+						 
                             $sqlorderpush = "select sum(case when status = 3 then 1 else 0 end) reject_count,count(ID)  order_sent_count from order_push_pilot where merchant_id = '".$orderlist['merchant_id']."' and order_id = '".$orderlist['ID']."'";
                             $resorderpush = Yii::$app->db->createCommand($sqlorderpush)->queryOne();
 	                        if((!empty($sqlorderpush) &&  ($resorderpush['reject_count']+1) == $resorderpush['order_sent_count'] && $val['cancelconfirm'] == 1) || $val['cancelconfirm'] == 3){
@@ -1071,7 +1074,9 @@ class ServiceboyComponent extends Component{
 
 									$payload = array('status'=>'1','message'=>'Order has been Rejected');
 					    }
-
+					}else{
+						$payload = array('status'=>'0','message'=>'Order has already cancelled!!');
+					}
 					}else{
 					$payload = array('status'=>'0','message'=>'Order not found!!');
 					}
