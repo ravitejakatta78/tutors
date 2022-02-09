@@ -1362,8 +1362,7 @@ if(!empty($_POST['ckcDel'])){
 					$order_det->totalamount = (string)$compleamt;
 					$order_det->reorderprocess = '1';
 					$order_det->pending_amount = $orderData['pending_amount'];
-		
-		
+					$order_det['orderprocess'] = ($order_det['orderprocess'] == '0') ? '1' : $order_det['orderprocess']; 
 
 		if($order_det->save())
 					{
