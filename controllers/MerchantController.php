@@ -1312,7 +1312,7 @@ if(!empty($_POST['ckcDel'])){
 			$selectedpilot = $orderData['selectedpilot'];
 		    	if(!empty($selectedpilot)){
 						$serviceboyarray = Serviceboy::findOne($selectedpilot);
-						$stitle = 'New order.';
+						$stitle = 'Assigned order.';
 						$smessage = 'New order received please check the app for information.';
 						$simage = '';
 						if(!empty($order_det['user_id'])){
