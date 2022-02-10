@@ -221,7 +221,7 @@ class MerchantComponent extends Component{
 			$model->order_id = Utility::order_id($merchantid,'order'); 
 			$model->txn_id = Utility::order_id($merchantid,'transaction');
 			$model->txn_date = date('Y-m-d H:i:s');
-			$model->amount = $arr['amount'] ? number_format($arr['amount'], 2, '.', ',') : 0;
+			$model->amount = $arr['amount'];
 			
 					$model->tax = (string)$arr['taxamt'];
 					$model->tips = number_format($arr['tipamt'], 2, '.', '');

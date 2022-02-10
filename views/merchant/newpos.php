@@ -267,11 +267,11 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
                   <span class="ttl-tip">Tip: ₹</span> 
                   <input type="text" id="ttl-tip-amt" class="ttl-tip-amt" value="<?php echo ($prevFullSingleOrderDet['tips'] ?? 0); ?>" style="width:50px" onchange="totlrealprice(1)"> 
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4" style="display:none">
                   <span class="ttl-paid">Paid: ₹</span> 
                   <span class="ttl-paid-amount" > <?php echo $ttl_sub_amt = (!empty($prevFullSingleOrderDet['paid_amount']) ? $prevFullSingleOrderDet['paid_amount'] : 0) ?></span>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4" style="display:none">
                   <span class="ttl-pending">Pending: ₹</span> 
                   <span class="ttl-pending-amount"> <?php echo $ttl_sub_amt = (!empty($prevFullSingleOrderDet['pending_amount']) ? $prevFullSingleOrderDet['pending_amount'] : 0) ?></span>
                 </div>
@@ -1297,7 +1297,7 @@ function saveorder()
               if(isNaN(ttl_sub_amt)){
                    swal(
             				'Warning!',
-            				'Please Chaeck The Order !!',
+            				'Please Check The Order !!',
             				'warning'
             			);
                       return false;   
