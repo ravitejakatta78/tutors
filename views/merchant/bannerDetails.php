@@ -33,9 +33,11 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
             <div class="card">
               <div class="card-header d-flex align-items-center pt-0 pb-0">
                 <h3 class="h4 col-md-6 pl-0 tab-title">Banner List</h3>
+				<?php if($bannerStatusCount['1'] < 3 ) { ?>
 				<div class="col-md-6 text-right pr-0">
-	<button type="button" class="btn btn-add btn-xs" id="myBtn" data-toggle="modal" data-target="#myModal"><i class="fa fa-plus mr-1"></i> Add Banner</button>			
+	<button type="button" class="btn btn-add btn-xs" id="myBtn" data-toggle="modal" ><i class="fa fa-plus mr-1"></i> Add Banner</button>			
 				</div>
+				<?php } ?>
               </div>
 
 
@@ -55,10 +57,10 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
 									foreach($bannerdet as $banner){
 								?>
                                   <tr>
-                                 	<td><?php echo $x;?></td>   
+                                 	<td><?php echo $x ;?></td>   
 									<td><img  width="100" height="100"  src="<?= '../../../bannerimage/'.$banner['image'];?>" /></td>
 									<td><label class="switch">										  
-											<input type="checkbox" <?php if($banner['status']=='1'){ echo 'checked';}?> onChange="changestatus('banners',<?php echo $banner['ID'];?>);">										  
+											<input type="checkbox" <?php if($banner['status'] == '1'){ echo 'checked';}?> onChange="changeBannerStatus('banners',<?php echo $banner['ID'];?>);">										  
 											<span class="slider round"></span>										
 										</label>									
 									</td>
@@ -172,5 +174,36 @@ function deletebanner(id){
 					}
 				});
 
+}
+
+$("#myBtn").click(function(){
+	var bannerStatusCountJson = '<?= json_encode($bannerStatusCount); ?>';
+	var bannerStatusCount = JSON.parse(bannerStatusCountJson);  
+	if(bannerStatusCount['1'] < 3){
+		$('#myModal').modal('toggle');
+	}
+	else{
+		swal(
+				'Warning!',
+				'More than 3 Active Banners are restricted!!',  
+				'warning'
+			);
+	}
+	
+});
+
+function changeBannerStatus(tablename,tableid){
+			 $.ajax({
+				 type: 'post',
+				 url: 'changeproductstatus',
+				 data: {
+				 tablename:tablename,
+				 tableid:tableid
+				 },		
+				 success: function (response) {
+					/* silence is golden */ 
+					window.location.href = 'bannerdetails';
+				 }	 
+				 });
 }
 </script>

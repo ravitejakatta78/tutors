@@ -280,6 +280,16 @@ else if($tablename == 'role')
 		
 	}
 }
+else if($tablename == 'banners'){
+	$model =Banners::findOne($tableid);
+	if($model['status']=='1'){
+			$status ='0';
+	}else{
+			$status = '1';
+	}
+	$model->status = $status;
+	$model->save();
+}
 else{
 	$details->status = $status;
 	if(!$details->save()){
@@ -4989,6 +4999,7 @@ $catModel = AllocatedRooms::findOne($resUpdate['room_alocated']);
             'ID'=>SORT_DESC
         ])
 		->asArray()->all();
+		$bannerStatusCount = array_count_values(array_column($bannerdet,'status'));
 		$model = new Banners;
 				if ($model->load(Yii::$app->request->post()) ) {
 			$MerchantGalleryArr = Yii::$app->request->post('Banners');
@@ -5022,7 +5033,8 @@ $catModel = AllocatedRooms::findOne($resUpdate['room_alocated']);
 				echo "<pre>";print_r($model->getErrors());exit;
 			}
 		}
-		return $this->render('bannerDetails',['bannerdet'=>$bannerdet,'model'=>$model]);
+		return $this->render('bannerDetails',['bannerdet'=>$bannerdet
+		,'model'=>$model,'bannerStatusCount' => $bannerStatusCount]);
 	}
 	public function actionDeletebanner()
 	{

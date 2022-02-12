@@ -1781,7 +1781,6 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 												$notificationdet = ['type' => 'NEW_ORDER','orderamount' => $orderamount
 												,'username' => $userdetails['name'],'tablename' => $tabel_Det['name']];
 												foreach($serviceboyarray as $serviceboy){
-													$serviceboy['push_id'] = 'ezFi8kIxQtWHcs4Hz8CJXj:APA91bHSogYC3yBJEU6e51XMZVukXu0BDKtNyh5VkMAJvAwCF7P4iWhUmJAH4VLb5bZAPNixywr2m9SQ-VNepiTxufciUFW4ZBJmzUnSs3NzyV3hVaaB0i059K50srr9CDTl_3luxzHj';
 												    Utility::sendNewFCM($serviceboy['push_id'],$stitle,$smessage,$simage,'6',null,$orderdetails['ID'],$notificationdet);
 													$orderpushmodel = new \app\models\OrderPushPilot;
 													$orderpushmodel->merchant_id = $merchantid;
