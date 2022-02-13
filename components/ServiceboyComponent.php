@@ -510,8 +510,18 @@ class ServiceboyComponent extends Component{
 	public function neworders($val){
 		$serviceboydetails = Serviceboy::findOne($val['header_user_id']);
 	$date = date('Y-m-d');
+			$sqlTableId = 'select tb.ID from pilot_table pt 
+			inner join sections s on pt.section_id = s.ID
+			inner join tablename tb on tb.section_id = s.ID
+			where pt.merchant_id = \''.$serviceboydetails['merchant_id'].'\' and pt.serviceboy_id = \''.$val['header_user_id'].'\' and tb.status = \'1\'';
+			$resTableId = Yii::$app->db->createCommand($sqlTableId)->queryAll();
+
+					$tableId = ArrayHelper::getColumn($resTableId,  'ID');
+					$tableIdString = implode("','",$tableId);
 					$sqlorderlistarray = 'select * from orders o where merchant_id = \''.$serviceboydetails['merchant_id'].'\' 
-					and date(reg_date) = \''.$date.'\'   and orderprocess = \'0\' AND NOT EXISTS (SELECT * FROM order_rejections ore
+					and date(reg_date) = \''.$date.'\'   and orderprocess = \'0\' 
+					and o.tablename in (\''.$tableIdString.'\')
+					AND NOT EXISTS (SELECT * FROM order_rejections ore
                     WHERE ore.order_id = o.ID and ore.rejected_by = \''.$val['header_user_id'].'\')' ;
 					$orderlistarray = Yii::$app->db->createCommand($sqlorderlistarray)->queryAll();
 					if(!empty($orderlistarray)){

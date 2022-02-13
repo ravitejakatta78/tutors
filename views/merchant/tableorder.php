@@ -84,7 +84,7 @@ if($se % 2 == 0){
                   <div class="ih-item circle effect10 top_to_bottom"   onclick="placeOrder('<?= $tableDetails[$i]['ID']?>','<?= $tableDetails[$i]['name']?>','<?= ($merchant_det['table_occupy_status'] == 1) ? $tableDetails[$i]['current_order_id'] : '0'; ?>')"><a href="#">
                       <div class="img" width="20px" height="20px">
 					  <?php 
-					  $table_status = ($tableDetails[$i]['table_status'] ?? 5);
+					  $table_status = ($prevWeekTableOrderStatus[$tableDetails[$i]['ID']] ?? 5);
 					  if($table_status == '1' || $table_status == '2') { ?>
 					  <img  src="<?= Yii::$app->request->baseUrl.'/img/table/servingtable.png' ?>" alt="img">
 					  <?php } else {
@@ -93,7 +93,7 @@ if($se % 2 == 0){
 						  
 					   <?php }?>
 					  </div>
-                                              <p><?php $tableStatus = $tableDetails[$i]['table_status'] ?? 5 ;
+            <p><?php $tableStatus = $prevWeekTableOrderStatus[$tableDetails[$i]['ID']] ?? 5 ;
 						if($tableStatus == '5' || $tableStatus == '' ){ ?>
 <div class="info Available">
                         <h3><?= $tableDetails[$i]['name']?></h3>

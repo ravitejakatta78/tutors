@@ -1475,8 +1475,17 @@ $re_Order =     (int)$reorderCount['max_reorder'] + 1;
 		inner join tablename tn on s.ID = tn.section_id 
 		where s.merchant_id =  \''.Yii::$app->user->identity->merchant_id.'\' and tn.status = \'1\'';
 		$tableSections = Yii::$app->db->createCommand($sqlTableSections)->queryAll();
+
+		$sqlPrevWeekOrders = 'select ID,tablename,orderprocess from orders where date(reg_date) between \''.date('Y-m-d', strtotime('-7 days')).'\' 
+		and \''.date('Y-m-d').'\' and orderprocess in (\'0\',\'1\',\'2\') 
+		and merchant_id = \''.Yii::$app->user->identity->merchant_id.'\'
+		order by ID desc';
+		$resPrevWeekOrders = Yii::$app->db->createCommand($sqlPrevWeekOrders)->queryAll();
+		$prevWeekTableOrderStatus = array_column($resPrevWeekOrders,'orderprocess','tablename');
 		
-		return $this->render('tableorder',['tableDetails'=>$tableDetails,'tableSections'=>$tableSections]);
+		return $this->render('tableorder',['tableDetails'=>$tableDetails, 'tableSections'=>$tableSections
+		, 'prevWeekTableOrderStatus' => $prevWeekTableOrderStatus
+		]);
 	}
 	public function actionTableorder()
 	{
@@ -4185,19 +4194,25 @@ order by reg_date,purchase_number';
 		left join food_category_types fct on fct.ID =  P.food_category_quantity and fct.merchant_id =  \''.Yii::$app->user->identity->merchant_id.'\'
 
         left join section_item_price_list sipl on sipl.item_id =  P.ID and sipl.section_id = \''.$table_section_id.'\'
-		where P.merchant_id = \''.Yii::$app->user->identity->merchant_id.'\' and status=\'1\' ';
+		where P.merchant_id = \''.$merchant_id.'\' and status=\'1\' ';
 		$productDetails = Yii::$app->db->createCommand($sqlproductDetails)->queryAll();
 		$allProductDetails = \yii\helpers\ArrayHelper::index($productDetails, null, 'modified_title');
 		$fcqarr = array_column($productDetails,'food_type_name','ID');
-		$sqlTableDetails = 'select s.section_name as sectionname,tn.*,o.orderprocess
-		 from tablename tn 
-		 inner join sections s on s.ID = tn.section_id
-		 left join orders o on tn.current_order_id = o.id 
-		where tn.merchant_id = \''.Yii::$app->user->identity->merchant_id.'\' and tn.status = \'1\'';
-		
+
+		$sqlPrevWeekOrders = 'select ID,tablename,orderprocess from orders where date(reg_date) between \''.date('Y-m-d', strtotime('-7 days')).'\' 
+		and \''.date('Y-m-d').'\' and orderprocess in (\'0\',\'1\',\'2\') and merchant_id = \''.$merchant_id.'\'
+		order by ID desc';
+		$resPrevWeekOrders = Yii::$app->db->createCommand($sqlPrevWeekOrders)->queryAll();
+		$prevWeekTableOrderStatus = array_column($resPrevWeekOrders,'orderprocess','tablename');
+
+		$sqlTableDetails = 'select s.section_name as sectionname,tn.*
+							from tablename tn
+							inner join sections s on s.ID = tn.section_id
+							where tn.merchant_id = \''.$merchant_id.'\' 
+							and tn.status = \'1\'';
 		$tableDetails = Yii::$app->db->createCommand($sqlTableDetails)->queryAll();
 		
-		$food_cat_qty_arr = FoodCategoryTypes::find()->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])->asArray()->All();
+		$food_cat_qty_arr = FoodCategoryTypes::find()->where(['merchant_id'=>$merchant_id])->asArray()->All();
 		$food_cat_qty_det = array_column($food_cat_qty_arr,'food_type_name','ID');
 		$prevOrderDetails = [];
 		$prevFullSingleOrderDet = [];
@@ -4241,9 +4256,17 @@ order by reg_date,purchase_number';
 		->where(['fs_status'=>'1','merchant_id'=>Yii::$app->user->identity->merchant_id])
 		->asArray()->All();
 
-		$resServiceBoy = Serviceboy::find()
-		->where(['merchant_id'=>Yii::$app->user->identity->merchant_id,'loginstatus'=>'1'])
-		->asArray()->All();
+		$pilotTable = PilotTable::find()->where(['merchant_id' => Yii::$app->user->identity->merchant_id
+		,'section_id' => $table_section_id])->asArray()->All();
+		$pilotTableId = ArrayHelper::getColumn($pilotTable,  'serviceboy_id');
+		$pilotTableIdString = implode("','",$pilotTableId);
+		$sqlserviceboyarray = "select * from serviceboy where merchant_id = '".Yii::$app->user->identity->merchant_id."' and 
+		loginstatus = '1' and ID in ('".$pilotTableIdString."') order by ID desc";
+		$resServiceBoy = Yii::$app->db->createCommand($sqlserviceboyarray)->queryAll();
+
+		//$resServiceBoy = Serviceboy::find()
+		//->where(['merchant_id'=>Yii::$app->user->identity->merchant_id,'loginstatus'=>'1'])
+		//->asArray()->All();
 		//echo "<pre>";print_r($resServiceBoy);exit;
 		
 		$sqlRunning = 'select o.order_id,s.name pilot_name,u.name username,o.tablename,o.ID
@@ -4259,10 +4282,12 @@ order by reg_date,purchase_number';
 		and status = \'Active\' AND \''.date('Y-m-d').'\' between  date(fromdate) and date(todate)';
 		$resmerchantcoupon = YIi::$app->db->createCommand($sqlmerchantcoupon)->queryAll();
 		$merchantcoupons = array_column($resmerchantcoupon,'code');
+		
 		$merchant_pay_types_det = \app\models\MerchantPaytypes::find()->where(['merchant_id'=>Yii::$app->user->identity->merchant_id,'status' => 1])->orderBy([
             'ID'=>SORT_DESC
         ])->asArray()->All();
         $merchant_pay_types = array_column($merchant_pay_types_det,'paymenttype');
+		
 		return $this->render('newpos',['result' => $result
 		,'res' => $res,'allProductDetails' => $allProductDetails
 		,'tableDetails' => $tableDetails 
@@ -4274,6 +4299,7 @@ order by reg_date,purchase_number';
 		,'userDet' => $userDet, 'runningOrders' => $runningOrders,'merchantcoupons' => $merchantcoupons
 		,'fcqarr' => $fcqarr, 'merchant_pay_types' => $merchant_pay_types
 		,'current_order_id' => !empty($current_order_id) ? $current_order_id : 0
+		, 'prevWeekTableOrderStatus' => $prevWeekTableOrderStatus
 		]);
 	}	
 	public function actionSaveneworder()

@@ -436,7 +436,7 @@ foreach($secTableIndexArr as $sec_id => $tableDetails ) {
              <a onclick="changetable('<?= $tableDetails[$tn]['ID']?>','<?= $tableDetails[$tn]['name']?>','<?= ($merchant_det['table_occupy_status'] == 1) ? $tableDetails[$tn]['current_order_id'] : '0'; ?>')">
                <div class="img" width="20px" height="20px">
                  <?php 
-                     $table_status = ($tableDetails[$i]['table_status'] ?? 5);
+                     $table_status = ($prevWeekTableOrderStatus[$tableDetails[$tn]['ID']] ?? 5);
                      if($table_status == '1' || $table_status == '2') { ?>
                      <img  src="<?= Yii::$app->request->baseUrl.'/img/table/servingtable.png' ?>" alt="img">
                      <?php } else {
@@ -446,7 +446,7 @@ foreach($secTableIndexArr as $sec_id => $tableDetails ) {
                  <?php }?>
                </div>
                <p>
-                 <?php $tableStatus = $tableDetails[$tn]['table_status'] ?? 5 ;
+                 <?php $tableStatus = $prevWeekTableOrderStatus[$tableDetails[$tn]['ID']] ?? 5 ;
                    if($tableStatus == '5' || $tableStatus == '' ){ ?>
                    <div class="info Available">
                      <h3><?= $tableDetails[$tn]['name']?></h3>
