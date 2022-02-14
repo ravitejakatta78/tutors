@@ -249,7 +249,8 @@ public function beforeAction($action)
 				break;
 				case 'usermerchantpaymenttypes':
 					$this->usermerchantpaymenttypes($_REQUEST);
-					break;
+				break;
+				
 			}
 		}
 	}
@@ -374,6 +375,9 @@ public function beforeAction($action)
 				break;
 				case 'confirmpayment':
 				$this->confirmpayment($_REQUEST);
+				break;
+				case 'pilotDemoRequests':
+					$this->pilotDemoRequests($_REQUEST);
 				break;
 			}	
 		}	
@@ -1588,6 +1592,28 @@ public function reordercashpilot($val){
 		}
 		return $this->asJson($payload);				
 	}
+	public function pilotDemoRequests($val)
+	{
+		$model = new \app\models\PilotDemoRequests;
+		$model->business_name = $_REQUEST['business_name'];
+		$model->owner_name = $_REQUEST['owner_name'];
+		$model->location = $_REQUEST['location'];
+		$model->city = $_REQUEST['city'];
+		$model->state = $_REQUEST['state'];
+		$model->pincode = $_REQUEST['pincode'];
+		$model->mobile_number = $_REQUEST['mobile_number'];
+		$model->alt_mobile_number = $_REQUEST['alt_mobile_number'];
+		$model->lat = $_REQUEST['lat'];
+		$model->lng = $_REQUEST['lng'];
+		$model->reg_date = date('Y-m-d H:i:s A');
+		if(!$model->save()){
+			$payload = ['status' => '0', 'message' => 'Error while requesting for a demo'];
+		}else{
+			$payload = ['status' => '1', 'message' => 'Requested for demo successfully!!'];
+		}
+		return $this->asJson($payload);				
+	}
+	
 	
 
 	
