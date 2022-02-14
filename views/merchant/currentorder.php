@@ -6,6 +6,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use aryelds\sweetalert\SweetAlert;
 $actionId = Yii::$app->controller->action->id;
+$paytypearray = \app\helpers\MyConst::PAYMENT_METHODS;
 ?>
 <style>
 .fixed {position:fixed; top:0;right: 15px;width: 245px;}
@@ -138,9 +139,9 @@ $parcelCount = (array_values(array_filter(array_column($parcelDetails,'orderproc
 				</div>
 				</div>				
 				<div class="text-center mt-1">
-				<button class="placeorder btn" onclick="changepilotstatus('<?= $tableDetails[$i]['tableId'] ;?>','<?= $tableDetails[$i]['current_order_id'] ;?>','4','')">Completed</button>
+				<button class="placeorder btn" onclick="statusPopUp('<?= $tableDetails[$i]['ID'] ;?>')">Complete</button>
 		<!--		<button class="btn btn-danger btn-xs placeordercnl" onclick="tableorderstatuschange('<?= $tableDetails[$i]['ID'] ;?>','<?= $tableDetails[$i]['tableId'] ;?>','<?= $tableDetails[$i]['orderprocess'] ;?>')">Cancelled</button> -->
-				<button class="btn btn-danger btn-xs placeordercnl" onclick="changepilotstatus('<?= $tableDetails[$i]['tableId'] ;?>','<?= $tableDetails[$i]['current_order_id'] ;?>','3','')">Cancelled</button>
+				<button class="btn btn-danger btn-xs placeordercnl" onclick="cancelreject('<?= $tableDetails[$i]['ID'] ;?>','<?= $tableDetails[$i]['tableId'] ;?>')">Cancel</button>
 				</div>
 			</div>
 				</div>
@@ -193,6 +194,97 @@ $parcelCount = (array_values(array_filter(array_column($parcelDetails,'orderproc
     </div>
   </div>
 </div>
+
+
+<div id="updateorderstatuschange" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md" >
+      <div class="modal-content">
+      
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Order Close</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+	    <div class="modal-body" id="updateorderstatuschangebody">
+			<div class="row">	
+
+                               
+	<div class="col-md-6">	
+	   <div class="form-group row">
+	   <label class="control-label col-md-4">Payment Method</label>
+	   <div class="col-md-8">
+			      <select id="orderpaymethod">
+			     <?php for($p=0;$p<count($merchant_pay_types);$p++) {?>
+			          <option value="<?= $merchant_pay_types[$p]; ?>"><?= $paytypearray[$merchant_pay_types[$p]]; ?></option>
+			     <?php } ?>     
+			     </select>     
+	   </div>
+	   </div>
+	   
+	    <div class="form-group row">
+	   <label class="control-label col-md-4">Company</label>
+	   <div class="col-md-8">
+			      <select id="orderorigin">
+			          <option value="Self">Self</option>
+			          <option value="Swiggy">Swiggy</option>
+			          <option value="Card">Zomato</option>
+			          <option value="">None</option>
+			     </select> 
+			     <input type="hidden" id="curr_Order_id" >
+	   </div>
+	   </div>
+	   
+	   
+	   </div>
+	   </div>
+		</div>	
+		
+		  <div class="modal-footer">
+		<?= Html::submitButton('Confirm', ['class'=> 'btn btn-add btn-hide','id'=>'closeOrderStatus']); ?>
+		<button class="btn btn-danger btn-xs" data-dismiss="modal">Cancel</button>
+
+      </div> 
+		
+	</div>
+	</div>
+</div>
+
+
+<!--Cancel  Modal -->
+<div id="myModalCanc" class="modal fade" role="dialog">
+<div class="modal-dialog">
+  <!-- Modal content-->
+  <div class="modal-content">
+  <div class="modal-header">
+    <h4 class="modal-title" >Cancel</h4>
+    <button type="button" class="close" data-dismiss="modal">&times;</button>
+  </div>
+
+  <div class="modal-body" >
+			<div class="row">	
+				<div class="col-md-12">	
+				
+	   
+					<div class="form-group row">
+					<label class="control-label cr-label col-md-4">Cancel Reason</label>
+					<div class="col-md-8">
+                        <textarea  id="crid"   class="form-control" ></textarea>
+                        <input type="hidden" id="crorderid" >
+						<input type="hidden" id="tableId" >
+					</div>
+					</div>
+			   </div>
+	   		</div>
+		</div>
+
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" id="savecr">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
         </section>
 		<script src="<?= Yii::$app->request->baseUrl.'/js/fontfaceobserver.min.js'?>"></script>
 		<script src="<?= Yii::$app->request->baseUrl.'/js/menu.js'?>"></script>
@@ -371,5 +463,66 @@ function placeOrder(id,name,current_order_id)
     document.body.appendChild(form);
     form.submit();   
 }
+
+function statusPopUp(orderId){
+    $('#updateorderstatuschange').modal('show');
+    $("#curr_Order_id").val(orderId);
+}
+
+$("#closeOrderStatus").click(function(){
+var orderorigin = $("#orderorigin").val();
+var orderpaymethod = $("#orderpaymethod").val();
+var curr_order_id = $("#curr_Order_id").val();
+var orderpaymethodname = $("#orderpaymethod option:selected").text();
+
+    var request = $.ajax({
+  url: "updateorderstatus",
+  type: "POST",
+  data: {id : curr_order_id,orderorigin:orderorigin,orderpaymethod:orderpaymethod},
+}).done(function(msg) {
+	  swal(
+				'Success!',
+				'Order Status Updated Successfully',
+				'success'
+			);
+			location.reload();
+});
+});
+
+function cancelreject(orderid,tableid){
+    $("#crorderid").val(orderid);
+	$("#tableId").val(tableid);
+    $("#myModalCanc").modal('show');
+    
+}
+
+
+$("#savecr").click(function(){
+        var tableid = $("#tableId").val();;
+        var orderid = $("#crorderid").val();
+        var cr_reason = $("#crid").val();
+    
+        swal({
+				title: "Are you sure !!", 
+				type: "warning",
+				showCancelButton: true
+		    })
+		    	.then((result) => {
+					if (result.value) {
+					     var request = $.ajax({
+                            url: "cancelreasonpos",
+                            type: "POST",
+                            data: {orderid : orderid,cr_reason:cr_reason,orderstatus:'3',tableid:tableid},
+                        }).done(function(msg) {
+        	                swal(
+                				'Success!',
+                				'Reason Updated Successfully',
+                				'success'
+                			);
+							location.reload();        		
+				        }); 
+					}
+				});
+});
 
 </script>

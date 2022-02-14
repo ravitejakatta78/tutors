@@ -3091,8 +3091,15 @@ $runningPie = [];
                 from tablename tn left join orders o on tn.current_order_id = o.id 
 		where tn.merchant_id = \''.Yii::$app->user->identity->merchant_id.'\' and  orderprocess=\'0\'';
 		$newOrdersDetails = Yii::$app->db->createCommand($sqlNewOrdersDetails)->queryAll();
-                
-		return $this->render('currentorder',['tableDetails'=>$tableDetails,'resServiceBoy'=>$resServiceBoy,'parcelDetails'=>$parcelDetails,'newOrdersDetails'=>$newOrdersDetails]);
+        
+		$merchant_pay_types_det = \app\models\MerchantPaytypes::find()->where(['merchant_id'=>Yii::$app->user->identity->merchant_id,'status' => 1])->orderBy([
+            'ID'=>SORT_DESC
+        ])->asArray()->All();
+        $merchant_pay_types = array_column($merchant_pay_types_det,'paymenttype');
+
+		return $this->render('currentorder',['tableDetails'=>$tableDetails
+		, 'resServiceBoy'=>$resServiceBoy, 'parcelDetails'=>$parcelDetails, 
+		'newOrdersDetails'=>$newOrdersDetails,'merchant_pay_types' => $merchant_pay_types]);
 	}
 	public function actionParcels()
 	{
