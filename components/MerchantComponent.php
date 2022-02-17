@@ -288,11 +288,13 @@ class MerchantComponent extends Component{
 							, 'price','inc','reorder','reg_date'],$productscount)
 							->execute();
 
-							$tableUpdate = \app\models\Tablename::findOne($arr['tableid']);
-										$tableUpdate->table_status = '1';
-										$tableUpdate->current_order_id = $model->ID;
-										$tableUpdate->save();
-							
+                        if ($arr['table_name'] != 'PARCEL') {
+                            $tableUpdate = \app\models\Tablename::findOne($arr['tableid']);
+                            $tableUpdate->table_status = '1';
+                            $tableUpdate->current_order_id = $model->ID;
+                            $tableUpdate->save();
+                        }
+
 							$cur_order_id = $model->ID;	
 							return $cur_order_id;
 					}

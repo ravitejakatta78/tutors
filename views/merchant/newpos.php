@@ -39,7 +39,13 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
                 <div class="col-md-4">
                    <?php 
                    $sectionNameArray = array_column($tableDetails,'sectionname','ID');
-                   echo $tableName." (".$sectionNameArray[$tableid].")"; ?></i>
+                   echo $tableName ;
+                   if(!empty($sectionNameArray[$tableid])){
+                     echo  " (".@$sectionNameArray[$tableid].")";
+                   }
+
+
+                   ?></i>
                 </div>
                 <div class="col-md-5 text-right">
                   <div class="usertyps">
@@ -85,7 +91,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
                           <h4 class="panel-title">
                             <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse<?= ($r+1) ?>" aria-expanded="true" aria-controls="collapseOne">
                               <i class="more-less fa fa-plus" id="<?= ($r+1); ?>"></i>
-                              <?php echo   ($runningOrders[$r]['table_name'] ?? $runningOrders[$r]['order_id']).' ('.$runningOrders[$r]['section_name'].' )'; ?> 
+                              <?php echo   ($runningOrders[$r]['table_name'] ?? $runningOrders[$r]['order_id']).' ('.(!empty($runningOrders[$r]['section_name']) ? $runningOrders[$r]['section_name'] : "Parcel") .')'; ?>
                             </a>
                           </h4>
                         </div>

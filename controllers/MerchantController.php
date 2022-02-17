@@ -4175,7 +4175,9 @@ order by reg_date,purchase_number';
 			$table_section_id = $tabDet['section_id'];
 		   }
 		   else{
-			$tableName = "PARCEL";
+		       $tableName = "PARCEL";
+               $parcelSections = Sections::find()->select('ID')->where(['merchant_id' => $merchant_id,'section_name' => 'Parcels'])->asArray()->One();
+               $table_section_id = $parcelSections['ID'];
 		   }
 
 		   
@@ -4313,26 +4315,26 @@ order by reg_date,purchase_number';
 	{
 		extract($_REQUEST);
 		$arr =  $_REQUEST;
-if(!empty($user_mobile)){
-	
-	$alreadyid = Users::find()->where(['mobile'=>$user_mobile])->asArray()->One();
+        if(!empty($user_mobile)){
 
-	if(empty($alreadyid)){
-		$user_id = Yii::$app->merchant->userCreation($user_mobile,$user_name);
-	}
-	else{
-		if(!empty($user_name) &&  $user_name != $alreadyid['name'] ){
-			$umodel = Users::findOne($alreadyid['ID']);
-			$umodel->name = $user_name;
-			$umodel->save();
-		}
-		$user_id = $alreadyid['ID'];
-	}
-}
+            $alreadyid = Users::find()->where(['mobile'=>$user_mobile])->asArray()->One();
+
+            if(empty($alreadyid)){
+                $user_id = Yii::$app->merchant->userCreation($user_mobile,$user_name);
+            }
+            else{
+                if(!empty($user_name) &&  $user_name != $alreadyid['name'] ){
+                    $umodel = Users::findOne($alreadyid['ID']);
+                    $umodel->name = $user_name;
+                    $umodel->save();
+                }
+                $user_id = $alreadyid['ID'];
+            }
+        }
 		$tablecheck = $tableid;
 		if(!is_numeric($tablecheck) || empty($tableid)){
 
-		Yii::$app->getSession()->setFlash('success', [
+		/* Yii::$app->getSession()->setFlash('success', [
 			'title' => 'Order',
 			'text' => "Place Services are temporarily disabled!!",
 			'type' => 'warning',
@@ -4340,7 +4342,7 @@ if(!empty($user_mobile)){
 			'showConfirmButton' => false
 		]);
 		   
-		   return $this->redirect('merchant/newpos');
+		   return $this->redirect('newpos'); */
 		   
 			$tableid = 'PARCEL'.Utility::get_parcel_uniqueid();
 			$table_det['name'] =  $tableid;
@@ -4356,7 +4358,7 @@ if(!empty($user_mobile)){
 			{
 				$table_det['table_status'] = 0;
 			}
-
+            $table_det['name'] = $tablecheck;
 			
 		}
 		else{
@@ -4448,6 +4450,7 @@ if(!empty($user_mobile)){
 			$arr['tableid'] = $tableid;		
 			$arr['pilotid'] = $pilotid ?? '';
 			$arr['user_id'] = !empty($user_id) ? (string)$user_id : '';
+            $arr['table_name'] = $table_det['name'];
 		$cur_order_id = Yii::$app->merchant->saveorder($arr);
 		$order_status = 'Order created successfully';
 		if(!empty($pilotid)){
