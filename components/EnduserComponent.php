@@ -711,8 +711,10 @@ class EnduserComponent extends Component {
 							$merchants['servingtype'] =  $merchantsdata['servingtype'];
 							$merchants['verify'] =  $merchantsdata['verify'];
 							$merchants['logo'] = !empty($merchantsdata['logo']) ? MERCHANT_LOGO.$merchantsdata['logo'] : '';
-							$merchants['coverpic'] = !empty($merchantsdata['coverpic']) ? MERCHANT_LOGO.$merchantsdata['coverpic'] : '';  
-							
+							$merchants['coverpic'] = !empty($merchantsdata['coverpic']) ? MERCHANT_LOGO.$merchantsdata['coverpic'] : '';
+                            $merchants['open_time'] =  $merchantsdata['open_time'];
+                            $merchants['close_time'] =  $merchantsdata['close_time'];
+
 							$payload = array("status"=>'1',"merchant"=>$merchants);
 					}else{
 						

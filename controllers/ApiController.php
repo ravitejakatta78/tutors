@@ -593,7 +593,9 @@ $sqlmerchantsarray = "SELECT *  FROM merchant";
 							$merchants['logo'] = !empty($merchantsdata['logo']) ?  MERCHANT_LOGO.$merchantsdata['logo'] : '';
 							$merchants['coverpic'] = !empty($merchantsdata['coverpic']) ? MERCHANT_LOGO.$merchantsdata['coverpic'] : '';
 							$merchants['food_serve_type']= !empty($merchantsdata['food_serve_type']) ? $merchantsdata['food_serve_type'] : '';
-								$merchantlist[] = $merchants;
+                            $merchants['open_time'] =  $merchantsdata['open_time'];
+                            $merchants['close_time'] =  $merchantsdata['close_time'];
+                            	$merchantlist[] = $merchants;
 							} 
 							$takeawayarr = [];
 							for($i=0;$i<count($merchantlist);$i++){
