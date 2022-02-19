@@ -125,7 +125,15 @@ use yii\helpers\Html;
 			      <?= $form->field($model, 'description')->textarea(['class' => 'form-control','placeholder'=>'Enter Description'])->label(false); ?>
 			       <input type="hidden" id="hiddenchkpwd" >
 			      
-	   </div></div>	
+	   </div></div>
+
+    <div class="form-group row">
+        <label class="control-label col-md-4">Approx Cost</label>
+        <div class="col-md-8">
+            <?= $form->field($model, 'approx_cost')->textinput(['class' => 'form-control','autocomplete'=>'off','placeholder'=>'Approx Cost'])->label(false); ?>
+
+
+        </div></div>
 </div>
 	   
 				<div class="col-md-4">

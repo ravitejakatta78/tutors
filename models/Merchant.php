@@ -38,6 +38,7 @@ use Yii;
  * @property string $subscription_date
  * @property int $allocated_msgs
  * @property int $used_msgs
+ * @property int $popularity
  */
 class Merchant extends \yii\db\ActiveRecord 
 {
@@ -63,9 +64,9 @@ class Merchant extends \yii\db\ActiveRecord
 			, 'latitude', 'longitude',   'status', 'recommend', 'verify', 'description'
 			, 'servingtype', 'plan', 'useraccess'], 'string'],
 			[['logo','qrlogo','coverpic'], 'file', 'extensions' => ['png', 'jpg', 'gif']],
-            [['otp','table_occupy_status'], 'integer'],
-		    [['mod_date','subscription_date','allocated_msgs','used_msgs'], 'safe'],
-		    [['scan_range','tax','tip'], 'number'],	
+            [['otp','owner_type','open_time','close_time','table_res_avail', 'table_occupy_status', 'popularity'], 'integer'],
+		    [['mod_date', 'food_serve_type', 'subscription_date','allocated_msgs','used_msgs'], 'safe'],
+		    [['scan_range','tax','tip', 'approx_cost'], 'number'],
             [['user_id', 'unique_id', 'name', 'email'], 'string', 'max' => 50],
             [['reg_date'], 'string', 'max' => 20],
 			[['newpassword', 'confirmpassword'], 'required', 'on' => 'chagepassword'],
@@ -106,11 +107,16 @@ class Merchant extends \yii\db\ActiveRecord
             'useraccess' => 'Useraccess',
             'reg_date' => 'Reg Date',
             'mod_date' => 'Mod Date',
-			            'scan_range' => 'Scan Range',
-			            'tax' => 'Tax',
-			            'tip' => 'Tip',
-			            'table_occupy_status' => 'Table Occupy Status'
-			            
+            'owner_type' => 'Owner Type',
+            'open_time' => 'Open Time',
+            'close_time' => 'Close Time',
+            'table_res_avail' => 'Table Reservation Availablity',
+            'food_serve_type' => 'Food Serve Type',
+			'scan_range' => 'Scan Range',
+			'tax' => 'Tax',
+			'tip' => 'Tip',
+			'table_occupy_status' => 'Table Occupy Status',
+			'popularity' => 'Popularity'
         ];
     }
 
