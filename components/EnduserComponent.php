@@ -3057,7 +3057,7 @@ order by remain_coins desc limit '.$val['userCount'] ;
 		  
 		  if(!empty($orderdet))
 		  {
-		    $notificationdet = ['type' => 'NEW_ORDER','orderamount' => $orderdet['totalamount'],'username' => $orderdet['username']];
+		    $notificationdet = ['type' => 'ALERT_ORDER','orderamount' => $orderdet['totalamount'],'username' => $orderdet['username']];
                         $stitle = 'Meet Me.';
 						$smessage = 'Meet Me On Table '.$orderdet['table_name'];
 						$simage = '';
