@@ -1623,7 +1623,9 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 										, "tablename"=>$tabledetails['name'], "section_id"=>$tabledetails['section_id']
 										, 'section_name' => $tabledetails->section['section_name']
 										, "store"=>$merchantdetails['storename'], "storetype"=>$merchantdetails['storetype']
-										, "servingtype"=>$merchantdetails['servingtype'], "verify"=>$merchantdetails['verify']
+										, "servingtype"=>$merchantdetails['servingtype']
+                                        , "open_time"=>$merchantdetails['open_time'], "close_time"=>$merchantdetails['close_time']
+                                        , "verify"=>$merchantdetails['verify']
 										, "location"=>$merchantdetails['location'], "logo"=>$merchantlgo, "merchant_mobile"=>$merchantdetails['mobile'], "coverpic"=>$merchantcoverpic
 										, "productlist"=>$newProduclistArr,"categoryDetail"=>$categoryDetail, "configured_tip" => $merchantdetails['tip']
 										, "bannerdet" => $this->bannerlist(['merchant_id' => $merchantid])

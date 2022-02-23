@@ -572,7 +572,7 @@ return  $this->asJson($payload);
                     $sqlmerchantsarray = "SELECT * FROM (SELECT *,(((acos(sin((".$latitude."*pi()/180)) * sin((latitude*pi()/180))+cos((".$latitude."*pi()/180)) * 
                         cos((latitude*pi()/180)) * cos(((".$longitude."- longitude)* pi()/180))))*180/pi())*60*1.1515 ) as distance FROM merchant 
                         WHERE 1 GROUP BY ID ) as X where distance <= 5 and status = '1' ORDER BY ID DESC";
-                    $sqlmerchantsarray = "SELECT *  FROM merchant where status = '\1\'";
+                    $sqlmerchantsarray = "SELECT *  FROM merchant where status = '1'";
 					$merchantsarray = Yii::$app->db->createCommand($sqlmerchantsarray)->queryAll();
 					 if(!empty($merchantsarray)){
 							$merchantlist = $merchants = $newMerchants = $popularMerchants = [];
