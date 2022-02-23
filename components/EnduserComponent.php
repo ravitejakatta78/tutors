@@ -715,7 +715,25 @@ class EnduserComponent extends Component {
                             $merchants['open_time'] =  $merchantsdata['open_time'];
                             $merchants['close_time'] =  $merchantsdata['close_time'];
 
-							$payload = array("status"=>'1',"merchant"=>$merchants);
+                            $merchantInfo = \app\models\MerchantInfo::find()->select('merchant_description')->where(['merchant_id' => $merchantsdata['ID']])->asArray()->all();
+
+                            $merchantAmenities = \app\models\MerchantAmenities::find()->select('amenity_id')->where(['merchant_id' => $merchantsdata['ID']])->asArray()->All();
+                            $merchantAmenityIdArray = array_column($merchantAmenities,'amenity_id');
+                            $allAmenites = \app\models\MerchantAmenities::AMENITIES;
+                            $amenityArray = $amenitySingleArray = [];
+                            foreach($allAmenites as $amenityId => $amenity){
+                                $amenitySingleArray['amenity'] = $amenity;
+                                if(in_array($amenityId,$merchantAmenityIdArray)){
+                                    $amenitySingleArray['isPresent'] = true;
+                                }
+                                else{
+                                    $amenitySingleArray['isPresent'] = false;
+                                }
+                                $amenityArray[] = $amenitySingleArray;
+                            }
+                            $payload = ["status"=>'1', "merchant"=>$merchants, 'merchantInfo' => $merchantInfo
+                                , 'amenityArray' => $amenityArray
+                            ];
 					}else{
 						
 						$payload = array("status"=>'0',"text"=>"Invalid Merchant");
@@ -2831,14 +2849,14 @@ order by remain_coins desc limit '.$val['userCount'] ;
 		$room_reservation_types_ids = array_keys($room_reservation_types);
 		$room_reservation_types_ids_string = implode("','",$room_reservation_types_ids);
 
-        $sqlMerchants = 'select m.ID,m.user_id,m.unique_id,m.name,email,m.mobile,m.storetype,m.storename,m.address,m.state,m.city
-        ,m.location
+        $sqlMerchants = 'select m.ID,m.user_id,m.unique_id,m.name,email,m.mobile,m.storetype
+        ,m.storename,m.address,m.state,m.city,m.location
 		,case when (m.logo is null or m.logo = "") then "" else concat(\'http://superpilot.in/dev/merchantimages/\',m.logo) end logo
 		,case when (m.qrlogo is null or m.qrlogo = "") then "" else concat(\'http://superpilot.in/dev/merchantimages/\',m.qrlogo) end qrlogo
 		,case when (m.coverpic is null or m.coverpic = "")  then "" else concat(\'http://superpilot.in/dev/merchantimages/\',m.coverpic) end coverpic
 		,m.latitude,m.longitude,m.status,m.otp,m.recommend,m.verify,m.description,m.servingtype
-        ,m.plan,m.useraccess,m.scan_range
-        ,m.open_time,m.close_time,m.table_res_avail,m.owner_type,m.tax,m.tip,m.reg_date,m.mod_date
+        ,m.plan,m.useraccess,m.scan_range,m.open_time,m.close_time,m.table_res_avail,m.owner_type
+        ,m.tax,m.tip,m.reg_date,m.mod_date
 		,m.food_serve_type,m.subscription_date
         ,m.allocated_msgs,m.used_msgs 
 		, (case when uw.status is not null then true else false end)  wishlist
@@ -3044,16 +3062,21 @@ order by remain_coins desc limit '.$val['userCount'] ;
         }
 		return $payload;
 	}
+
+    /**
+     * @param $val
+     * @return string[]
+     * @throws yii\db\Exception
+     */
 	public function meetme($val)
 	{
-
-		  
-		  $sqlorderdet = "SELECT sb.push_id,u.name username,o.order_id,t.name table_name,o.totalamount FROM orders o 
+		$sqlorderdet = "SELECT sb.push_id,u.name username,o.order_id,t.name table_name,o.totalamount 
+          FROM orders o 
 		  inner join serviceboy sb on sb.ID = o.serviceboy_id
 		  inner join users u on u.ID = o.user_id
 		  inner join tablename t on t.ID = o.tablename
 		  WHERE o.ID = '".$val['order_id']."' and o.user_id = ".$val['header_user_id'];
-		  $orderdet =  Yii::$app->db->createCommand($sqlorderdet)->queryOne();
+		$orderdet =  Yii::$app->db->createCommand($sqlorderdet)->queryOne();
 		  
 		  if(!empty($orderdet))
 		  {
@@ -3067,9 +3090,6 @@ order by remain_coins desc limit '.$val['userCount'] ;
 		  }else{
 		      $payload = array("status"=>'0',"message"=>'Invalid Order Details');
 		  }
-		              
-		  
-          
 		return $payload;
 	}
 	public function bookroom($val)

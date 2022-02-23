@@ -1709,22 +1709,30 @@ $("#savecr").click(function(){
 		    })
 		    	.then((result) => {
 					if (result.value) {
-					            $("#myModalPrep").modal('toggle');
-					     var request = $.ajax({
-                            url: "cancelreasonpos",
-                            type: "POST",
-                            data: {orderid : orderid,cr_reason:cr_reason,orderstatus:'3',tableid:tableid},
-                        }).done(function(msg) {
-        	                swal(
-                				'Success!',
-                				'Reason Updated Successfully',
-                				'success'
-                			);
-        		window.location.replace("newpos?tableid="+tableid+"&tableName="+$tableName+"&current_order_id=0");
-        		
-        		
-        }); 
-					}
+					     //$("#myModalPrep").modal('toggle');
+					     if(cr_reason != ''){
+                             var request = $.ajax({
+                                 url: "cancelreasonpos",
+                                 type: "POST",
+                                 data: {orderid : orderid,cr_reason:cr_reason,orderstatus:'3',tableid:tableid},
+                             }).done(function(msg) {
+                                 swal(
+                                     'Success!',
+                                     'Reason Updated Successfully',
+                                     'success'
+                                 );
+                                 window.location.replace("newpos?tableid="+tableid+"&tableName="+$tableName+"&current_order_id=0");
+                             });
+                         }
+					     else{
+                             swal(
+                                 'Warning!',
+                                 'Please add the reason to cancel',
+                                 'warning'
+                             );
+                             return false;
+                         }
+                    }
 				});
 });
 </script>
