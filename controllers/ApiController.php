@@ -551,50 +551,66 @@ return  $this->asJson($payload);
 	  }
 	  return $this->asJson($payload);
 	}
+
+    /**
+     * @param $val
+     * @return yii\web\Response
+     * @throws yii\db\Exception
+     */
     public function merchants($val)
 	{
-		
-$headerslist = apache_request_headers();
-$usersid = base64_decode($headerslist['Authorization']);
-//$usersid = 1;
-if(!empty($usersid)){ 
-	$sqluserdetails = "select ID from users where ID = '".$usersid."'";
-	$userdetails = Yii::$app->db->createCommand($sqluserdetails)->queryOne();
-		
-		if(!empty($val['latitude'])&&!empty($val['longitude'])){
-					$latitude = $val['latitude']; 
-					$longitude = $val['longitude']; 
-					$sqlmerchantsarray = "SELECT * FROM (SELECT *,(((acos(sin((".$latitude."*pi()/180)) * sin((latitude*pi()/180))+cos((".$latitude."*pi()/180)) * 
-cos((latitude*pi()/180)) * cos(((".$longitude."- longitude)* pi()/180))))*180/pi())*60*1.1515 ) as distance FROM merchant 
-WHERE 1 GROUP BY ID ) as X where distance <= 5 and status = '1' ORDER BY ID DESC";
-$sqlmerchantsarray = "SELECT *  FROM merchant";
+        $headerslist = apache_request_headers();
+        $usersid = base64_decode($headerslist['Authorization']);
+
+        if(!empty($usersid)){
+            $sqluserdetails = "select ID from users where ID = '".$usersid."'";
+            $userdetails = Yii::$app->db->createCommand($sqluserdetails)->queryOne();
+
+                if(!empty($val['latitude'])&&!empty($val['longitude'])){
+                    $latitude = $val['latitude'];
+                    $longitude = $val['longitude'];
+                    $sqlmerchantsarray = "SELECT * FROM (SELECT *,(((acos(sin((".$latitude."*pi()/180)) * sin((latitude*pi()/180))+cos((".$latitude."*pi()/180)) * 
+                        cos((latitude*pi()/180)) * cos(((".$longitude."- longitude)* pi()/180))))*180/pi())*60*1.1515 ) as distance FROM merchant 
+                        WHERE 1 GROUP BY ID ) as X where distance <= 5 and status = '1' ORDER BY ID DESC";
+                    $sqlmerchantsarray = "SELECT *  FROM merchant where status = '\1\'";
 					$merchantsarray = Yii::$app->db->createCommand($sqlmerchantsarray)->queryAll();
 					 if(!empty($merchantsarray)){
-							$merchantlist = $merchants = array();
+							$merchantlist = $merchants = $newMerchants = $popularMerchants = [];
+
 							foreach($merchantsarray as $merchantsdata){
-							$merchants['id'] = $merchantsdata['ID'];
-							$merchants['unique_id'] = $merchantsdata['unique_id'];
-							$merchants['name'] = $merchantsdata['name'];
-							$merchants['email'] = $merchantsdata['email'];
-							$merchants['storename'] = $merchantsdata['storename'];
-							$merchants['storetype'] = $merchantsdata['storetype'];
-							$merchants['address'] = $merchantsdata['address'];
-							$merchants['state'] = $merchantsdata['state'];
-							$merchants['city'] = $merchantsdata['city'];
-							$merchants['location'] = $merchantsdata['location'];
-							$merchants['latitude'] =  $merchantsdata['latitude'];
-							$merchants['longitude'] =  $merchantsdata['longitude'];
-							$merchants['servingtype'] =  $merchantsdata['servingtype'];
-							$merchants['verify'] =  $merchantsdata['verify'];
-							$merchants['showpage'] =  $merchantsdata['storetype'] == 'Restaurant' ? '1' : '0';
-							$sqlfeedbackrating = "select avg(rating) as rating from feedback where merchant_id =  '".$merchantsdata['ID']."'";
-							$feedbackrating = Yii::$app->db->createCommand($sqlfeedbackrating)->queryAll();
-							$merchants['rating'] = !empty($feedbackrating) ? ceil($feedbackrating['rating']) : 0;
-							$merchants['logo'] = !empty($merchantsdata['logo']) ?  MERCHANT_LOGO.$merchantsdata['logo'] : '';
-							$merchants['coverpic'] = !empty($merchantsdata['coverpic']) ? MERCHANT_LOGO.$merchantsdata['coverpic'] : '';
-							$merchants['food_serve_type']= !empty($merchantsdata['food_serve_type']) ? $merchantsdata['food_serve_type'] : '';
-                            $merchants['open_time'] =  $merchantsdata['open_time'];
-                            $merchants['close_time'] =  $merchantsdata['close_time'];
+                                $merchants['id'] = $merchantsdata['ID'];
+                                $merchants['unique_id'] = $merchantsdata['unique_id'];
+                                $merchants['name'] = $merchantsdata['name'];
+                                $merchants['email'] = $merchantsdata['email'];
+                                $merchants['storename'] = $merchantsdata['storename'];
+                                $merchants['storetype'] = $merchantsdata['storetype'];
+                                $merchants['address'] = $merchantsdata['address'];
+                                $merchants['state'] = $merchantsdata['state'];
+                                $merchants['city'] = $merchantsdata['city'];
+                                $merchants['location'] = $merchantsdata['location'];
+                                $merchants['latitude'] =  $merchantsdata['latitude'];
+                                $merchants['longitude'] =  $merchantsdata['longitude'];
+                                $merchants['servingtype'] =  $merchantsdata['servingtype'];
+                                $merchants['verify'] =  $merchantsdata['verify'];
+                                $merchants['showpage'] =  $merchantsdata['storetype'] == 'Restaurant' ? '1' : '0';
+                                $sqlfeedbackrating = "select avg(rating) as rating from feedback where merchant_id =  '".$merchantsdata['ID']."'";
+                                $feedbackrating = Yii::$app->db->createCommand($sqlfeedbackrating)->queryOne();
+                                $merchants['rating'] = !empty($feedbackrating) ? ceil($feedbackrating['rating']) : 0;
+                                $merchants['logo'] = !empty($merchantsdata['logo']) ?  MERCHANT_LOGO.$merchantsdata['logo'] : '';
+                                $merchants['coverpic'] = !empty($merchantsdata['coverpic']) ? MERCHANT_LOGO.$merchantsdata['coverpic'] : '';
+                                $merchants['qrlogo'] = !empty($merchantsdata['qrlogo']) ? MERCHANT_LOGO.$merchantsdata['qrlogo'] : "";
+                                $merchants['food_serve_type']= !empty($merchantsdata['food_serve_type']) ? $merchantsdata['food_serve_type'] : '';
+                                $merchants['open_time'] =  $merchantsdata['open_time'];
+                                $merchants['close_time'] =  $merchantsdata['close_time'];
+                                $merchants['popularity'] =  $merchantsdata['popularity'];
+
+                            if($merchants['popularity'] == '1' || $merchants['popularity'] == '3'){
+                                $newMerchants[] = $merchants;
+                            }
+
+                            if($merchants['popularity'] == '2' || $merchants['popularity'] == '3'){
+                                $popularMerchants[] = $merchants;
+                            }
                             	$merchantlist[] = $merchants;
 							} 
 							$takeawayarr = [];
@@ -612,19 +628,22 @@ $sqlmerchantsarray = "SELECT *  FROM merchant";
 							    
 							}
 						    
-							$payload = array("status"=>'1',"merchantlist"=>$merchantlist,'takeaway'=>array_values($takeawayarr));
+							$payload = ["status"=>'1',"merchantlist"=>$merchantlist
+                                            ,'takeaway'=>array_values($takeawayarr),'newMerchants' => $newMerchants
+                                            ,'popularMerchants' => $popularMerchants
+                                       ];
 						}else{
 						
-						$payload = array("status"=>'0',"text"=>"No Restaurant Found.");
+						$payload = ["status"=>'0',"text"=>"No Restaurant Found."];
 					 }
 					}else{
 						
-						$payload = array("status"=>'0',"text"=>"Invalid parameters");
+						$payload = ["status"=>'0',"text"=>"Invalid parameters"];
 					 }
 					}else{
-							$payload = array('status'=>'0','message'=>'Invalid users details');
+						$payload = ['status'=>'0','message'=>'Invalid users details'];
 					}
-					 		return $this->asJson($payload);
+        return $this->asJson($payload);
 	}
 	public function recommendlist($val)
 	{
