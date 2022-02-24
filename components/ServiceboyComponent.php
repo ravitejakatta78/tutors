@@ -408,7 +408,7 @@ class ServiceboyComponent extends Component{
 			 
 
 			  $sqltotalorders = "SELECT count(*) as count FROM orders WHERE merchant_id = '".$row['merchant_id']."' 
-			  and serviceboy_id = '".$row['ID']."'";
+			  and serviceboy_id = '".$row['ID']."' and closed_by = '".$row['ID']."'";
 			  $restotalorders = Yii::$app->db->createCommand($sqltotalorders)->queryOne();
 			  $totalorders = $restotalorders['count'];
 			  $sqltodayorders = "SELECT sum(case when (orderprocess != '4' and orderprocess != '3') then 1 else 0 end) rununing_orders
@@ -419,11 +419,11 @@ class ServiceboyComponent extends Component{
 			  ,sum(case when (orderprocess != '4' and orderprocess != '3' and paidstatus != '1' and  paidstatus != '2') then totalamount else 0 end) rununing_amount
 			  ,\"0\" tips
 			  FROM orders WHERE merchant_id = '".$row['merchant_id']."' and serviceboy_id = '".$row['ID']."' 
-			  and reg_date>='".$date." 00:00:00' and reg_date<='".$date." 23:59:59'";
+			  and reg_date>='".$date." 00:00:00' and reg_date<='".$date." 23:59:59' and closed_by = '".$row['ID']."'";
 			  $restodayorders = Yii::$app->db->createCommand($sqltodayorders)->queryOne();
 			  $todayorders = $restodayorders['count'];
 			  $sqltotalamount = "SELECT sum(totalamount) as amount FROM orders WHERE merchant_id = '".$row['merchant_id']."' 
-			  and serviceboy_id = '".$row['ID']."'";
+			  and serviceboy_id = '".$row['ID']."' and closed_by = '".$row['ID']."'";
 			  $restotalamount = Yii::$app->db->createCommand($sqltotalamount)->queryOne();
 			  $totalamount = $restotalamount['amount'];
 			  $totalpoints = (string)ceil($totalamount/100);
@@ -1831,6 +1831,7 @@ class ServiceboyComponent extends Component{
 			if(!empty($orderDetails)){
 				$orderDetails->paymenttype = $val['payment_method'];
 				$orderDetails->paidstatus = $val['paidstatus'];
+				$orderDetails->closed_by = $val['header_user_id'];
 				$orderDetails->save();
 				$payload = ['status' => '1', 'message' => 'Payment Status Updated Successfully'];
 			}

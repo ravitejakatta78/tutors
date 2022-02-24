@@ -38,6 +38,7 @@ use Yii;
  * @property int $paymentby
  * @property string $reg_date
  * @property string $mod_date
+ * @property int $closed_by
  */
 class Orders extends \yii\db\ActiveRecord
 {
