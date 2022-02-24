@@ -419,7 +419,7 @@ class ServiceboyComponent extends Component{
 			  ,sum(case when (orderprocess != '4' and orderprocess != '3' and paidstatus != '1' and  paidstatus != '2') then totalamount else 0 end) rununing_amount
 			  ,\"0\" tips
 			  FROM orders WHERE merchant_id = '".$row['merchant_id']."' and serviceboy_id = '".$row['ID']."' 
-			  and reg_date>='".$date." 00:00:00' and reg_date<='".$date." 23:59:59' and closed_by = '".$row['ID']."'";
+			  and reg_date>='".$date." 00:00:00' and reg_date<='".$date." 23:59:59'";
 			  $restodayorders = Yii::$app->db->createCommand($sqltodayorders)->queryOne();
 			  $todayorders = $restodayorders['count'];
 			  $sqltotalamount = "SELECT sum(totalamount) as amount FROM orders WHERE merchant_id = '".$row['merchant_id']."' 
