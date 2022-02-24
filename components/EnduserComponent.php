@@ -714,6 +714,7 @@ class EnduserComponent extends Component {
 							$merchants['coverpic'] = !empty($merchantsdata['coverpic']) ? MERCHANT_LOGO.$merchantsdata['coverpic'] : '';
                             $merchants['open_time'] =  $merchantsdata['open_time'];
                             $merchants['close_time'] =  $merchantsdata['close_time'];
+                            $merchants['approx_cost'] =  $merchantsdata['approx_cost'];
 
                             $merchantInfo = \app\models\MerchantInfo::find()->select('merchant_description')->where(['merchant_id' => $merchantsdata['ID']])->asArray()->all();
 

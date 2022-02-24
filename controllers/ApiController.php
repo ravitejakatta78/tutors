@@ -603,6 +603,7 @@ return  $this->asJson($payload);
                                 $merchants['open_time'] =  $merchantsdata['open_time'];
                                 $merchants['close_time'] =  $merchantsdata['close_time'];
                                 $merchants['popularity'] =  $merchantsdata['popularity'];
+                                $merchants['approx_cost'] =  $merchantsdata['approx_cost'];
 
                             if($merchants['popularity'] == '1' || $merchants['popularity'] == '3'){
                                 $newMerchants[] = $merchants;
@@ -630,7 +631,7 @@ return  $this->asJson($payload);
 						    
 							$payload = ["status"=>'1',"merchantlist"=>$merchantlist
                                             ,'takeaway'=>array_values($takeawayarr),'newMerchants' => $newMerchants
-                                            ,'popularMerchants' => $popularMerchants
+                                            ,'popularMerchants' => $popularMerchants,'distance' => '10000'
                                        ];
 						}else{
 						
