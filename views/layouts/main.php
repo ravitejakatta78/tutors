@@ -73,25 +73,23 @@ echo \Yii::$app->view->renderFile('@app/views/layouts/_footer.php');
 		//toastr.success('New Order #0010');
   
 	});
-	function get_fb(){
-	
-    var request = $.ajax({
-    url: "checkneworder",
-    type: "POST",
-    }).done(function(msg) {
-		//alert(msg);
-					 data = JSON.parse(msg);
-					 for(var i=0;i<data.length;i++){
-							//	toastr.success(data[i]['name'] +' has got new order');
-								toastr.success('<p onclick="placeOrder(\''+data[i]['ID']+'\',\''+data[i]['name']+'\',\''+data[i]['current_order_id']+'\')">'+data[i]['name'] +' has got new order</p>');
-								var audio = new Audio("http://superpilot.in/dev/tutors/web/sounds/notification.mp3");
-                				audio.play();
-					 }
-
-
+	function get_fb()
+    {
+        var checkOrderUrl = '<?php echo \yii\helpers\Url::to(['merchant/checkneworder']); ?>';
+        var request = $.ajax({
+        url: checkOrderUrl,
+        type: "POST",
+        }).done(function(msg) {
+            //alert(msg);
+            data = JSON.parse(msg);
+            for(var i=0;i<data.length;i++){
+                //	toastr.success(data[i]['name'] +' has got new order');
+                toastr.success('<p onclick="placeOrder(\''+data[i]['ID']+'\',\''+data[i]['name']+'\',\''+data[i]['current_order_id']+'\')">'+data[i]['name'] +' has got new order</p>');
+                var audio = new Audio("http://superpilot.in/dev/tutors/web/sounds/notification.mp3");
+                audio.play();
+            }
         });
-
-    }name
+    }
 function taketoorder(){
   location.replace("tableorder")
 

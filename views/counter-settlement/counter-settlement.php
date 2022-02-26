@@ -51,31 +51,44 @@ $actionId = Yii::$app->controller->action->id;
                   <table id="example" class="table table-striped table-bordered ">
                     <thead>
                       <tr>
-                    <th>S No</th>
-									<th>Date</th> 
-									<th>Service Boy</th>
-									<th>Pending</th>
-									<th>Order Amount</th>
-									<th>Payment</th>
-									<th>Action</th>
-								  </tr>
+                          <th>S No</th>
+                          <th>Date</th>
+                          <th>Service Boy</th>
+                          <th>Pending</th>
+                          <th>Order Amount</th>
+                          <th>Status</th>
+                          <th>Action</th>
+                      </tr>
                     </thead>
 		            <tbody>
 					    <?php for($i=0;$i<count($res);$i++){ ?> 
 					        <tr>
 					           <td><?= ($i+1); ?></td>
-					           <td><?= $res[$i]['orders_date']; ?></td>
+					           <td><?= date('d-M-Y',strtotime($res[$i]['reg_date'])); ?></td>
 					           <td><?=  $res[$i]['name']; ?></td>
 					           <td><?=  $res[$i]['pending_amount']  ?></td>
-					           <td><?= $res[$i]['totalamount'];  ?></td>
-					           <td><input type="text" id="paid_<?= $i+1 ?>" ></td>
-					           <td ><a style="cursor:pointer" onclick="settlement('<?= $res[$i]['orders_date']; ?>','<?= $res[$i]['closed_by']; ?>','<?= $res[$i]['totalamount']; ?>','<?= $i+1 ?>')">Settle</a></td>
+					           <td><?= $res[$i]['order_amount'];  ?></td>
+                                <td>
+                                    <?php
+                                        if($res[$i]['status'] == \app\helpers\MyConst::_NEW) {
+                                            echo 'New';
+                                        }
+                                        else if($res[$i]['status'] == \app\helpers\MyConst::_COMPLETED) {
+                                            echo 'Approved';
+                                        }
+                                        else{
+                                            echo 'Rejected';
+                                        }
+                                        ?>
+                                </td>
+                                <td class="icons">
+                                    <a onclick="settleSession('<?= $res[$i]['ID'];?>','33')"><span class="fa fa-check"></span></a>
+                                    <a title="Product - Delete" onClick="settleSession('<?= $res[$i]['ID']; ?>','17')"><span class="fa fa-close"></span></a>
+                                </td>
 					       </tr>     
 					    <?php } ?>			
                     </tbody>
                   </table>
-
-
               </div>
             </div>
           </div>
@@ -92,14 +105,14 @@ $(document).ready(function(){
 	
 
 });
-function settlement(order_date,closed_by,total_amount,id){
-    var paid_amount = $("#paid_"+id).val();
+function settleSession(sessionId,settlementStatus){
+
     var request = $.ajax({
-  url: "addsettlement",
-  type: "POST",
-  data: {order_date : order_date,closed_by:closed_by,total_amount:total_amount,paid_amount:paid_amount},
-}).done(function(msg) {
-    location.reload()
-});
+        url: "confirm-settlement",
+        type: "POST",
+        data: {sessionId : sessionId,settlementStatus:settlementStatus},
+    }).done(function(msg) {
+        location.reload()
+    });
 }
 </script>
