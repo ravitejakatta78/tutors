@@ -38,6 +38,9 @@ $config = [
         'order' => [
             'class' => 'app\components\OrderComponent',
        ],
+        'counter' => [
+            'class' => 'app\components\CounterSettlementComponent',
+        ],
 		        // other default components here..
         'jwt' => [
             'class' => \sizeg\jwt\Jwt::class,

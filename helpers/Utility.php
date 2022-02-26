@@ -724,20 +724,35 @@ return $contents;
 	}
 	    
 	}
-	public static function monthRange($val){
+	public static function monthRange($val)
+	{
 	    $monRange = ['1'=>'Jan','2'=>'Feb','3'=>'Mar','4'=>'Apr','5'=>'May','6'=>'Jun','7'=>'Jul','8'=>'Aug','9'=>'Sep','10'=>'Oct','11'=>'Nov',
-'12'=>'Dec'
-];
-	if(!empty($val)){
-	    return $monRange[$val];	    
-	}else{
-	    return $monRange; 
-	}
+						'12'=>'Dec'
+					];
+
+		if (!empty($val)) {
+			return $monRange[$val];
+		}
+		else {
+			return $monRange;
+		}
 	    
 	}
-	public static function discountTypes(){
+
+	public static function discountTypes()
+	{
 	    $discountArr = ['1'=>'Overall', '2'=>'Percentage', '3'=>'Itemwise'];
+
 	    return $discountArr;
+	}
+
+	/**
+	 * @param int $days
+	 * @return false|string
+	 */
+	public function lastDesiredDate(int $days)
+	{
+		return date('Y-m-d', strtotime('-'.$days.' days'));
 	}
 }
 ?>

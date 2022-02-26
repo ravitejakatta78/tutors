@@ -55,10 +55,12 @@ class GoController extends Controller
     }
 	public function beforeAction($action)
 	{
-	     date_default_timezone_set("asia/kolkata");
-		$this->idty = Yii::$app->user->identity;
+	    date_default_timezone_set("asia/kolkata");
+
+	    $this->idty = Yii::$app->user->identity;
 		$this->enableCsrfValidation = false;
-		  if(is_null(Yii::$app->user->identity)):
+
+		if(is_null(Yii::$app->user->identity)):
 		   $url = Yii::$app->request->baseUrl."/site/login";
              $this->redirect($url);
             Yii::$app->end();

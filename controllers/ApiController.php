@@ -1,5 +1,6 @@
 <?php
 namespace app\controllers;
+use app\models\Serviceboy;
 use yii;
 use sizeg\jwt\Jwt;
 use sizeg\jwt\JwtHttpBearerAuth;
@@ -254,133 +255,151 @@ public function beforeAction($action)
 			}
 		}
 	}
-	public function actionServiceboy(){
-	    	    Yii::debug("=====pilot action ===".trim($_REQUEST['action']));
-		$action = trim($_REQUEST['action']);
-		if(!empty($action)){
-			switch($action){
-				case 'login':
-				$payload = Yii::$app->serviceboy->login($_REQUEST);
-				return $this->asJson($payload);
-				break;
-				case 'logout':
-				$payload = Yii::$app->serviceboy->logout($_REQUEST);
-				return $this->asJson($payload);
-				break;
-				case 'registration':
-				$payload =  Yii::$app->serviceboy->registration($_REQUEST);
-				return $this->asJson($payload);
-				break;
-				case 'updation':
-				$payload = Yii::$app->serviceboy->updation($_REQUEST);
-				return $this->asJson($payload);
-				break;
-				case 'login-status':
-				$payload = Yii::$app->serviceboy->loginstatus($_REQUEST);
-				return $this->asJson($payload);
-				break;
-				case 'forgotpassword':
-				$payload = Yii::$app->serviceboy->forgotpassword($_REQUEST);
-				return $this->asJson($payload);
-				break;
-				case 'forgotpassword-otp':
-				$payload = Yii::$app->serviceboy->forgotpasswordotp($_REQUEST);
-				return $this->asJson($payload);
-				break;
-				case 'changepassword':
-				$payload = Yii::$app->serviceboy->changepassword($_REQUEST);
-				return $this->asJson($payload);
-				break;
-				case 'updatepassword':
-				$payload = Yii::$app->serviceboy->updatepassword($_REQUEST);
-				return $this->asJson($payload);
-				break;
-				case 'checkloginstatus':
-				$payload = Yii::$app->serviceboy->checkloginstatus($_REQUEST);
-				return $this->asJson($payload);
-				break;
-				case 'serviceboy':
-				$payload = Yii::$app->serviceboy->serviceboys($_REQUEST);
-				return $this->asJson($payload);
-				break;
-				case 'notificationslist':
-				$this->servicenotificationslist($_REQUEST);
-				break;
-				case 'seenstatus':
-				$this->serviceseenstatus($_REQUEST);
-				break;
-				case 'neworders':
-				$this->serviceneworders($_REQUEST);
-				break;
-				case 'acceptedorders':
-				$this->serviceacceptedorders($_REQUEST);
-				break;
-				case 'cashpilot':
-				$this->cashpilot($_REQUEST);
-				break;
-				case 'reordercashpilot':
-				$this->reordercashpilot($_REQUEST);
-				break;
-				
-				case 'order':
-				$this->serviceorder($_REQUEST);
-				break;
-				case 'acceptorder': 
-				$this->serviceacceptorder($_REQUEST);
-				break;
-				case 'prepareorder': 
-				$this->serviceprepareorder($_REQUEST);
-				break;
-				case 'getpreparetiontime': 
-				$this->getpreparetiontime($_REQUEST);
-				break;
-				case 'serveorder': 
-				$this->serviceserveorder($_REQUEST);
-				break;
-				case 'rejectorder':
-				$this->servicerejectorder($_REQUEST);
-				break;
-				case 'deliverorder':
-				$this->servicedeliverorder($_REQUEST);
-				break;
-				case 'paidstatus':
-				$this->servicepaidstatus($_REQUEST);
-				break;
-				case 'orderslist':
-				$this->serviceorderslist($_REQUEST);
-				break;
-				case 'cancelreasons':
-				$this->cancelreasons($_REQUEST);
-				break;
-				case 'foodcomplaintreasons':
-				$this->foodcomplaintreasons($_REQUEST);
-				break;
-                case 'qrcodepilot':
-				$this->qrcodepilot($_REQUEST);
-				break;
-				case 'tablelist':
-				$this->tablelist($_REQUEST);
-				break;
-				case 'tablesections':
-				$this->tablesections($_REQUEST);
-				break;
-				case 'addpilotfeedback':
-				$this->addpilotfeedback($_REQUEST);
-				break;
-				case 'preparecompleteorder':
-				$this->preparecompleteorder($_REQUEST);
-				break;
-				case 'merchantpaymenttypes':
-				$this->merchantpaymenttypes($_REQUEST);
-				break;
-				case 'confirmpayment':
-				$this->confirmpayment($_REQUEST);
-				break;
-				case 'pilotDemoRequests':
-					$this->pilotDemoRequests($_REQUEST);
-				break;
-			}	
-		}	
+	public function actionServiceboy()
+    {
+        $payload = []; // Declaring responce
+        $action = trim($_REQUEST['action']); // API name
+        $usersid = $_REQUEST['usersid']; // API Accessing User Id (Pilot)
+
+        $pilotDetails = Serviceboy::findOne($usersid);
+        // Checking is Pilot associated with us ??
+        if(!empty($usersid)){
+            $val = $_REQUEST;
+            $val['header_user_id'] = $usersid;
+            $val['merchantId'] = $pilotDetails['merchant_id'];
+            if (!empty($action)) {
+                switch ($action) {
+                    case 'login':
+                        $payload = Yii::$app->serviceboy->login($val);
+                        break;
+                    case 'logout':
+                        $payload = Yii::$app->serviceboy->logout($val);
+                        break;
+                    case 'registration':
+                        $payload =  Yii::$app->serviceboy->registration($val);
+                        break;
+                    case 'updation':
+                        $payload = Yii::$app->serviceboy->updation($val);
+                        break;
+                    case 'login-status':
+                        $payload = Yii::$app->serviceboy->loginstatus($val);
+                        break;
+                    case 'forgotpassword':
+                        $payload = Yii::$app->serviceboy->forgotpassword($val);
+                        break;
+                    case 'forgotpassword-otp':
+                        $payload = Yii::$app->serviceboy->forgotpasswordotp($val);
+                        break;
+                    case 'changepassword':
+                        $payload = Yii::$app->serviceboy->changepassword($val);
+                        break;
+                    case 'updatepassword':
+                        $payload = Yii::$app->serviceboy->updatepassword($val);
+                        break;
+                    case 'checkloginstatus':
+                        $payload = Yii::$app->serviceboy->checkloginstatus($val);
+                        break;
+                    case 'serviceboy':
+                        $payload = Yii::$app->serviceboy->serviceboys($val);
+                        break;
+                    case 'notificationslist':
+                        $payload = Yii::$app->serviceboy->servicenotificationslist($val);
+                        break;
+                    case 'seenstatus':
+                        $payload = Yii::$app->serviceboy->seenstatus($val);
+                        break;
+                    case 'neworders':
+                        $payload = Yii::$app->serviceboy->neworders($val);
+                        break;
+                    case 'acceptedorders':
+                        $payload = Yii::$app->serviceboy->orderswithstatus($val);
+                        break;
+                    case 'cashpilot':
+                        $payload = Yii::$app->serviceboy->cash($val);
+                        break;
+                    case 'reordercashpilot':
+                        $payload = Yii::$app->serviceboy->reordercash($val);
+                        break;
+                    case 'order':
+                        $payload = Yii::$app->serviceboy->order($val);
+                        break;
+                    case 'acceptorder':
+                        $payload = Yii::$app->serviceboy->acceptorder($val);
+                        break;
+                    case 'prepareorder':
+                        $payload = Yii::$app->serviceboy->prepareorder($val);
+                        break;
+                    case 'getpreparetiontime':
+                        $payload = Yii::$app->serviceboy->getpreparetiontime($val);
+                        break;
+                    case 'serveorder':
+                        $payload = Yii::$app->serviceboy->serveorder($val);
+                        break;
+                    case 'rejectorder':
+                        $payload = Yii::$app->serviceboy->rejectorder($val);
+                        break;
+                    case 'deliverorder':
+                        $payload = Yii::$app->serviceboy->deliverorder($val);
+                        break;
+                    case 'paidstatus':
+                        $payload = Yii::$app->serviceboy->paidstatus($val);
+                        break;
+                    case 'orderslist':
+                        $payload = Yii::$app->serviceboy->orderslist($val);
+                        break;
+                    case 'cancelreasons':
+                        $payload = Yii::$app->serviceboy->cancelreasons($val);
+                        break;
+                    case 'foodcomplaintreasons':
+                        $payload = Yii::$app->serviceboy->foodcomplaintreasons($val);
+                        break;
+                    case 'qrcodepilot':
+                        $payload = Yii::$app->serviceboy->qrcode($val);
+                        break;
+                    case 'tablelist':
+                        $tablelist = Yii::$app->merchant->tableslist($val);
+                        $payload = array('status'=>'1','message'=>'List Of Tables','tablelist' => $tablelist);
+                        break;
+                    case 'tablesections':
+                        $tablesections = Yii::$app->merchant->tablesections($val);
+                        $serviceboydet = \app\models\Serviceboy::findOne($val['header_user_id']);
+                        $payload = ['status'=>'1','message'=>'List Of Sections','loginstatus' => $serviceboydet['loginstatus'],'tablesections' => $tablesections];
+                        break;
+                    case 'addpilotfeedback':
+                        $payload = Yii::$app->serviceboy->addpilotfeedback($val);
+                        break;
+                    case 'preparecompleteorder':
+                        $payload = Yii::$app->serviceboy->preparecompleteorder($val);
+                        break;
+                    case 'merchantpaymenttypes':
+                        $payload = Yii::$app->serviceboy->merchantpaymenttypes($val);
+                        break;
+                    case 'confirmpayment':
+                        $payload = Yii::$app->serviceboy->confirmpayment($val);
+                        break;
+                    case 'pilotDemoRequests':
+                        $this->pilotDemoRequests($val);
+                        break;
+                    /* counter settlement */
+                    case 'getCurrentSettlementSession':
+                        $payload = Yii::$app->counter->getCurrentSettlementSession($val);
+                        break;
+                    case 'settlementHistory':
+                        $payload = Yii::$app->counter->settlementHistory($val);
+                        break;
+                    case 'saveSettlement':
+                        $payload = Yii::$app->counter->saveSettlement($val);
+                        break;
+                }
+                return $this->asJson($payload);
+            }
+            else {
+                $payload = array('status'=>'0','message'=>'Invalid API!!');
+            }
+        }
+        else{
+            $payload = array('status'=>'0','message'=>'Invalid users details');
+        }
 	}
 
 	public function actionProfilepic()
@@ -525,6 +544,12 @@ return  $this->asJson($payload);
 		  }
 		return $this->asJson($payload);
 	}
+
+    /**
+     * @param $val
+     * @return yii\web\Response
+     * @throws yii\db\Exception
+     */
 	public function login($val){
 	    
 	  if(!empty($val['mobilenumber'])){
@@ -1241,292 +1266,26 @@ cos((latitude*pi()/180)) * cos(((".$longitude."- longitude)* pi()/180))))*180/pi
 		}
 		return $this->asJson($payload);		
 	}
-	
-	public function servicenotificationslist($val)
-	{
-		$usersid = $val['usersid'];
-		
-		if(!empty($usersid)){
-			$val['header_user_id'] = $usersid;
-			$payload = Yii::$app->serviceboy->servicenotificationslist($val);
-		}else{
-			$payload = array('status'=>'0','message'=>'Invalid users details');
-		}
-		return $this->asJson($payload);			
-	}
-	public function serviceseenstatus($val)
-	{
-		$usersid = $_REQUEST['usersid']; 
-		if(!empty($usersid)){
-			$val['header_user_id'] = $usersid;
-			$payload = Yii::$app->serviceboy->seenstatus($val);
-		}else{
-			$payload = array('status'=>'0','message'=>'Invalid users details');
-		}
-		return $this->asJson($payload);
-	}
-	public function serviceneworders($val)
-	{
-		$usersid = $_REQUEST['usersid']; 
-		if(!empty($usersid)){
-			$val['header_user_id'] = $usersid;
-			$payload = Yii::$app->serviceboy->neworders($val);
-		}else{
-			$payload = array('status'=>'0','message'=>'Invalid users details');
-		}
-		return $this->asJson($payload);
-	}
-	public function serviceacceptedorders($val)
-	{
-		$usersid = $_REQUEST['usersid']; 
-		if(!empty($usersid)){
-			$val['header_user_id'] = $usersid;
-			$payload = Yii::$app->serviceboy->orderswithstatus($val);
-		}else{
-			$payload = array('status'=>'0','message'=>'Invalid users details');
-		}
-		return $this->asJson($payload);
-	}
-    public function serviceorder($val)
-	{
-		$usersid = $_REQUEST['usersid']; 
-		if(!empty($usersid)){
-			$val['header_user_id'] = $usersid;
-			$payload = Yii::$app->serviceboy->order($val);
-		}else{
-			$payload = array('status'=>'0','message'=>'Invalid users details');
-		}
-		return $this->asJson($payload);		
-	} 	
-	public function serviceacceptorder($val)
-	{
-		$usersid = $_REQUEST['usersid']; 
-		if(!empty($usersid)){
-			$val['header_user_id'] = $usersid;
-			$payload = Yii::$app->serviceboy->acceptorder($val);
-		}else{
-			$payload = array('status'=>'0','message'=>'Invalid users details');
-		}
-		return $this->asJson($payload);		
-	}
-	public function serviceprepareorder($val)
-	{
-		$usersid = $_REQUEST['usersid']; 
-		if(!empty($usersid)){
-			$val['header_user_id'] = $usersid;
-			$payload = Yii::$app->serviceboy->prepareorder($val);
-		}else{
-			$payload = array('status'=>'0','message'=>'Invalid users details');
-		}
-		return $this->asJson($payload);		
-	}
-	public function getpreparetiontime($val)
-	{
-		$usersid = $_REQUEST['usersid']; 
-		if(!empty($usersid)){
-			$val['header_user_id'] = $usersid;
-			$payload = Yii::$app->serviceboy->getpreparetiontime($val);
-		}else{
-			$payload = array('status'=>'0','message'=>'Invalid users details');
-		}
-		return $this->asJson($payload);		
-	}
-	public function serviceserveorder($val)
-	{
-		$usersid = $_REQUEST['usersid']; 
-		if(!empty($usersid)){
-			$val['header_user_id'] = $usersid;
-			$payload = Yii::$app->serviceboy->serveorder($val);
-		}else{
-			$payload = array('status'=>'0','message'=>'Invalid users details');
-		}
-		return $this->asJson($payload);		
-	}
-	public function qrcodepilot($val)
-	{
-		$usersid = $_REQUEST['usersid']; 
-		if(!empty($usersid)){
-			$val['header_user_id'] = $usersid;
-			$payload = Yii::$app->serviceboy->qrcode($val);
-		}else{
-			$payload = array('status'=>'0','message'=>'Invalid users details');
-		}
-		return $this->asJson($payload);		
-	}
-	
-	public function servicerejectorder($val)
-	{
-		$usersid = $_REQUEST['usersid']; 
-		if(!empty($usersid)){
-			$val['header_user_id'] = $usersid;
-			$payload = Yii::$app->serviceboy->rejectorder($val);
-		}else{
-			$payload = array('status'=>'0','message'=>'Invalid users details');
-		}
-		return $this->asJson($payload);		
-	}
-	public function servicedeliverorder($val)
-	{
-		$usersid = $_REQUEST['usersid']; 
-		if(!empty($usersid)){
-			$val['header_user_id'] = $usersid;
-			$payload = Yii::$app->serviceboy->deliverorder($val);
-		}else{
-			$payload = array('status'=>'0','message'=>'Invalid users details');
-		}
-		return $this->asJson($payload);		
-	}
-	public function servicepaidstatus($val)
-	{
-		$usersid = $_REQUEST['usersid']; 
-		if(!empty($usersid)){
-			$val['header_user_id'] = $usersid;
-			$payload = Yii::$app->serviceboy->paidstatus($val);
-		}else{
-			$payload = array('status'=>'0','message'=>'Invalid users details');
-		}
-		return $this->asJson($payload);		
-	}
-	public function serviceorderslist($val)
-	{
-		$usersid = $_REQUEST['usersid']; 
 
-		if(!empty($usersid)){
-			$val['header_user_id'] = $usersid;
-			$payload = Yii::$app->serviceboy->orderslist($val);
-		}else{
-			$payload = array('status'=>'0','message'=>'Invalid users details');
-		}
-		return $this->asJson($payload);		
-	}
-	public function cancelreasons($val)
-	{
-	    $usersid = $_REQUEST['usersid']; 
-        //$usersid = '1';
-		if(!empty($usersid)){
-			$val['header_user_id'] = $usersid;
-			$payload = Yii::$app->serviceboy->cancelreasons($val);
-		}else{
-			$payload = array('status'=>'0','message'=>'Invalid users details');
-		}
-		return $this->asJson($payload);		
+    public function encrypt($string)
+    {
+        $output = false;
+        $encrypt_method = "AES-256-CBC";
+        $secret_key = 'foodgenee_key';
+        $secret_iv = 'foodgenee_iv';
+        // hash
+        $key = hash('sha256', $secret_key);
 
-    
+        // iv - encrypt method AES-256-CBC expects 16 bytes - else you will get a warning
+        $iv = substr(hash('sha256', $secret_iv), 0, 16);
+
+            $output = openssl_encrypt($string, $encrypt_method, $key, 0, $iv);
+            $output = base64_encode($output);
+
+        return trim($output);
     }
-    public function encrypt($string){
 
-	 $output = false;
-    $encrypt_method = "AES-256-CBC";
-    $secret_key = 'foodgenee_key';
-    $secret_iv = 'foodgenee_iv';
-    // hash
-    $key = hash('sha256', $secret_key);
-    
-    // iv - encrypt method AES-256-CBC expects 16 bytes - else you will get a warning
-    $iv = substr(hash('sha256', $secret_iv), 0, 16);
-	
-        $output = openssl_encrypt($string, $encrypt_method, $key, 0, $iv);
-        $output = base64_encode($output);
-   
-    return trim($output);
 
-}
-public function foodcomplaintreasons(){
-    $usersid = $_REQUEST['usersid']; 
-		if(!empty($usersid)){
-			$val['header_user_id'] = $usersid;
-			$payload = Yii::$app->serviceboy->foodcomplaintreasons($val);
-		}else{
-			$payload = array('status'=>'0','message'=>'Invalid users details');
-		}
-		return $this->asJson($payload);	
-}
-public function cashpilot($val){
-    $usersid = $_REQUEST['serviceboy_id']; 
-		if(!empty($usersid)){
-			$val['header_user_id'] = $usersid;
-			$payload = Yii::$app->serviceboy->cash($val);
-		}else{
-			$payload = array('status'=>'0','message'=>'Invalid users details');
-		}
-		return $this->asJson($payload);	
-}
-public function reordercashpilot($val){
-    $usersid = $_REQUEST['serviceboy_id']; 
-		if(!empty($usersid)){
-			$val['header_user_id'] = $usersid;
-			$payload = Yii::$app->serviceboy->reordercash($val);
-		}else{
-			$payload = array('status'=>'0','message'=>'Invalid users details');
-		}
-		return $this->asJson($payload);	
-}
-	public function actionTest(){
-	   $var = ['latitude'=>1.1, 'longitude'=>1.1, 'food_serve_type'=>1];
-	   
-	   $var1 = Yii::$app->enduser->restaurants($var);
-	   var_dump($var1);
-	   
-	   
-	   
-	}
-	public function tablesections($val)
-	{
-		$usersid = $_REQUEST['usersid']; 
-		if(!empty($usersid)){
-			$val['header_user_id'] = $usersid;
-			$tablesections = Yii::$app->merchant->tablesections($val);
-            $serviceboydet = \app\models\Serviceboy::findOne($val['header_user_id']);
-
-			$payload = array('status'=>'1','message'=>'List Of Sections','loginstatus' => $serviceboydet['loginstatus'],'tablesections' => $tablesections);
-		}else{
-			$payload = array('status'=>'0','message'=>'Invalid users details');
-		}
-		return $this->asJson($payload);		
-	}
-	public function addpilotfeedback($val)
-	{
-		$usersid = $_REQUEST['usersid']; 
-		if(!empty($usersid)){
-			$val['header_user_id'] = $usersid;
-			$payload = Yii::$app->serviceboy->addpilotfeedback($val);
-		}else{
-			$payload = array('status'=>'0','message'=>'Invalid users details');
-		}
-		return $this->asJson($payload);		
-	}
-	public function preparecompleteorder($val){
-	    $usersid = $_REQUEST['usersid']; 
-		if(!empty($usersid)){
-			$val['header_user_id'] = $usersid;
-			$payload = Yii::$app->serviceboy->preparecompleteorder($val);
-		}else{
-			$payload = array('status'=>'0','message'=>'Invalid users details');
-		}
-		return $this->asJson($payload);	
-	}
-	public function merchantpaymenttypes($val){
-	    $usersid = $_REQUEST['usersid']; 
-		if(!empty($usersid)){
-			$val['header_user_id'] = $usersid;
-			$payload = Yii::$app->serviceboy->merchantpaymenttypes($val);
-		}else{
-			$payload = array('status'=>'0','message'=>'Invalid users details');
-		}
-		return $this->asJson($payload);	
-	}
-	public function tablelist($val)
-	{
-		$usersid = $_REQUEST['usersid']; 
-		if(!empty($usersid)){
-			$val['header_user_id'] = $usersid;
-			$tablelist = Yii::$app->merchant->tableslist($val);
-			$payload = array('status'=>'1','message'=>'List Of Tables','tablelist' => $tablelist);
-		}else{
-			$payload = array('status'=>'0','message'=>'Invalid users details');
-		}
-		return $this->asJson($payload);		
-	}
 	public function meetme($val)
 	{
 
@@ -1605,15 +1364,16 @@ public function reordercashpilot($val){
 	}
 	public function confirmpayment($val)
 	{
-		$usersid = $_REQUEST['usersid']; 
+		$usersid = $_REQUEST['usersid'];
 		if(!empty($usersid)){
 			$val['header_user_id'] = $usersid;
 			$payload = Yii::$app->serviceboy->confirmpayment($val);
 		}else{
 			$payload = array('status'=>'0','message'=>'Invalid users details');
 		}
-		return $this->asJson($payload);				
+		return $this->asJson($payload);
 	}
+
 	public function pilotDemoRequests($val)
 	{
 		$model = new \app\models\PilotDemoRequests;
@@ -1633,61 +1393,7 @@ public function reordercashpilot($val){
 		}else{
 			$payload = ['status' => '1', 'message' => 'Requested for demo successfully!!'];
 		}
+
 		return $this->asJson($payload);				
 	}
-	
-	
-
-	
-	
-	public function actionClosetableorder(){
-	    //$_REQUEST
-/*	    $_REQUEST['CURRENCY'] = 'INR';
-$_REQUEST['GATEWAYNAME'] = 'WALLET';
-$_REQUEST['RESPMSG'] = 'Txn Success';
-$_REQUEST['BANKNAME'] = 'WALLET';
-$_REQUEST['PAYMENTMODE'] = 'PPI';
-$_REQUEST['MID'] = 'SgzeNI56959621932970';
-$_REQUEST['RESPCODE'] = '01';
-$_REQUEST['TXNID'] = '20211204111212800110168976203254653';
-$_REQUEST['TXNAMOUNT'] = '100.00';
-$_REQUEST['ORDERID'] = 'ORDS00011937';
-$_REQUEST['STATUS'] = 'TXN_SUCCESS';
-$_REQUEST['BANKTXNID'] = '65590826';
-$_REQUEST['TXNDATE'] = '2021-12-04 12:56:30.0';
-$_REQUEST['CHECKSUMHASH'] = 'bGyUGQxHiDoQIbaCV/y9pgZw06duXI/Q0ubsAMr8vscSuBj+OrEu05LlTRCDK1ZJR1RvuF3eooPwBoZlnt2AY06HQkhif+yXrPFyQjCMdxo=';*/
-	if(isset($_REQUEST['STATUS'])){
-	        if($_REQUEST['STATUS'] == 'TXN_SUCCESS'){
-	            $orderid = str_replace('ORDS0000','',$_REQUEST['ORDERID']);
-	            $orderDet = \app\models\Orders::findOne($orderid);
-	            $tableUpdate = \app\models\Tablename::findOne($orderDet['tablename']);
-				$encrypttableid = null;
-				if(!empty($orderDet['user_id'])){
-					$encrypttableid = \app\helpers\Utility::encrypt($tableUpdate['ID'],$orderDet['user_id']);
-				}
-				
-	    if(!empty($tableUpdate))
-		{
-			$table_status = null;
-			$current_order_id = 0;
-			$tableUpdate->table_status = $table_status;
-			$tableUpdate->current_order_id = $current_order_id;
-			$tableUpdate->save();
-		}
-		$orderDet->orderprocess = '4';
-		$orderDet->paidstatus = '1';
-		$orderDet->paymenttype = '2';
-		//$orderDet->ordercompany = $orderorigin;
-		$orderDet->closed_by = $orderDet['serviceboy_id'];
-		$orderDet->save();
-				return ['tableid'=>$tableUpdate['ID'],'tableName'=>$tableUpdate['name'],'current_order_id'=>0
-				,'ordertype' => $orderDet['ordertype'],'encrypttableid' => $encrypttableid  ];
-	        }
-	    }
-	    
-	}
-
-
-	
-	
 }

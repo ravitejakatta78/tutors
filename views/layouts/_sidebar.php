@@ -224,8 +224,8 @@ $tabPermissions = (array_column($tabPermissionsArr,'ID'));
 				<a href="<?php echo Url::to(['merchant/roomsdisplay']); ?>"> <i class="fa fa-star-o"></i>Room Reservation </a>
 			</li>
 			
-			 <li class="<?php if($actionId == 'counter-settlement') { echo "active" ;} ?>">
-			    <a href="<?php echo Url::to(['merchant/counter-settlement']); ?>"> <i class="fa fa-cube"></i>Counter Settlement </a>
+			 <li class="<?php if($actionId == 'index') { echo "active" ;} ?>">
+			    <a href="<?php echo Url::to(['counter-settlement/index']); ?>"> <i class="fa fa-cube"></i>Counter Settlement </a>
 			</li>
 			
             		  <?php if($roleId == '0' && in_array('14',$tabPermissions)) { ?>
