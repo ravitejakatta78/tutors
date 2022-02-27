@@ -1,6 +1,7 @@
 <?php
 
 namespace app\components;
+use app\models\Sections;
 use yii;
 use yii\base\Component;
 use app\helpers\Utility;
@@ -1475,13 +1476,17 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
                 $pos = explode('?',$val['enckey']);
                 parse_str($pos[1], $outputencarray);
                 $enckey = Utility::decrypt($outputencarray['enckey']);
-            } else {
+            }
+			else if( $val['enckey'] == 'PARCEL'){
+                $enckey = $val['merchantId'].','.'Parcels';
+            }else {
 			    $enckey = Utility::decrypt(trim($val['enckey']));
             }
+
 			$foodtype = trim($val['foodtype']) ?: 0;
 			$latfrom = trim($val['lat']) ?: 0;
 			$lngfrom = trim($val['lng']) ?: 0;
-						/* $enckey = trim($_POST['enckey']);*/ 
+
 			if(!empty($enckey)){
 			    if($latfrom == 0 || $lngfrom == 0){
 			        $payload = array("status"=>'0',"text"=>"Unable to get your location");
@@ -1490,112 +1495,119 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 				$merchantexplode = explode(',',$enckey);
 				$merchantid = $merchantexplode[0];
 				$tableid = $merchantexplode[1];
-								
-				$tabel_Det = Tablename::findOne($tableid);
-				$merchantdetails = Merchant::find()
+
+                if($tableid == 'Parcels') {
+                    $parcelSections = Sections::find()->select('ID, section_name')->where(['merchant_id' => $merchantid,'section_name' => 'Parcels'])->asArray()->One();
+                    $tabledetails['section_id'] = $parcelSections['ID'];
+                    $tabledetails['current_order_id'] = null;
+                    $tabledetails['name'] = 'Take Away';
+                    $tabledetails['table'] = '';
+                    $tabledetails['tablename']  = 'Take Away';
+                    $tabledetails['section_name'] = $parcelSections['section_name'];
+                }
+                else{
+                    $tabledetails = Tablename::findOne($tableid);
+                }
+
+
+                $merchantdetails = Merchant::find()
 					->where(['ID'=>$merchantid, 'status'=>'1'])->asArray()->One();
-				if(($tabel_Det['current_order_id'] != 0 || $tabel_Det['current_order_id'] != null) && $merchantdetails['table_occupy_status'] == 1)	{
-				    $currentOrder = Orders::findOne($tabel_Det['current_order_id']);
+				if((@$tabledetails['current_order_id'] != 0 || @$tabledetails['current_order_id'] != null) && $merchantdetails['table_occupy_status'] == 1 && $tableid != 'Parcels' )	{
+				    $currentOrder = Orders::findOne(@$tabledetails['current_order_id']);
 				    if($currentOrder['user_id'] != $val['header_user_id'] ){
 				        $payload = array("status"=>'0',"text"=>"Table is already occupied");
 					    return $payload;
 					    exit;
 				    }
 				}
-								
 
+				if(!empty($merchantdetails)){
+				    $latlngdistance = Utility::haversineGreatCircleDistance($latfrom,$lngfrom,$merchantdetails['latitude'],$merchantdetails['longitude']);
 						
-							if(!empty($merchantdetails)){
-									$latlngdistance = Utility::haversineGreatCircleDistance($latfrom,$lngfrom,$merchantdetails['latitude'],$merchantdetails['longitude']);
-						
-									if($latlngdistance > $merchantdetails['scan_range']){
-									    $payload = array("status"=>'0',"text"=>"Restaurent or  theater distance is too long");
-									//return $payload;
-									 //   exit;
-									}
+					if($latlngdistance > $merchantdetails['scan_range']){
+                        $payload = array("status"=>'0',"text"=>"Restaurent or  theater distance is too long");
+                        //return $payload;
+                        //exit;
+                    }
 
-									$tabledetails = Tablename::findOne($tableid);
-									if(!empty($tabledetails)){
-										$sqlmerchantproductsarray = 'select p.*, section_item_price, section_item_sale_price, food_type_name
-										,  food_category, food_section_name , fs.ID food_section_id
-										from product p 
-										left join section_item_price_list sipl on sipl.item_id =  p.ID and sipl.section_id = \''.$tabledetails['section_id'].'\' 
-										left join food_categeries fc on fc.ID = p.foodtype 
-										left join food_category_types fct on fct.ID =  p.food_category_quantity
-										left join food_sections fs on fs.ID =  fc.food_section_id
-										where p.merchant_id = \''.$merchantdetails['ID'].'\' 
-										and  p.status = \'1\' ';
+					if(!empty($tabledetails)){
+                        $sqlmerchantproductsarray = 'select p.*, section_item_price, section_item_sale_price, food_type_name
+                        ,  food_category, food_section_name , fs.ID food_section_id
+                        from product p 
+                        left join section_item_price_list sipl on sipl.item_id =  p.ID and sipl.section_id = \''.$tabledetails['section_id'].'\' 
+                        left join food_categeries fc on fc.ID = p.foodtype 
+                        left join food_category_types fct on fct.ID =  p.food_category_quantity
+                        left join food_sections fs on fs.ID =  fc.food_section_id
+                        where p.merchant_id = \''.$merchantdetails['ID'].'\' 
+                        and  p.status = \'1\' ';
 
-										if($foodtype>0){
-                                            $sqlmerchantproductsarray .= ' and p.foodtype = \''.$foodtype.'\' ';
-										}
-										
-										if(!empty($val["isVeg"])){
-										       $sqlmerchantproductsarray .= ' and p.item_type = \''.$val['isVeg'].'\' ';
-										}
-										
-										if(!empty($val["today_special"])){
-										       $sqlmerchantproductsarray .= ' and p.today_special = \''.$val['today_special'].'\' ';
-										}
-										
-										
-										$merchantproductsarray = Yii::$app->db->createCommand($sqlmerchantproductsarray)->queryAll();
-										$getproducts = array();
-										foreach($merchantproductsarray as $merchantproduct){
-										    if($merchantproduct['section_item_sale_price'] > 0){
-										$singleproducts = array();
-										$singleproducts['id'] = (int)$merchantproduct['ID'];
-										$singleproducts['unique_id'] = $merchantproduct['unique_id'];
-										$singleproducts['title'] = $merchantproduct['title'];
-										$singleproducts['item_type'] = $merchantproduct['item_type'];
-										$singleproducts['labeltag'] = $merchantproduct['labeltag'];
-										$singleproducts['serveline'] = $merchantproduct['serveline'];
-										$singleproducts['price'] = $merchantproduct['section_item_price'];
-										$singleproducts['food_category'] = $merchantproduct['food_category'];
-										$singleproducts['food_unit'] = $merchantproduct['food_type_name'];
-										$singleproducts['food_section_name'] = $merchantproduct['food_section_name'];
-										$singleproducts['saleprice'] = $merchantproduct['section_item_sale_price'];
-										$singleproducts['availabilty'] = $merchantproduct['availabilty']; 
-										$singleproducts['image'] = !empty($merchantproduct['image']) ? MERCHANT_PRODUCT_URL.$merchantproduct['image'] : '';
-										$singleproducts['taste_category'] = !empty($merchantproduct['taste_category']) ? MyConst::TASTE_CATEGORIES[$merchantproduct['taste_category']] : '';
-										$singleproducts['taste_range'] = !empty($merchantproduct['taste_range']) ? $merchantproduct['taste_range'] : 3;
+                        if($foodtype>0){
+                            $sqlmerchantproductsarray .= ' and p.foodtype = \''.$foodtype.'\' ';
+                        }
 
-										$restax = MerchantFoodCategoryTax::find()
-										->select('tax_type,tax_value')
-										->where(['merchant_id'=>$merchantid, 'food_category_id'=>$merchantproduct['foodtype']])
-										->asArray()->All();
-										
-										$singleproducts['tax'] = $restax;
-										
-										
-										$getproducts[] = $singleproducts;
-										    }
-										} 
-										$merchantlgo = !empty($merchantdetails['logo']) ? MERCHANT_LOGO.$merchantdetails['logo'] : '';
-                                    
-										$merchantcoverpic = !empty($merchantdetails['coverpic']) ? MERCHANT_LOGO.$merchantdetails['coverpic'] : '';
-										$itemCategoryImagePath = SITE_URL.'merchant_docs/'.$merchantid.'/'.'item_category/';
-										    $sqlcategoryDetail = 'select 0 foodtype, \'Recommended\' food_category 
-											,null category_img
-											,count(foodtype) itemcount  from product where merchant_id = \''.$merchantid.'\' ';
-											
+                        if(!empty($val["isVeg"])){
+                               $sqlmerchantproductsarray .= ' and p.item_type = \''.$val['isVeg'].'\' ';
+                        }
 
-											if(!empty($val["isVeg"])){
-												$sqlcategoryDetail .= ' and item_type = \''.$val['isVeg'].'\' ';
-										 	}
-                                                        
-											$sqlcategoryDetail .= '  union all
-														select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category end as food_category
-                                                        ,concat(\''.$itemCategoryImagePath.'\',category_img) category_img
-														,count(foodtype) itemcount  from product p
-                                                        left join food_categeries fc on fc.id = p.foodtype
-                                                        where p.merchant_id = \''.$merchantid.'\' ';
-														
-														if(!empty($val["isVeg"])){
-															$sqlcategoryDetail .= ' and p.item_type = \''.$val['isVeg'].'\' ';
-														}
-														$sqlcategoryDetail .= '  group by foodtype';
-											$categoryDetail = Yii::$app->db->createCommand($sqlcategoryDetail)->queryAll();
+                        if(!empty($val["today_special"])){
+                               $sqlmerchantproductsarray .= ' and p.today_special = \''.$val['today_special'].'\' ';
+                        }
+                        $merchantproductsarray = Yii::$app->db->createCommand($sqlmerchantproductsarray)->queryAll();
+						$getproducts = array();
+                        foreach($merchantproductsarray as $merchantproduct){
+                            if($merchantproduct['section_item_sale_price'] > 0){
+							    $singleproducts = array();
+                                $singleproducts['id'] = (int)$merchantproduct['ID'];
+                                $singleproducts['unique_id'] = $merchantproduct['unique_id'];
+                                $singleproducts['title'] = $merchantproduct['title'];
+                                $singleproducts['item_type'] = $merchantproduct['item_type'];
+                                $singleproducts['labeltag'] = $merchantproduct['labeltag'];
+                                $singleproducts['serveline'] = $merchantproduct['serveline'];
+                                $singleproducts['price'] = $merchantproduct['section_item_price'];
+                                $singleproducts['food_category'] = $merchantproduct['food_category'];
+                                $singleproducts['food_unit'] = $merchantproduct['food_type_name'];
+                                $singleproducts['food_section_name'] = $merchantproduct['food_section_name'];
+                                $singleproducts['saleprice'] = $merchantproduct['section_item_sale_price'];
+                                $singleproducts['availabilty'] = $merchantproduct['availabilty'];
+                                $singleproducts['image'] = !empty($merchantproduct['image']) ? MERCHANT_PRODUCT_URL.$merchantproduct['image'] : '';
+                                $singleproducts['taste_category'] = !empty($merchantproduct['taste_category']) ? MyConst::TASTE_CATEGORIES[$merchantproduct['taste_category']] : '';
+                                $singleproducts['taste_range'] = !empty($merchantproduct['taste_range']) ? $merchantproduct['taste_range'] : 3;
+
+                                $restax = MerchantFoodCategoryTax::find()
+                                ->select('tax_type,tax_value')
+                                ->where(['merchant_id'=>$merchantid, 'food_category_id'=>$merchantproduct['foodtype']])
+                                ->asArray()->All();
+										
+                                $singleproducts['tax'] = $restax;
+								$getproducts[] = $singleproducts;
+                            }
+						}
+
+						$merchantlgo = !empty($merchantdetails['logo']) ? MERCHANT_LOGO.$merchantdetails['logo'] : '';
+                        $merchantcoverpic = !empty($merchantdetails['coverpic']) ? MERCHANT_LOGO.$merchantdetails['coverpic'] : '';
+                        $itemCategoryImagePath = SITE_URL.'merchant_docs/'.$merchantid.'/'.'item_category/';
+
+                        $sqlcategoryDetail = 'select 0 foodtype, \'Recommended\' food_category 
+                                ,null category_img
+                                    ,count(foodtype) itemcount  from product where merchant_id = \''.$merchantid.'\' ';
+
+
+                                    if(!empty($val["isVeg"])){
+                                        $sqlcategoryDetail .= ' and item_type = \''.$val['isVeg'].'\' ';
+                                    }
+
+                                    $sqlcategoryDetail .= '  union all
+                                                select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category end as food_category
+                                                ,concat(\''.$itemCategoryImagePath.'\',category_img) category_img
+                                                ,count(foodtype) itemcount  from product p
+                                                left join food_categeries fc on fc.id = p.foodtype
+                                                where p.merchant_id = \''.$merchantid.'\' ';
+
+                                                if(!empty($val["isVeg"])){
+                                                    $sqlcategoryDetail .= ' and p.item_type = \''.$val['isVeg'].'\' ';
+                                                }
+                                                $sqlcategoryDetail .= '  group by foodtype';
+                                    $categoryDetail = Yii::$app->db->createCommand($sqlcategoryDetail)->queryAll();
 							            	$getproductsreindex = ArrayHelper::index($getproducts, null, 'food_category');
 											$getSections = array_values(array_unique(array_column($getproducts,'food_section_name')));
 											$getSectionCategory = array_column($getproducts,'food_section_name','food_category');
@@ -1620,9 +1632,9 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 											} */
 
 
-										$payload = array("status"=>'1', "merchantid"=>$merchantdetails['ID'], "table"=>$tabledetails['ID']
+										$payload = array("status"=>'1', "merchantid"=>$merchantdetails['ID'], "table"=>$tabledetails['ID'] ?? ''
 										, "tablename"=>$tabledetails['name'], "section_id"=>$tabledetails['section_id']
-										, 'section_name' => $tabledetails->section['section_name']
+										, 'section_name' => !empty($tabledetails->section['section_name']) ? $tabledetails->section['section_name'] : $tabledetails['section_name']
 										, "store"=>$merchantdetails['storename'], "storetype"=>$merchantdetails['storetype']
 										, "servingtype"=>$merchantdetails['servingtype']
                                         , "open_time"=>$merchantdetails['open_time'], "close_time"=>$merchantdetails['close_time']
