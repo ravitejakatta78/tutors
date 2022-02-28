@@ -265,7 +265,7 @@ public function beforeAction($action)
         if(in_array( $action, $loginFreeActions)) {
             switch ($action) {
                 case 'logout':
-                    $payload = Yii::$app->serviceboy->logout($_REQUEST);
+                    $payload = Yii::$app->serviceboy->login($_REQUEST);
                     break;
                 case 'registration':
                     $payload =  Yii::$app->serviceboy->registration($_REQUEST);
