@@ -773,7 +773,14 @@ class EnduserComponent extends Component {
                                 }
                                 $amenityArray[] = $amenitySingleArray;
                             }
-                            $payload = ["status"=>'1', "merchant"=>$merchants, 'merchantInfo' => $merchantInfo
+
+                         $sqlFeedbackFactorRating = "select mar.ambiance_id ,round(avg(mar.rating),1) as rating from
+                                merchant_ambiance_rating mar where mar.merchant_id =  '".$merchantsdata['ID']."' group by mar.ambiance_id ";
+                         $feedbackFactorRating = Yii::$app->db->createCommand($sqlFeedbackFactorRating)->queryAll();
+                         $merchants['factor_rating'] = !empty($feedbackFactorRating) ? $feedbackFactorRating  : null;
+
+
+                         $payload = ["status"=>'1', "merchant"=>$merchants, 'merchantInfo' => $merchantInfo
                                 , 'amenityArray' => $amenityArray
                             ];
 					}else{
