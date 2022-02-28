@@ -264,7 +264,7 @@ public function beforeAction($action)
         $loginFreeActions = ['login','registration'];
         if(in_array( $action, $loginFreeActions)) {
             switch ($action) {
-                case 'logout':
+                case 'login':
                     $payload = Yii::$app->serviceboy->login($_REQUEST);
                     break;
                 case 'registration':
@@ -283,8 +283,8 @@ public function beforeAction($action)
             $val['merchantId'] = $pilotDetails['merchant_id'];
             if (!empty($action)) {
                 switch ($action) {
-                    case 'login':
-                        $payload = Yii::$app->serviceboy->login($val);
+                    case 'logout':
+                        $payload = Yii::$app->serviceboy->logout($val);
                         break;
                     case 'updation':
                         $payload = Yii::$app->serviceboy->updation($val);
