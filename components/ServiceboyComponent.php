@@ -1485,13 +1485,13 @@ class ServiceboyComponent extends Component{
 									    return $payload;
 									    exit;
 								    }    
-								} 
-						
-						
+								}
+
+                        $val['serviceboy_id'] = $val['usersid'];
 						$valtax = !empty($val['tax']) ? number_format(trim($val['tax']), 2, '.', ',') : 0;
 							$userarray['merchant_id'] = $merchantid;
 							$userarray['serviceboy_id'] = isset($val['serviceboy_id']) ? $val['serviceboy_id'] : '';
-							$userarray['tablename'] = 	$val['table']; 
+							$userarray['tablename'] = 	$val['table'];
 							$userarray['order_id'] = Utility::order_id($merchantid,'order'); 
 							$userarray['txn_id'] = Utility::order_id($merchantid,'transaction'); 
 							$userarray['txn_date'] = date('Y-m-d H:i:s');
