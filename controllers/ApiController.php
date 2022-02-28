@@ -274,6 +274,8 @@ public function beforeAction($action)
                     $this->pilotDemoRequests($_REQUEST);
                     break;
             }
+
+            return $this->asJson($payload);
         }
         $pilotDetails = Serviceboy::findOne($usersid);
         // Checking is Pilot associated with us ??
@@ -396,6 +398,7 @@ public function beforeAction($action)
                         $payload = Yii::$app->counter->saveSettlement($val);
                         break;
                 }
+                return $this->asJson($payload);
             }
             else {
                 $payload = array('status'=>'0','message'=>'Invalid API!!');
@@ -404,8 +407,6 @@ public function beforeAction($action)
         else{
             $payload = array('status'=>'0','message'=>'Invalid users details');
         }
-
-        return $this->asJson($payload);
 	}
 
 	public function actionProfilepic()
