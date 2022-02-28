@@ -16,6 +16,8 @@ use Yii;
  */
 class MerchantAmbianceRating extends \yii\db\ActiveRecord
 {
+    const FACTORS = ['1' => 'Ambience', '2' => 'Hygiene', '3' => 'Food Taste'];
+
     /**
      * {@inheritdoc}
      */

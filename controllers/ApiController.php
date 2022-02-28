@@ -1,5 +1,6 @@
 <?php
 namespace app\controllers;
+use app\models\MerchantAmbianceRating;
 use app\models\PilotFactorRating;
 use app\models\Serviceboy;
 use yii;
@@ -261,6 +262,10 @@ public function beforeAction($action)
                 case 'get-pilot-factors':
                     $this->getPilotFactors($_REQUEST);
                     break;
+                case 'get-merchant-factors':
+                    $this->getMerchantFactors($_REQUEST);
+                    break;
+
 			}
 		}
 	}
@@ -1438,6 +1443,20 @@ cos((latitude*pi()/180)) * cos(((".$longitude."- longitude)* pi()/180))))*180/pi
         if(!empty($usersid)){
             $val['header_user_id'] = $usersid;
             $payload = ['status' => '1', 'factors' => PilotFactorRating::FACTORS];
+
+        }else{
+            $payload = array('status'=>'0','message'=>'Invalid users details');
+        }
+        return $this->asJson($payload);
+    }
+
+    public function getMerchantFactors($val)
+    {
+        $headerslist = apache_request_headers();
+        $usersid = base64_decode($headerslist['Authorization']);
+        if(!empty($usersid)){
+            $val['header_user_id'] = $usersid;
+            $payload = ['status' => '1', 'factors' => MerchantAmbianceRating::FACTORS];
 
         }else{
             $payload = array('status'=>'0','message'=>'Invalid users details');
