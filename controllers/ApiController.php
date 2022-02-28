@@ -638,7 +638,7 @@ return  $this->asJson($payload);
                                 $feedbackrating = Yii::$app->db->createCommand($sqlfeedbackrating)->queryOne();
 
 
-                                $merchants['rating'] = !empty($feedbackrating) ? ceil($feedbackrating['rating']) : 0;
+                                $merchants['rating'] = !empty($feedbackrating) ? round($feedbackrating['rating'],1) : 0;
                                 $merchants['logo'] = !empty($merchantsdata['logo']) ?  MERCHANT_LOGO.$merchantsdata['logo'] : '';
                                 $merchants['coverpic'] = !empty($merchantsdata['coverpic']) ? MERCHANT_LOGO.$merchantsdata['coverpic'] : '';
                                 $merchants['qrlogo'] = !empty($merchantsdata['qrlogo']) ? MERCHANT_LOGO.$merchantsdata['qrlogo'] : "";

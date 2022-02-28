@@ -751,6 +751,12 @@ class EnduserComponent extends Component {
                             $merchants['close_time'] =  !empty($merchantsdata['close_time']) ? Utility::hourRange($merchantsdata['close_time']) : "";
                             $merchants['approx_cost'] =  $merchantsdata['approx_cost'];
 
+                            $sqlfeedbackrating = "select sum(rating)/count(ID) rating from (select mf.ID,avg(mar.rating) as rating from merchant_feedback mf
+                                inner join merchant_ambiance_rating mar on mf.ID = mar.merchant_feedback_id
+                                where mf.merchant_id =  '".$merchantsdata['ID']."' group by mf.ID) A ";
+                            $feedbackrating = Yii::$app->db->createCommand($sqlfeedbackrating)->queryOne();
+                             $merchants['rating'] = !empty($feedbackrating) ? round($feedbackrating['rating'],1) : 0;
+
                             $merchantInfo = \app\models\MerchantInfo::find()->select('merchant_description')->where(['merchant_id' => $merchantsdata['ID']])->asArray()->all();
 
                             $merchantAmenities = \app\models\MerchantAmenities::find()->select('amenity_id')->where(['merchant_id' => $merchantsdata['ID']])->asArray()->All();
@@ -2379,7 +2385,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 						$orderarray['orderprocess'] =  $orderlist['orderprocess'];
 						$orderarray['orderprocesstext'] =  Utility::orderstatus_details($orderlist['orderprocess']);
 						$orderarray['orderprocessstatus'] =  $orderlist['orderprocessstatus'];
-						$orderarray['rating'] = !empty($feedbackrating) ? ceil($feedbackrating['rating']) : 0;
+						$orderarray['rating'] = !empty($feedbackrating) ? round($feedbackrating['rating'],1) : 0;
 						$orderarray['orderdate'] =  date('d M Y',strtotime($orderlist['reg_date']));
 						$orderarray['enckey'] =  Utility::encrypt($orderlist['merchant_id'].','.$orderlist['tablename']); 
 						/* code for alert disapper in app */
