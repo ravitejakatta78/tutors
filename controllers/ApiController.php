@@ -261,6 +261,20 @@ public function beforeAction($action)
         $action = trim($_REQUEST['action']); // API name
         $usersid = $_REQUEST['usersid']; // API Accessing User Id (Pilot)
 
+        $loginFreeActions = ['login','registration'];
+        if(in_array( $action, $loginFreeActions)) {
+            switch ($action) {
+                case 'logout':
+                    $payload = Yii::$app->serviceboy->logout($_REQUEST);
+                    break;
+                case 'registration':
+                    $payload =  Yii::$app->serviceboy->registration($_REQUEST);
+                    break;
+                case 'pilotDemoRequests':
+                    $this->pilotDemoRequests($_REQUEST);
+                    break;
+            }
+        }
         $pilotDetails = Serviceboy::findOne($usersid);
         // Checking is Pilot associated with us ??
         if(!empty($usersid)){
@@ -269,14 +283,8 @@ public function beforeAction($action)
             $val['merchantId'] = $pilotDetails['merchant_id'];
             if (!empty($action)) {
                 switch ($action) {
-                    case 'login':
-                        $payload = Yii::$app->serviceboy->login($val);
-                        break;
                     case 'logout':
                         $payload = Yii::$app->serviceboy->logout($val);
-                        break;
-                    case 'registration':
-                        $payload =  Yii::$app->serviceboy->registration($val);
                         break;
                     case 'updation':
                         $payload = Yii::$app->serviceboy->updation($val);
@@ -376,9 +384,6 @@ public function beforeAction($action)
                         break;
                     case 'confirmpayment':
                         $payload = Yii::$app->serviceboy->confirmpayment($val);
-                        break;
-                    case 'pilotDemoRequests':
-                        $this->pilotDemoRequests($val);
                         break;
                     /* counter settlement */
                     case 'getCurrentSettlementSession':

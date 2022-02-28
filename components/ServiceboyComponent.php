@@ -901,26 +901,23 @@ class ServiceboyComponent extends Component{
 	}
 	public function prepareorder($val)
 	{
-
-		$serviceboydetails = Serviceboy::findOne($val['header_user_id']);
-		$date = date('Y-m-d');
-					$orderid = $val['orderid'];
-					$preparetime = $val['preparetime'];
+		$orderid = $val['orderid'];
+		$preparetime = $val['preparetime'];
 	
-					$orderlist = Orders::findOne($orderid);
-					$tableDetails = Tablename::findOne($orderlist['tablename']);
-					if(!empty($orderlist)){
-					    if(!empty($preparetime)){
+		$orderlist = Orders::findOne($orderid);
+		$tableDetails = Tablename::findOne($orderlist['tablename']);
+		if(!empty($orderlist)){
+		    if(!empty($preparetime)){
+                $preparetimestamp  =date('Y-m-d H:i',strtotime('+'.$preparetime.' minutes',strtotime(date('Y-m-d H:i:s'))));
+		        $sqlUpdate = 'update orders set preparetime = \''.$preparetimestamp.'\',mod_date=\''.date('Y-m-d H:i:s').'\'	where ID = \''.$orderid.'\'';
+				$result = Yii::$app->db->createCommand($sqlUpdate)->execute();
 
-					     $sqlUpdate = 'update orders set preparetime = \''.$preparetime.'\',mod_date=\''.date('Y-m-d H:i:s').'\'	where ID = \''.$orderid.'\'';
-						 $result = Yii::$app->db->createCommand($sqlUpdate)->execute();
-						 if(!empty(@$orderlist['user_id'])){
-						     $userDet = \app\models\Users::findOne($orderlist['user_id']);
-						     $title = 'Order';
-						     $message = 'Order will be served in '.$preparetime.' minutes';
-						     Utility::sendNewFCM($userdetails['push_id'],$title,$message,null,null,null,$orderlist['ID']);
-
-						 }
+				if(!empty(@$orderlist['user_id'])){
+				     $userDet = \app\models\Users::findOne($orderlist['user_id']);
+				     $title = 'Order';
+				     $message = 'Order will be served in '.$preparetime.' minutes';
+				     Utility::sendNewFCM($userDet['push_id'],$title,$message,null,null,null,$orderlist['ID']);
+				}
 
 						 		$merchantNotidication = new MerchantNotifications;
 								$merchantNotidication->merchant_id = $orderlist['merchant_id'];
