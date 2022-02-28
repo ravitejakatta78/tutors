@@ -283,7 +283,7 @@ public function beforeAction($action)
             $val['merchantId'] = $pilotDetails['merchant_id'];
             if (!empty($action)) {
                 switch ($action) {
-                    case 'logout':
+                    case 'login':
                         $payload = Yii::$app->serviceboy->logout($val);
                         break;
                     case 'updation':
