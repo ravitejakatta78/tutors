@@ -643,6 +643,10 @@ return  $this->asJson($payload);
                                 $feedbackrating = Yii::$app->db->createCommand($sqlfeedbackrating)->queryOne();
 
 
+                                $sqlFeedbackFactorRating = "select mar.ambiance_id ,round(avg(mar.rating),1) as rating from
+                                merchant_ambiance_rating mar where mar.merchant_id =  '".$merchantsdata['ID']."' group by mar.ambiance_id ";
+                                $feedbackFactorRating = Yii::$app->db->createCommand($sqlFeedbackFactorRating)->queryAll();
+
                                 $merchants['rating'] = !empty($feedbackrating) ? round($feedbackrating['rating'],1) : 0;
                                 $merchants['logo'] = !empty($merchantsdata['logo']) ?  MERCHANT_LOGO.$merchantsdata['logo'] : '';
                                 $merchants['coverpic'] = !empty($merchantsdata['coverpic']) ? MERCHANT_LOGO.$merchantsdata['coverpic'] : '';
@@ -652,6 +656,9 @@ return  $this->asJson($payload);
                                 $merchants['close_time'] =  $merchantsdata['close_time'];
                                 $merchants['popularity'] =  $merchantsdata['popularity'];
                                 $merchants['approx_cost'] =  $merchantsdata['approx_cost'];
+
+                                $merchants['factor_rating'] = !empty($feedbackFactorRating) ? $feedbackFactorRating  : null;
+
 
                             if($merchants['popularity'] == '1' || $merchants['popularity'] == '3'){
                                 $newMerchants[] = $merchants;
