@@ -284,7 +284,7 @@ public function beforeAction($action)
             if (!empty($action)) {
                 switch ($action) {
                     case 'login':
-                        $payload = Yii::$app->serviceboy->logout($val);
+                        $payload = Yii::$app->serviceboy->login($val);
                         break;
                     case 'updation':
                         $payload = Yii::$app->serviceboy->updation($val);
