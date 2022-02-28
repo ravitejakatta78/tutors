@@ -1,6 +1,7 @@
 <?php
 
 namespace app\components;
+use app\models\MerchantFeedback;
 use app\models\Sections;
 use yii;
 use yii\base\Component;
@@ -333,45 +334,58 @@ class EnduserComponent extends Component {
 		return $payload;
 	}
 	public function addfeedback($val){
-	    //Yii::debug('===qrcode parameters==='.json_encode($val));
-		if(!empty($val['rating'])){
-		    $sqlorderdet = Orders::findOne($val['orderid']);
-		    if(!empty($sqlorderdet)){
+		if(!empty($val['orderid'])){
+            $row = Feedback::find()
+                ->where(['order_id'=>$val['orderid']])
+                ->asArray()->One();
+            if(empty($row)){
 						$userarray = $userwherearray = array();
 						$userarray['user_id'] = $val['header_user_id'];
 						$userarray['order_id'] = trim($val['orderid']);
+                        $userarray['pilot_id'] = trim($val['header_user_id']);
 						$userarray['merchant_id'] = trim($val['merchantid']);
-						$userarray['rating'] =  trim($val['rating']);
-						$userarray['message'] =  !empty($val['message']) ? trim($val['message']) : ''; 
+						$userarray['message'] =  !empty($val['message']) ? trim($val['message']) : '';
 						$userarray['reg_date'] = date('Y-m-d h:i:s');
   
 						$result = new Feedback;
 						$result->attributes = $userarray;
-						$result->save();		        
+						$result->save();
+
+                        $data = [];
+                        for($i=0;$i<count($val['factor_id']);$i++){
+                            $data[$i]['feedback_id'] = $result->ID;
+                            $data[$i]['factor_id'] = $val['factor_id'][$i];
+                            $data[$i]['rating'] = $val['rating'][$i];
+                            $data[$i]['reg_date'] = date('Y-m-d H:i:s');
+                        }
+
+                        if(count($data) > 0) {
+                            Yii::$app->db
+                                ->createCommand()
+                                ->batchInsert('pilot_factor_rating', ['feedback_id', 'factor_id','rating','reg_date'],$data)
+                                ->execute();
+                        }
+                $payload = array("status"=>'1',"text"=>"Feedback updated");
 		    }
 		    else{
-		        		$sqlUpdate = "update feedback set rating = '".$val['rating']."',message = '".$val['message']."' where order_id = '".$val['orderid']."'";
-						$resUpdate = Yii::$app->db->createCommand($sqlUpdate)->execute();
+		        		$sqlUpdate = "update feedback set message = '".$val['message']."' where order_id = '".$val['orderid']."'";
+						//$resUpdate = Yii::$app->db->createCommand($sqlUpdate)->execute();
+                $payload = array("status"=>'0',"text"=>"Feedback has already provided!!");
 		    }
 
-			//			if($result->save()){  
-				//		$sqlUpdate = "update orders set orderprocess = '4',orderprocessstatus = '0' where ID = '".$userarray['order_id']."'";
-				//		$resUpdate = Yii::$app->db->createCommand($sqlUpdate)->execute(); 
-							$payload = array("status"=>'1',"text"=>"Feedback updated");
-					//	}else{ 	
-				//			$payload = array("status"=>'1',"text"=>$result);
-			//			}    
+
 					}else{
 									
 						$payload = array('status'=>'0','message'=>'Invalid Parameters');
 					}
-					return $payload;
+
+		return $payload;
 	}
-	public function checkfeedback($val)
+	public function checkMerchantFeedback($val)
 	{
 		  if(!empty($val['header_user_id'])){ 
 						$merchant_id = trim($val['merchantid']);
-					  $row = Feedback::find()
+					  $row = MerchantFeedback::find()
 					  ->where(['user_id'=>$val['header_user_id'], 'merchant_id' => $merchant_id])
 					  ->asArray()->One();
 					  if(!empty($row['ID'])){
@@ -386,6 +400,26 @@ class EnduserComponent extends Component {
 					  }
 					  return $payload;
 	}
+
+    public function checkOrderFeedback($val)
+    {
+        if(!empty($val['header_user_id'])){
+            $row = Feedback::find()
+                ->where(['order_id' => $val['orderId']])
+                ->asArray()->One();
+            if(!empty($row['ID'])){
+
+                $payload = array("status"=>'1',"showfeedback"=>"false");
+            }  else {
+
+                $payload = array("status"=>'1',"showfeedback"=>"true");
+            }
+        }else{
+            $payload = array("status"=>'0',"text"=>"Invalid users id");
+        }
+        return $payload;
+    }
+
 	public function setalert($val)
 	{
 		  if(!empty($val['header_user_id'])){ 
@@ -713,8 +747,8 @@ class EnduserComponent extends Component {
 							$merchants['verify'] =  $merchantsdata['verify'];
 							$merchants['logo'] = !empty($merchantsdata['logo']) ? MERCHANT_LOGO.$merchantsdata['logo'] : '';
 							$merchants['coverpic'] = !empty($merchantsdata['coverpic']) ? MERCHANT_LOGO.$merchantsdata['coverpic'] : '';
-                            $merchants['open_time'] =  $merchantsdata['open_time'];
-                            $merchants['close_time'] =  $merchantsdata['close_time'];
+                            $merchants['open_time'] =  !empty($merchantsdata['open_time']) ? Utility::hourRange($merchantsdata['open_time']) : "";
+                            $merchants['close_time'] =  !empty($merchantsdata['close_time']) ? Utility::hourRange($merchantsdata['close_time']) : "";
                             $merchants['approx_cost'] =  $merchantsdata['approx_cost'];
 
                             $merchantInfo = \app\models\MerchantInfo::find()->select('merchant_description')->where(['merchant_id' => $merchantsdata['ID']])->asArray()->all();
@@ -1231,6 +1265,7 @@ class EnduserComponent extends Component {
 						}
 						return $payload;
 	}
+
 	public function cancelcoupon($val){
 		if(!empty($val['amount'])){
 					$savingamt = 0;  
@@ -1262,7 +1297,8 @@ class EnduserComponent extends Component {
 				}
 		return $payload;
 	}
-public function qrcodenew($val)
+
+	public function qrcodenew($val)
 	{
 
 	    		 Yii::debug('===qrcode parameters==='.json_encode($val));
@@ -1637,7 +1673,8 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 										, 'section_name' => !empty($tabledetails->section['section_name']) ? $tabledetails->section['section_name'] : $tabledetails['section_name']
 										, "store"=>$merchantdetails['storename'], "storetype"=>$merchantdetails['storetype']
 										, "servingtype"=>$merchantdetails['servingtype']
-                                        , "open_time"=>$merchantdetails['open_time'], "close_time"=>$merchantdetails['close_time']
+                                        , "open_time"=> (!empty($merchantdetails['open_time']) ? Utility::hourRange($merchantdetails['open_time']) : "")
+                                        , "close_time"=>(!empty($merchantdetails['close_time']) ? Utility::hourRange($merchantdetails['close_time']) : "")
                                         , "verify"=>$merchantdetails['verify']
 										, "location"=>$merchantdetails['location'], "logo"=>$merchantlgo, "merchant_mobile"=>$merchantdetails['mobile'], "coverpic"=>$merchantcoverpic
 										, "productlist"=>$newProduclistArr,"categoryDetail"=>$categoryDetail, "configured_tip" => $merchantdetails['tip']
@@ -3277,5 +3314,43 @@ order by remain_coins desc limit '.$val['userCount'] ;
 	    }
 		return	$payload = array('status'=>'1','payment_names' => $paytypearray);
 	}
+
+	public function addMerchantRating($val)
+    {
+        $merchantFeedBackDetail = MerchantFeedback::find()->where(['merchant_id' => $val['merchantId']
+            ,'user_id' => $val['header_user_id'] ])->asArray()->One();
+        if(empty($merchantFeedBackDetail)) {
+            $model = new MerchantFeedback;
+            $model->merchant_id = $val['merchantId'];
+            $model->user_id = $val['header_user_id'];
+            $model->feedback = !empty($val['feedback']) ? $val['feedback'] : null;
+            $model->reg_date = date('Y-m-d H:i:s');
+            $model->save();
+
+            $data = [];
+            for($i=0;$i<count($val['ambiance_id']);$i++){
+                $data[$i]['merchant_id'] = $val['merchantId'];
+                $data[$i]['merchant_feedback_id'] = $model->ID;
+                $data[$i]['ambiance_id'] = $val['ambiance_id'][$i];
+                $data[$i]['rating'] = $val['rating'][$i];
+                $data[$i]['reg_date'] = date('Y-m-d H:i:s');
+            }
+
+            if(count($data) > 0) {
+                Yii::$app->db
+                    ->createCommand()
+                    ->batchInsert('merchant_ambiance_rating', ['merchant_id','merchant_feedback_id', 'ambiance_id','rating','reg_date'],$data)
+                    ->execute();
+            }
+
+
+            $payload = ['status' => '1', 'message' => 'Feedback Added Successfully'];
+        }
+        else{
+            $payload = ['status' => '0', 'message' => 'User has already provided the feedback'];
+        }
+
+        return $payload;
+    }
 }
 ?>

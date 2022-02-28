@@ -1,5 +1,6 @@
 <?php
 namespace app\controllers;
+use app\models\PilotFactorRating;
 use app\models\Serviceboy;
 use yii;
 use sizeg\jwt\Jwt;
@@ -95,9 +96,12 @@ public function beforeAction($action)
 				case 'add-feedback':
 				$this->addfeedback($_REQUEST);
 				break;
-				case 'check-feedback':
-				$this->checkfeedback($_REQUEST);
+				case 'check-merchant-feedback':
+				$this->checkMerchantFeedback($_REQUEST);
 				break;
+                case 'check-order-feedback':
+                    $this->checkOrderFeedback($_REQUEST);
+                    break;
 				case 'set-alert':
 				$this->setalert($_REQUEST);
 				break;
@@ -251,7 +255,12 @@ public function beforeAction($action)
 				case 'usermerchantpaymenttypes':
 					$this->usermerchantpaymenttypes($_REQUEST);
 				break;
-				
+                case 'add-merchant-rating':
+                    $this->addMerchantRating($_REQUEST);
+                    break;
+                case 'get-pilot-factors':
+                    $this->getPilotFactors($_REQUEST);
+                    break;
 			}
 		}
 	}
@@ -274,12 +283,9 @@ public function beforeAction($action)
                     $this->pilotDemoRequests($_REQUEST);
                     break;
             }
-
-            return $this->asJson($payload);
         }
-        $pilotDetails = Serviceboy::findOne($usersid);
-        // Checking is Pilot associated with us ??
-        if(!empty($usersid)){
+        else if(!empty($usersid)){
+            $pilotDetails = Serviceboy::findOne($usersid);
             $val = $_REQUEST;
             $val['header_user_id'] = $usersid;
             $val['merchantId'] = $pilotDetails['merchant_id'];
@@ -398,7 +404,6 @@ public function beforeAction($action)
                         $payload = Yii::$app->counter->saveSettlement($val);
                         break;
                 }
-                return $this->asJson($payload);
             }
             else {
                 $payload = array('status'=>'0','message'=>'Invalid API!!');
@@ -407,6 +412,8 @@ public function beforeAction($action)
         else{
             $payload = array('status'=>'0','message'=>'Invalid users details');
         }
+
+        return $this->asJson($payload);
 	}
 
 	public function actionProfilepic()
@@ -777,18 +784,30 @@ cos((latitude*pi()/180)) * cos(((".$longitude."- longitude)* pi()/180))))*180/pi
 		}
 		return $this->asJson($payload);		
 	}
-    public function checkfeedback($val)
+    public function checkMerchantFeedback($val)
 	{
 		$headerslist = apache_request_headers();
 		$usersid = base64_decode($headerslist['Authorization']);
 		if(!empty($usersid)){
 		$val['header_user_id'] = $usersid;
-		$payload = Yii::$app->enduser->checkfeedback($val);
+		$payload = Yii::$app->enduser->checkMerchantFeedback($val);
 		}else{
 			$payload = array('status'=>'0','message'=>'Invalid users details');
 		}
 		return $this->asJson($payload);		
-	}	
+	}
+    public function checkOrderFeedback($val)
+    {
+        $headerslist = apache_request_headers();
+        $usersid = base64_decode($headerslist['Authorization']);
+        if(!empty($usersid)){
+            $val['header_user_id'] = $usersid;
+            $payload = Yii::$app->enduser->checkOrderFeedback($val);
+        }else{
+            $payload = array('status'=>'0','message'=>'Invalid users details');
+        }
+        return $this->asJson($payload);
+    }
     public function setalert($val){
 		$headerslist = apache_request_headers();
 		$usersid = base64_decode($headerslist['Authorization']);
@@ -1369,17 +1388,7 @@ cos((latitude*pi()/180)) * cos(((".$longitude."- longitude)* pi()/180))))*180/pi
 		}
 		return $this->asJson($payload);				
 	}
-	public function confirmpayment($val)
-	{
-		$usersid = $_REQUEST['usersid'];
-		if(!empty($usersid)){
-			$val['header_user_id'] = $usersid;
-			$payload = Yii::$app->serviceboy->confirmpayment($val);
-		}else{
-			$payload = array('status'=>'0','message'=>'Invalid users details');
-		}
-		return $this->asJson($payload);
-	}
+
 
 	public function pilotDemoRequests($val)
 	{
@@ -1403,4 +1412,33 @@ cos((latitude*pi()/180)) * cos(((".$longitude."- longitude)* pi()/180))))*180/pi
 
 		return $this->asJson($payload);				
 	}
+
+
+    public function addMerchantRating($val)
+    {
+        $headerslist = apache_request_headers();
+        $usersid = base64_decode($headerslist['Authorization']);
+        if(!empty($usersid)){
+            $val['header_user_id'] = $usersid;
+            $payload = Yii::$app->enduser->addMerchantRating($val);
+        }else{
+            $payload = array('status'=>'0','message'=>'Invalid users details');
+        }
+        return $this->asJson($payload);
+    }
+
+    public function getPilotFactors($val)
+    {
+        $headerslist = apache_request_headers();
+        $usersid = base64_decode($headerslist['Authorization']);
+        if(!empty($usersid)){
+            $val['header_user_id'] = $usersid;
+            $payload = ['status' => '1', 'factors' => PilotFactorRating::FACTORS];
+
+        }else{
+            $payload = array('status'=>'0','message'=>'Invalid users details');
+        }
+        return $this->asJson($payload);
+    }
+
 }

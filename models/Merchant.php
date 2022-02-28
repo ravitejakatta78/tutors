@@ -39,6 +39,7 @@ use Yii;
  * @property int $allocated_msgs
  * @property int $used_msgs
  * @property int $popularity
+ * @property int $cancel_decision
  */
 class Merchant extends \yii\db\ActiveRecord 
 {
@@ -64,7 +65,7 @@ class Merchant extends \yii\db\ActiveRecord
 			, 'latitude', 'longitude',   'status', 'recommend', 'verify', 'description'
 			, 'servingtype', 'plan', 'useraccess'], 'string'],
 			[['logo','qrlogo','coverpic'], 'file', 'extensions' => ['png', 'jpg', 'gif']],
-            [['otp','owner_type','open_time','close_time','table_res_avail', 'table_occupy_status', 'popularity'], 'integer'],
+            [['otp','owner_type','open_time','close_time','table_res_avail', 'table_occupy_status', 'popularity', 'cancel_decision'], 'integer'],
 		    [['mod_date', 'food_serve_type', 'subscription_date','allocated_msgs','used_msgs'], 'safe'],
 		    [['scan_range','tax','tip', 'approx_cost'], 'number'],
             [['user_id', 'unique_id', 'name', 'email'], 'string', 'max' => 50],
@@ -116,7 +117,8 @@ class Merchant extends \yii\db\ActiveRecord
 			'tax' => 'Tax',
 			'tip' => 'Tip',
 			'table_occupy_status' => 'Table Occupy Status',
-			'popularity' => 'Popularity'
+			'popularity' => 'Popularity',
+            'cancel_decision' => 'cancel_decision'
         ];
     }
 

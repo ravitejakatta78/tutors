@@ -11,7 +11,7 @@ use Yii;
  * @property string $merchant_id
  * @property string $order_id
  * @property string $user_id
- * @property string $rating
+ * @property string $pilot_id
  * @property string $message
  * @property string $reg_date
  * @property string $mod_date
@@ -35,7 +35,7 @@ class Feedback extends \yii\db\ActiveRecord
             [['merchant_id', 'order_id', 'user_id', 'reg_date'], 'required'],
             [['message','pilot_message'], 'string'],
             [['mod_date'], 'safe'],
-            [['merchant_id', 'order_id', 'user_id', 'rating','pilot_rating'], 'string', 'max' => 30],
+            [['merchant_id', 'order_id', 'user_id', 'pilot_id','pilot_rating'], 'string', 'max' => 30],
             [['reg_date'], 'string', 'max' => 20],
         ];
     }
@@ -50,7 +50,7 @@ class Feedback extends \yii\db\ActiveRecord
             'merchant_id' => 'Merchant ID',
             'order_id' => 'Order ID',
             'user_id' => 'User ID',
-            'rating' => 'Rating',
+            'pilot_id' => 'Pilot Id',
             'message' => 'Message',
             'reg_date' => 'Reg Date',
             'mod_date' => 'Mod Date',
