@@ -2333,11 +2333,12 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 					$orderarray = $totalordersarray = array();
 					foreach($orderlistarray as $orderlist){
 						$merchantdetails = Merchant::findOne($orderlist['merchant_id']);
-						
-							$feedbackrating = Feedback::find()
-							->select('rating')
-							->where(['merchant_id'=>$orderlist['merchant_id'], 'order_id'=>$orderlist['ID'], 'user_id'=>$val['header_user_id']])
-							->asArray()->One();
+
+                        $sqlfeedbackrating = "select sum(rating)/count(ID) rating from (select mf.ID,avg(rating) as rating from merchant_feedback mf
+                                inner join merchant_ambiance_rating mar on mf.ID = mar.merchant_feedback_id
+                                where mf.merchant_id =  '".$merchantdetails['ID']."' group by mf.ID) A ";
+                        $feedbackrating = Yii::$app->db->createCommand($sqlfeedbackrating)->queryOne();
+
 						$totalproductaarray = array();
 						$orderarray['order_id'] =  $orderlist['ID'];
 						$orderarray['unique_id'] =  $orderlist['order_id'];

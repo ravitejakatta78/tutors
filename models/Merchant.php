@@ -118,7 +118,7 @@ class Merchant extends \yii\db\ActiveRecord
 			'tip' => 'Tip',
 			'table_occupy_status' => 'Table Occupy Status',
 			'popularity' => 'Popularity',
-            'cancel_decision' => 'cancel_decision'
+            'cancel_decision' => 'Cancel Decision'
         ];
     }
 

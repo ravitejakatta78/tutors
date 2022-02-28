@@ -632,8 +632,12 @@ return  $this->asJson($payload);
                                 $merchants['servingtype'] =  $merchantsdata['servingtype'];
                                 $merchants['verify'] =  $merchantsdata['verify'];
                                 $merchants['showpage'] =  $merchantsdata['storetype'] == 'Restaurant' ? '1' : '0';
-                                $sqlfeedbackrating = "select avg(rating) as rating from feedback where merchant_id =  '".$merchantsdata['ID']."'";
+                                $sqlfeedbackrating = "select sum(rating)/count(ID) rating from (select mf.ID,avg(rating) as rating from merchant_feedback mf
+                                inner join merchant_ambiance_rating mar on mf.ID = mar.merchant_feedback_id
+                                where mf.merchant_id =  '".$merchantsdata['ID']."' group by mf.ID) A ";
                                 $feedbackrating = Yii::$app->db->createCommand($sqlfeedbackrating)->queryOne();
+
+
                                 $merchants['rating'] = !empty($feedbackrating) ? ceil($feedbackrating['rating']) : 0;
                                 $merchants['logo'] = !empty($merchantsdata['logo']) ?  MERCHANT_LOGO.$merchantsdata['logo'] : '';
                                 $merchants['coverpic'] = !empty($merchantsdata['coverpic']) ? MERCHANT_LOGO.$merchantsdata['coverpic'] : '';
