@@ -357,8 +357,8 @@ class MerchantComponent extends Component{
             $tablelist['enckey'] = Utility::encrypt($val['merchant_id'].','.$res['ID']);
             $tablelist['section_name'] = $res['section_name'];
             $tablelist['section_id'] = $res['section_id'];
-            $tablelist['table_status'] = ($table_status == '5' || $table_status == '') ? 1 : 0;
-            $tablelist['table_status_text'] = ($table_status == '5' || $table_status == '')  ? 'Occupied' : 'Free';
+            $tablelist['table_status'] = ($table_status == '5' || $table_status == '') ? 0 : 1;
+            $tablelist['table_status_text'] = ($table_status == '5' || $table_status == '')  ? 'Free' : 'Occupied';
 			$tablelist['table_occupy_status'] = $res['table_occupy_status'] ?? 1  ;
             $tablelistarray[] = $tablelist;
 	        
