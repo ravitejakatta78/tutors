@@ -342,7 +342,7 @@ class MerchantComponent extends Component{
 
         $sqlPrevWeekOrders = 'select ID,tablename,orderprocess from orders where date(reg_date) between \''.date('Y-m-d', strtotime('-7 days')).'\' 
 		and \''.date('Y-m-d').'\' and orderprocess in (\'0\',\'1\',\'2\') 
-		and merchant_id = \''.Yii::$app->user->identity->merchant_id.'\'
+		and merchant_id = \''.$val['merchant_id'].'\'
 		order by ID desc';
         $resPrevWeekOrders = Yii::$app->db->createCommand($sqlPrevWeekOrders)->queryAll();
         $prevWeekTableOrderStatus = array_column($resPrevWeekOrders,'orderprocess','tablename');
