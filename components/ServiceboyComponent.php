@@ -996,7 +996,9 @@ class ServiceboyComponent extends Component{
 	}
 	public function rejectorder($val)
 	{
+        $decisionCancelStatus = ['2','3'];
 		$serviceboydetails = Serviceboy::findOne($val['header_user_id']);
+		$merchantDetails = Merchant::findOne($serviceboydetails['merchant_id']);
 		$date = date('Y-m-d');
 					$orderid = $val['orderid'];
 					$orderlist = Orders::findOne($orderid);
@@ -1007,46 +1009,46 @@ class ServiceboyComponent extends Component{
 						 
                             $sqlorderpush = "select sum(case when status = 3 then 1 else 0 end) reject_count,count(ID)  order_sent_count from order_push_pilot where merchant_id = '".$orderlist['merchant_id']."' and order_id = '".$orderlist['ID']."'";
                             $resorderpush = Yii::$app->db->createCommand($sqlorderpush)->queryOne();
-	                        if((!empty($sqlorderpush) &&  ($resorderpush['reject_count']+1) == $resorderpush['order_sent_count'] && $val['cancelconfirm'] == 1) || $val['cancelconfirm'] == 3){
+
+                            if((!empty($sqlorderpush) && in_array($merchantDetails['cancel_decision'],$decisionCancelStatus) &&  ($resorderpush['reject_count']+1) == $resorderpush['order_sent_count'] && $val['cancelconfirm'] == 1) || $val['cancelconfirm'] == 3){
 	                        
-							$roderarray = $roderwharray=  array();
-							$roderwharray['ID'] = $orderid;  
-							$roderarray['orderprocess'] = 3;
-							$roderarray['serviceboy_id'] = $serviceboydetails['ID']; 
-							//updateQuery($roderarray,'orders',$roderwharray);
-							$sqlUpdate = 'update orders set orderprocess = \''.$roderarray['orderprocess'].'\',serviceboy_id = \''.$roderarray['serviceboy_id'].'\'
-							,cancel_reason = \''.$val['cancel_reason'].'\' where ID = \''.$roderwharray['ID'].'\'';
-							$result = Yii::$app->db->createCommand($sqlUpdate)->execute();
-							$userdetails = Users::findOne($orderlist['user_id']);
-							if(!empty($userdetails['push_id'])){	
-							$message = "Hey ".ucwords($userdetails['name']).", Your Order has been Rejected. Sorry for inconvenience.";	
-							$title = 'Order has been cancelled';
-							$image = '';
-							
-							Utility::sendNewFCM($userdetails['push_id'],$title,$message,$image,null,null,$orderid);			
-							}
-							$table_status = null;
-			                $current_order_id = 0;
+                                $roderarray = $roderwharray=  array();
+                                $roderwharray['ID'] = $orderid;
+                                $roderarray['orderprocess'] = 3;
+                                $roderarray['serviceboy_id'] = $serviceboydetails['ID'];
+                                //updateQuery($roderarray,'orders',$roderwharray);
+                                $sqlUpdate = 'update orders set orderprocess = \''.$roderarray['orderprocess'].'\',serviceboy_id = \''.$roderarray['serviceboy_id'].'\'
+                                ,cancel_reason = \''.$val['cancel_reason'].'\' where ID = \''.$roderwharray['ID'].'\'';
+                                $result = Yii::$app->db->createCommand($sqlUpdate)->execute();
+                                $userdetails = Users::findOne($orderlist['user_id']);
+                                if(!empty($userdetails['push_id'])){
+                                $message = "Hey ".ucwords($userdetails['name']).", Your Order has been Rejected. Sorry for inconvenience.";
+                                $title = 'Order has been cancelled';
+                                $image = '';
 
-							$tableUpdate->table_status = $table_status;
-		                    $tableUpdate->current_order_id = $current_order_id;
-		                	$tableUpdate->save();
-		                	    
-							$merchantNotidication = new MerchantNotifications;
-							$merchantNotidication->merchant_id = $orderlist['merchant_id'];
-							$merchantNotidication->message = 'Order '.$orderlist['order_id'].' on  '.$tableUpdate['name'].'-'.$tableUpdate->section['section_name'].' is <br> Cancelled' ;
-							$merchantNotidication->seen = '0';
-							$merchantNotidication->created_on = date('Y-m-d H:i:s');
-							$merchantNotidication->created_by = $val['header_user_id'];
-							$merchantNotidication->save();
+                                Utility::sendNewFCM($userdetails['push_id'],$title,$message,$image,null,null,$orderid);
+                                }
+                                $table_status = null;
+                                $current_order_id = 0;
 
-							$payload = array('status'=>'1','message'=>'Order has been Cancelled');
+                                $tableUpdate->table_status = $table_status;
+                                $tableUpdate->current_order_id = $current_order_id;
+                                $tableUpdate->save();
+
+                                $merchantNotidication = new MerchantNotifications;
+                                $merchantNotidication->merchant_id = $orderlist['merchant_id'];
+                                $merchantNotidication->message = 'Order '.$orderlist['order_id'].' on  '.$tableUpdate['name'].'-'.$tableUpdate->section['section_name'].' is <br> Cancelled' ;
+                                $merchantNotidication->seen = '0';
+                                $merchantNotidication->created_on = date('Y-m-d H:i:s');
+                                $merchantNotidication->created_by = $val['header_user_id'];
+                                $merchantNotidication->save();
+
+                                $payload = array('status'=>'1','message'=>'Order has been Cancelled');
 	                        }
-							else if(!empty($sqlorderpush) &&  ($resorderpush['reject_count']+1) == $resorderpush['order_sent_count'] && $val['cancelconfirm'] == 2){
-					            
-					            $payload = array('status'=>'1','message'=>'If we reject the order it will auto cancel !!');
-					    }
-					    else{
+							else if(!empty($sqlorderpush) && in_array($merchantDetails['cancel_decision'],$decisionCancelStatus) &&  ($resorderpush['reject_count']+1) == $resorderpush['order_sent_count'] && $val['cancelconfirm'] == 2) {
+					            $payload = array('status'=>'3','message'=>'If we reject the order it will auto cancel !!');
+					        }
+					        else{
     					     $OrderPushPilotDet =   OrderPushPilot::find()
                                     ->where(['merchant_id' => $orderlist['merchant_id'],'order_id' => $orderlist['ID']])
     	                            ->One();

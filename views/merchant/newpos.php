@@ -6,7 +6,7 @@ $actionId = Yii::$app->controller->action->id;
 $merchant_det = \app\models\Merchant::findOne(Yii::$app->user->identity->merchant_id);
 $merchant_tip_percent = !empty($merchant_det) ? $merchant_det['tip'] : 0;
 $paytypearray = array('1'=>'Cash On Dine','2'=>'Online Payment','3'=>'UPI Scanner','4'=>'Card Swipe');
-
+$decisionCancelStatus = ['1','3'];
 ?>
 
    <link rel="stylesheet" href="<?= Yii::$app->request->baseUrl.'/css/css/newpos.css';?>">
@@ -176,7 +176,8 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
                     <th>Price</th>
                     <th>Qty</th>
                     <th>Total</th>
-                    <?php if(isset($prevFullSingleOrderDet['ID'])){ ?> 
+                    <?php if(isset($prevFullSingleOrderDet['ID']) && in_array($merchant_det['cancel_decision'],$decisionCancelStatus)){
+                        ?>
                     <th><i class="fa fa-times" style="cursor:pointer" onclick="cancelreject(<?= $prevFullSingleOrderDet['ID']; ?>,<?= $prevFullSingleOrderDet['orderprocess']; ?>)"></i></th>
                     <?php }else { ?>
                     <th></th>
