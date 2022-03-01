@@ -328,7 +328,7 @@ class MerchantComponent extends Component{
 		
 	}
 	public function tableslist($val){
-	    $sql = 'select tb.*,s.section_name,tb.section_id,m.table_occupy_status from tablename tb 
+            $sql = 'select tb.*,s.section_name,tb.section_id,m.table_occupy_status from tablename tb 
 	    inner join  sections s on s.ID = tb.section_id 
 		inner join merchant m on m.ID =  tb.merchant_id
 		where tb.status = \'1\' 
@@ -339,7 +339,15 @@ class MerchantComponent extends Component{
     
 	    $sql .= ' order by tb.ID desc';
 	    $res = Yii::$app->db->createCommand($sql)->queryAll();
-	    $tablelist = $tablelistarray = [];
+
+        $sqlPrevWeekOrders = 'select ID,tablename,orderprocess from orders where date(reg_date) between \''.date('Y-m-d', strtotime('-7 days')).'\' 
+		and \''.date('Y-m-d').'\' and orderprocess in (\'0\',\'1\',\'2\') 
+		and merchant_id = \''.Yii::$app->user->identity->merchant_id.'\'
+		order by ID desc';
+        $resPrevWeekOrders = Yii::$app->db->createCommand($sqlPrevWeekOrders)->queryAll();
+        $prevWeekTableOrderStatus = array_column($resPrevWeekOrders,'orderprocess','tablename');
+
+        $tablelist = $tablelistarray = [];
 	    foreach($res as $res)
 	    {
 	        $tablelist['ID'] = $res['ID'];
@@ -348,8 +356,8 @@ class MerchantComponent extends Component{
             $tablelist['enckey'] = Utility::encrypt($val['merchant_id'].','.$res['ID']);
             $tablelist['section_name'] = $res['section_name'];
             $tablelist['section_id'] = $res['section_id'];
-            $tablelist['table_status'] = $res['table_status'] ?? 0;
-            $tablelist['table_status_text'] = ($res['table_status'] == 1) ? 'Occupied' : 'Free';
+            $tablelist['table_status'] = !empty(@$prevWeekTableOrderStatus[$res['ID']]) ? 1 : 0;
+            $tablelist['table_status_text'] = !empty(@$prevWeekTableOrderStatus[$res['ID']]) ? 'Occupied' : 'Free';
 			$tablelist['table_occupy_status'] = $res['table_occupy_status'] ?? 1  ;
             $tablelistarray[] = $tablelist;
 	        
