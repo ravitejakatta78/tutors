@@ -350,14 +350,15 @@ class MerchantComponent extends Component{
         $tablelist = $tablelistarray = [];
 	    foreach($res as $res)
 	    {
+            $table_status = $prevWeekTableOrderStatus[$res['ID']] ?? '5';
 	        $tablelist['ID'] = $res['ID'];
 	        $tablelist['name'] = $res['name'];
 	        $tablelist['capacity'] = $res['capacity'];
             $tablelist['enckey'] = Utility::encrypt($val['merchant_id'].','.$res['ID']);
             $tablelist['section_name'] = $res['section_name'];
             $tablelist['section_id'] = $res['section_id'];
-            $tablelist['table_status'] = !empty(@$prevWeekTableOrderStatus[$res['ID']]) ? 1 : 0;
-            $tablelist['table_status_text'] = !empty(@$prevWeekTableOrderStatus[$res['ID']]) ? 'Occupied' : 'Free';
+            $tablelist['table_status'] = ($table_status == '5' || $table_status == '') ? 1 : 0;
+            $tablelist['table_status_text'] = ($table_status == '5' || $table_status == '')  ? 'Occupied' : 'Free';
 			$tablelist['table_occupy_status'] = $res['table_occupy_status'] ?? 1  ;
             $tablelistarray[] = $tablelist;
 	        
