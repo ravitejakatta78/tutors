@@ -1482,7 +1482,7 @@ $re_Order =     (int)$reorderCount['max_reorder'] + 1;
 		order by ID desc';
 		$resPrevWeekOrders = Yii::$app->db->createCommand($sqlPrevWeekOrders)->queryAll();
 		$prevWeekTableOrderStatus = array_column($resPrevWeekOrders,'orderprocess','tablename');
-		
+
 		return $this->render('tableorder',['tableDetails'=>$tableDetails, 'tableSections'=>$tableSections
 		, 'prevWeekTableOrderStatus' => $prevWeekTableOrderStatus
 		]);
@@ -3164,6 +3164,17 @@ $runningPie = [];
 			$orderDet->closed_by = Yii::$app->user->identity->merchant_id;
 			$orderDet->save();
 
+            $merchantNotidication = new MerchantNotifications;
+            $merchantNotidication->merchant_id = $orderDet['merchant_id'];
+            $merchantNotidication->message = \app\helpers\MyConst::PAYMENT_METHODS[$orderpaymethod].' Payment of Rs. '.$orderDet['totalamount'].'  
+				received on Order '.$orderDet['order_id'].' of '.$tableUpdate['name'].'-'.$tableUpdate->section['section_name'];
+            $merchantNotidication->seen = '0';
+            $merchantNotidication->created_on = date('Y-m-d H:i:s');
+            $merchantNotidication->created_by = Yii::$app->user->identity->merchant_id;
+            if(!$merchantNotidication->save()){
+                print_r($merchantNotidication->getErrors());
+            }
+
 			if(!empty($orderDet['serviceboy_id'])){
 				
 				$notificaitonarary = array();
@@ -3197,6 +3208,7 @@ $runningPie = [];
 				$serviceBoyNotiModel->reg_date = date('Y-m-d H:i:s');
 				$serviceBoyNotiModel->mod_date = date('Y-m-d H:i:s');
 				$serviceBoyNotiModel->save();
+
 
 
 
