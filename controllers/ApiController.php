@@ -636,6 +636,7 @@ return  $this->asJson($payload);
                                 $merchants['longitude'] =  $merchantsdata['longitude'];
                                 $merchants['servingtype'] =  $merchantsdata['servingtype'];
                                 $merchants['verify'] =  $merchantsdata['verify'];
+                                $merchants['mobile'] =  $merchantsdata['mobile'];
                                 $merchants['showpage'] =  $merchantsdata['storetype'] == 'Restaurant' ? '1' : '0';
                                 $sqlfeedbackrating = "select sum(rating)/count(ID) rating from (select mf.ID,avg(mar.rating) as rating from merchant_feedback mf
                                 inner join merchant_ambiance_rating mar on mf.ID = mar.merchant_feedback_id
