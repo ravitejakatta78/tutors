@@ -745,6 +745,7 @@ class EnduserComponent extends Component {
 							$merchants['longitude'] =  $merchantsdata['longitude'];
 							$merchants['servingtype'] =  $merchantsdata['servingtype'];
 							$merchants['verify'] =  $merchantsdata['verify'];
+                            $merchants['mobile'] =  $merchantsdata['mobile'];
 							$merchants['logo'] = !empty($merchantsdata['logo']) ? MERCHANT_LOGO.$merchantsdata['logo'] : '';
 							$merchants['coverpic'] = !empty($merchantsdata['coverpic']) ? MERCHANT_LOGO.$merchantsdata['coverpic'] : '';
                             $merchants['open_time'] =  !empty($merchantsdata['open_time']) ? Utility::hourRange($merchantsdata['open_time']) : "";
