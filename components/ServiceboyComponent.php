@@ -1890,9 +1890,10 @@ class ServiceboyComponent extends Component{
         }
         $pilotFactors = PilotFactorRating::FACTORS;
         $singleFactor = $factorRating = [];
-        for($f=0;$f < count($feedbackFactorRating); $f++){
-            $singleFactor['name'] =    $pilotFactors[$feedbackFactorRating[$f]['ID']];
-            $singleFactor['rating'] = $feedbackFactorRating[$f]['rating'];
+        $polishedFactorArray = array_column($feedbackFactorRating,'rating','ID');
+        foreach($pilotFactors as $key => $value){
+            $singleFactor['name'] =    $value;
+            $singleFactor['rating'] = !empty(@$polishedFactorArray[$key]) ? $polishedFactorArray[$key]  : 0;
             $factorRating[] = $singleFactor;
         }
 
