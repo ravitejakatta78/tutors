@@ -884,7 +884,26 @@ class ServiceboyComponent extends Component{
 	    			if(!empty($order_details)){
                         //20/100*30
                         $conditionTime = ((20/100) * $order_details['preparation_time']);
-	    			    $order_details->orderprocess = '2';
+                        $conditionStringTime = (strtotime($order_details['preparetime'])) - ($conditionTime*60);
+                        $conditionDateTime = date("Y-m-d H:i:s", $conditionStringTime);
+                        $currentStringTime = strtotime(date('Y-m-d H:i:s'));
+
+                        //on time order
+                        if($currentStringTime < strtotime($order_details['preparetime']) && $currentStringTime <= $conditionStringTime && $order_details['extra_preptime_flag'] == 0){
+                            $order_details->order_performance = 1;
+                        }
+                        else if($currentStringTime < strtotime($order_details['preparetime']) && $order_details['extra_preptime_flag'] == 0 && $currentStringTime > $conditionStringTime){ // close to on time
+                            $order_details->order_performance = 2;
+                        }
+                        else if($currentStringTime <= strtotime($order_details['preparetime']) && $order_details['extra_preptime_flag'] == 1){ // on time but requested extra time
+                            $order_details->order_performance = 3;
+                        }
+                        else if($currentStringTime > strtotime($order_details['preparetime'])){ // on time but requested extra time
+                            $order_details->order_performance = 4;
+                        }
+
+
+                        $order_details->orderprocess = '2';
 	    			    $order_details->save();
 						
 						$merchantNotidication = new MerchantNotifications;
@@ -1858,9 +1877,9 @@ class ServiceboyComponent extends Component{
 
 	public function pilotFeedback($val){
 
-       $sqlfeedbackrating = "select f.ID,avg(rating) as rating from feedback f
+       $sqlfeedbackrating = "select mfr.factor_id ID,avg(rating) as rating from feedback f
                                 inner join pilot_factor_rating mfr on f.ID = mfr.feedback_id
-                                where f.pilot_id =  '".$val['header_user_id']."' group by f.ID";
+                                where f.pilot_id =  '".$val['header_user_id']."' group by mfr.factor_id";
         $feedbackFactorRating = Yii::$app->db->createCommand($sqlfeedbackrating)->queryAll();
         $factorRatingArray =  array_column($feedbackFactorRating,'rating');
         if(!empty($factorRatingArray)){
@@ -1869,10 +1888,16 @@ class ServiceboyComponent extends Component{
         else{
             $overAllRating = 0.00;
         }
+        $pilotFactors = PilotFactorRating::FACTORS;
+        $singleFactor = $factorRating = [];
+        for($f=0;$f < count($feedbackFactorRating); $f++){
+            $singleFactor['name'] =    $pilotFactors[$feedbackFactorRating[$f]['ID']];
+            $singleFactor['rating'] = $feedbackFactorRating[$f]['rating'];
+            $factorRating[] = $singleFactor;
+        }
 
-
-        return $payload = ['feedbackFactorRating' => $feedbackFactorRating
-            ,'overAllRating' => $overAllRating, 'factors' => PilotFactorRating::FACTORS ];
+        return $payload = ['feedbackFactorRating' => $factorRating
+            ,'overAllRating' => $overAllRating];
     }
 
 }
