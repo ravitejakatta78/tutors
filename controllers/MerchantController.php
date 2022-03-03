@@ -4955,6 +4955,7 @@ $catModel = AllocatedRooms::findOne($resUpdate['room_alocated']);
 		$tableDetails = Tablename::findOne($model['tablename']);
         $preparetimestamp  =date('Y-m-d H:i',strtotime('+'.$preptime.' minutes',strtotime(date('Y-m-d H:i:s'))));
         $model->preparetime = $preparetimestamp;
+        $model->preparation_time = $preptime;
 		$model->mod_date = date('Y-m-d H:i:s');
         if(!$model->save()){
             print_r($model->getErrors());

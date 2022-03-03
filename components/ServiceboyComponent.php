@@ -441,7 +441,7 @@ class ServiceboyComponent extends Component{
 				  $customerdetails['unique_id'] =  $row['unique_id'];
 				  $customerdetails['name'] =  $row['name'];
 				  $customerdetails['email'] =  $row['email'];
-				  $customerdetails['mobile'] =  $row['mobile']; 
+				  $customerdetails['mobile'] =  $row['mobile'];
 				  $customerdetails['profilepic'] =  Utility::serviceboy_image($row['ID']);
 				  $customerdetails['storename'] =  $merchant['storename'] ?: '';
 				  $customerdetails['storestate'] =  $merchant['state'] ?: '';
@@ -453,7 +453,7 @@ class ServiceboyComponent extends Component{
 				  $customerdetails['OnlinePay'] =  $restodayorders['OnlinePay'] ?: '0';
 				  $customerdetails['OfflinePay'] =  $restodayorders['OfflinePay'] ?: '0';
 				  $customerdetails['tips'] =  $restodayorders['tips'] ?: '0';
-				  
+
 				  $customerdetails['todayorders'] =  $todayorders ?: '0';
 				  $customerdetails['totalpoints'] =  $totalpoints ?: '0';
 				  $customerdetails['loginstatus'] =  $row['loginstatus'];
@@ -464,7 +464,7 @@ class ServiceboyComponent extends Component{
 				  $customerdetails['CounterPay'] = $restodayorders['CounterPay'] ?: '0';
 				  $customerdetails['store_open_time'] =  $merchant['open_time'];
 				  $customerdetails['store_close_time'] =  $merchant['close_time'];
-					$payload = array("status"=>'1',"users"=>$customerdetails);
+					$payload = array("status"=>'1',"users"=>$customerdetails,'ratingDetails' => $this->pilotFeedback(['header_user_id' => $row['ID']]));
 				  }  else {
 						
 						$payload = array("status"=>'0',"text"=>"Invalid users");
@@ -882,6 +882,8 @@ class ServiceboyComponent extends Component{
 	    			$order_details = Orders::findOne($orderid);
 					$tableDetails = Tablename::findOne($order_details['tablename']);
 	    			if(!empty($order_details)){
+                        //20/100*30
+                        $conditionTime = ((20/100) * $order_details['preparation_time']);
 	    			    $order_details->orderprocess = '2';
 	    			    $order_details->save();
 						
@@ -904,13 +906,15 @@ class ServiceboyComponent extends Component{
 	{
 		$orderid = $val['orderid'];
 		$preparetime = $val['preparetime'];
+        $flag = !empty($val['flag']) ? $val['flag'] : 0 ;
 	
 		$orderlist = Orders::findOne($orderid);
 		$tableDetails = Tablename::findOne($orderlist['tablename']);
 		if(!empty($orderlist)){
 		    if(!empty($preparetime)){
                 $preparetimestamp  =date('Y-m-d H:i',strtotime('+'.$preparetime.' minutes',strtotime(date('Y-m-d H:i:s'))));
-		        $sqlUpdate = 'update orders set preparetime = \''.$preparetimestamp.'\',mod_date=\''.date('Y-m-d H:i:s').'\'	where ID = \''.$orderid.'\'';
+		        $sqlUpdate = 'update orders set preparetime = \''.$preparetimestamp.'\'
+		        ,preparation_time = \''.$preparetime.'\',extra_preptime_flag = \''.$flag.'\' ,mod_date=\''.date('Y-m-d H:i:s').'\'	where ID = \''.$orderid.'\'';
 				$result = Yii::$app->db->createCommand($sqlUpdate)->execute();
 
 				if(!empty(@$orderlist['user_id'])){
@@ -1867,7 +1871,7 @@ class ServiceboyComponent extends Component{
         }
 
 
-        return $payload = ['status' => '1', 'feedbackFactorRating' => $feedbackFactorRating
+        return $payload = ['feedbackFactorRating' => $feedbackFactorRating
             ,'overAllRating' => $overAllRating, 'factors' => PilotFactorRating::FACTORS ];
     }
 

@@ -39,6 +39,9 @@ use Yii;
  * @property string $reg_date
  * @property string $mod_date
  * @property int $closed_by
+ * @property  int|null $order_performance
+ * @property  int|null $preparation_time
+ * @property int $extra_preptime_flag 0=no need,1 need extra time
  */
 class Orders extends \yii\db\ActiveRecord
 {
@@ -59,7 +62,7 @@ class Orders extends \yii\db\ActiveRecord
             [['merchant_id', 'order_id', 'txn_id', 'txn_date', 'amount', 'tax'
 			, 'totalamount', 'orderline', 'orderprocess', 'status', 'paymentby', 'reg_date'], 'required'],
             [['orderprocess', 'orderprocessstatus', 'status', 'paidstatus', 'reorderprocess','ordercompany','cancel_reason','instructions'], 'string'],
-            [['paymentby','ordertype','closed_by'], 'integer'],
+            [['paymentby','ordertype','closed_by', 'order_performance', 'preparation_time', 'extra_preptime_flag'], 'integer'],
             [['mod_date', 'discount_type', 'discount_number','preparetime'], 'safe'],
             [['paid_amount', 'pending_amount'], 'number'],
             [['user_id', 'merchant_id', 'serviceboy_id', 'tablename', 'order_id', 'txn_id', 'txn_date', 'amount', 'tax', 'tips', 'subscription', 'totalamount', 'paymenttype', 'orderline', 'coupon', 'preparedate'], 'string', 'max' => 50],
@@ -107,7 +110,8 @@ class Orders extends \yii\db\ActiveRecord
             'reg_date' => 'Reg Date',
             'mod_date' => 'Mod Date',
             'cancel_reason' => 'Cancel Reason',
-            'closed_by' => 'Closed By'
+            'closed_by' => 'Closed By',
+            'order_performance' => 'Order Performance'
         ];
     }
 }
