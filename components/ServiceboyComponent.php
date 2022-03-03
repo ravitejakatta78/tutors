@@ -424,7 +424,7 @@ class ServiceboyComponent extends Component{
 			  ,sum(case when (orderprocess != '4' and orderprocess != '3' and paidstatus != '1' and  paidstatus != '2') then totalamount else 0 end) rununing_amount
 			  ,\"0\" tips
 			  ,sum(case when order_performance = 1 then 1 else 0 end) on_time
-			  ,sum(case when order_performance = 2 then 1 else 0 end) in_time
+			  ,sum(case when order_performance = 2 then 1 else 0 end) near_end_time
 			  ,sum(case when order_performance = 3 then 1 else 0 end) extra_time
 			  ,sum(case when order_performance = 4 then 1 else 0 end) late  
 			  FROM orders WHERE merchant_id = '".$row['merchant_id']."' and serviceboy_id = '".$row['ID']."' 
@@ -470,7 +470,7 @@ class ServiceboyComponent extends Component{
 				  $customerdetails['store_close_time'] =  $merchant['close_time'];
 
 				  $singlePerformance = $overAllPerformance = [];
-                  $performanceArray = ['1' => $restodayorders['on_time'],'2' => $restodayorders['in_time'],'3' => $restodayorders['extra_time'], '4' => $restodayorders['late']];
+                  $performanceArray = ['1' => $restodayorders['on_time'],'2' => $restodayorders['near_end_time'],'3' => $restodayorders['extra_time'], '4' => $restodayorders['late']];
                   foreach (Orders::ORDER_PERFORMACE as $key => $value) {
                       $singlePerformance['name'] =     $value;
                       $singlePerformance['order_count'] = $performanceArray[$key] ?? 0;

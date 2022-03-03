@@ -45,7 +45,7 @@ use Yii;
  */
 class Orders extends \yii\db\ActiveRecord
 {
-    const ORDER_PERFORMACE = ['1' => 'On Time','2' => 'In Time','3' => 'Extra Time', '4' => 'Late'];
+    const ORDER_PERFORMACE = ['1' => 'On Time','2' => 'Near End Time','3' => 'Extra Time', '4' => 'Late'];
     /**
      * {@inheritdoc}
      */
