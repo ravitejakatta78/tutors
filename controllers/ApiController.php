@@ -408,6 +408,10 @@ public function beforeAction($action)
                     case 'saveSettlement':
                         $payload = Yii::$app->counter->saveSettlement($val);
                         break;
+                    /* feedback related */
+                    case 'get-feedback':
+                        $payload = Yii::$app->serviceboy->pilotFeedback($val);
+                        break;
                 }
             }
             else {

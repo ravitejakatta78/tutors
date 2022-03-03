@@ -1,5 +1,6 @@
 <?php
 namespace app\components;
+use app\models\PilotFactorRating;
 use yii;
 use yii\base\Component;
 use app\helpers\Utility;
@@ -1850,6 +1851,25 @@ class ServiceboyComponent extends Component{
 		}
 		return $payload;
 	}
+
+	public function pilotFeedback($val){
+
+       $sqlfeedbackrating = "select f.ID,avg(rating) as rating from feedback f
+                                inner join pilot_factor_rating mfr on f.ID = mfr.feedback_id
+                                where f.pilot_id =  '".$val['header_user_id']."' group by f.ID";
+        $feedbackFactorRating = Yii::$app->db->createCommand($sqlfeedbackrating)->queryAll();
+        $factorRatingArray =  array_column($feedbackFactorRating,'rating');
+        if(!empty($factorRatingArray)){
+            $overAllRating = array_sum($factorRatingArray)/count($factorRatingArray);
+        }
+        else{
+            $overAllRating = 0.00;
+        }
+
+
+        return $payload = ['status' => '1', 'feedbackFactorRating' => $feedbackFactorRating
+            ,'overAllRating' => $overAllRating, 'factors' => PilotFactorRating::FACTORS ];
+    }
 
 }
 ?>
