@@ -473,7 +473,7 @@ class ServiceboyComponent extends Component{
                   $performanceArray = ['1' => $restodayorders['on_time'],'2' => $restodayorders['near_end_time'],'3' => $restodayorders['extra_time'], '4' => $restodayorders['late']];
                   foreach (Orders::ORDER_PERFORMACE as $key => $value) {
                       $singlePerformance['name'] =     $value;
-                      $singlePerformance['order_count'] = $performanceArray[$key] ?? 0;
+                      $singlePerformance['order_count'] = (int) $performanceArray[$key] ?? 0;
                       $overAllPerformance[] = $singlePerformance;
 				  }
 				
