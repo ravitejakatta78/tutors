@@ -520,7 +520,7 @@ class EnduserComponent extends Component {
 	}
 	public function updation($val)
 	{
-		if(!empty($val['name'])&&!empty($val['email'])&&!empty($val['mobile'])){ 
+		if(!empty($val['name']) && !empty($val['mobile'])){
 						$userarray = $userwherearray = array();
 						$userwherearray['ID'] = $val['header_user_id'];
 						$userarray['name'] = trim($val['name']);

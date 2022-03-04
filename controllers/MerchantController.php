@@ -1087,7 +1087,7 @@ if(!empty($_POST['ckcDel'])){
 		$sqlOrders .=' and orderprocess = \''.$orderprocess.'\' ';
 		}		
 		$sqlOrders .=' order by ID desc';
-		$orderModel = Yii::$app->db->createCOmmand($sqlOrders)->queryAll();
+		$orderModel = Yii::$app->db->createCommand($sqlOrders)->queryAll();
 		
 
 		$model = new Orders;

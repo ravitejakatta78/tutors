@@ -4,6 +4,8 @@ use app\helpers\Utility;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use app\helpers\MyConst;
+
 $actionId = Yii::$app->controller->action->id;
 ?>
 <header class="page-header">
@@ -79,10 +81,23 @@ $actionId = Yii::$app->controller->action->id;
 									<td><?php echo $orderModel['order_id'];?></td>
 									<td><?php echo Utility::table_details($orderModel['tablename'],'name');?></td>
 									<td><?php if($orderModel['ordertype'] == 2 ) { echo "Offline" ; }else{ echo "Online"; }?></td>	
-									<td><?php $orderModel['paytype'] ; ?></td>										
+									<td><?php !empty($orderModel['paymenttype']) ? MyConst::PAYMENT_METHODS[$orderModel['paymenttype']] : null ; ?></td>
 									<td><?php  echo  Utility::user_details($orderModel['user_id'],'name');   ?></td>
 									<td><?php  echo Utility::user_details($orderModel['user_id'],'mobile');  ?></td>
-									<td><span class="pending"><?php echo Utility::orderstatus_details($orderModel['orderprocess']);?></span></td> 
+									<td>
+                                        <span class="pending">
+                                            <?php
+                                            if($orderModel['orderprocess'] == 1 && !empty($orderModel['preparetime']) && empty($orderModel['preparedate'])){
+                                                echo 'Preparing';
+                                            }
+                                            else if($orderModel['orderprocess'] == 1 && !empty($orderModel['preparetime']) && !empty($orderModel['preparedate'])){
+                                                echo 'Prepared';
+                                            }
+                                            else{
+                                                echo Utility::orderstatus_details($orderModel['orderprocess']);
+                                            }
+                                            ?></span>
+                                    </td>
 									<td><?php echo $orderModel['amount'];?></td>
 									<td><?php echo $orderModel['tax'];?></td>
 									<td><?php echo $orderModel['tips'];?></td>
