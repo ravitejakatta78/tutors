@@ -11,6 +11,7 @@ use Yii;
  * @property int $merchant_id
  * @property int $amenity_id
  * @property int $status 1.Active, 2.Inactive
+ * @property int $amenity_visibility 1.Active, 2.Inactive
  * @property string $reg_date
  */
 class MerchantAmenities extends \yii\db\ActiveRecord
@@ -33,7 +34,7 @@ class MerchantAmenities extends \yii\db\ActiveRecord
     {
         return [
             [['merchant_id', 'amenity_id', 'reg_date'], 'required'],
-            [['merchant_id', 'amenity_id', 'status'], 'integer'],
+            [['merchant_id', 'amenity_id', 'amenity_visibility','status'], 'integer'],
             [['reg_date'], 'safe'],
         ];
     }
@@ -47,6 +48,7 @@ class MerchantAmenities extends \yii\db\ActiveRecord
             'ID' => 'ID',
             'merchant_id' => 'Merchant ID',
             'amenity_id' => 'Amenity ID',
+            'amenity_visibility' => 'Amenity Visibility',
             'status' => 'Status',
             'reg_date' => 'Reg Date',
         ];
