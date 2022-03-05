@@ -81,7 +81,7 @@ $actionId = Yii::$app->controller->action->id;
 									<td><?php echo $orderModel['order_id'];?></td>
 									<td><?php echo Utility::table_details($orderModel['tablename'],'name');?></td>
 									<td><?php if($orderModel['ordertype'] == 2 ) { echo "Offline" ; }else{ echo "Online"; }?></td>	
-									<td><?php !empty($orderModel['paymenttype']) ? MyConst::PAYMENT_METHODS[$orderModel['paymenttype']] : null ; ?></td>
+									<td><?php echo !empty($orderModel['paymenttype']) ? MyConst::PAYMENT_METHODS[$orderModel['paymenttype']] : null ; ?></td>
 									<td><?php  echo  Utility::user_details($orderModel['user_id'],'name');   ?></td>
 									<td><?php  echo Utility::user_details($orderModel['user_id'],'mobile');  ?></td>
 									<td>
