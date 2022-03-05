@@ -1454,7 +1454,13 @@ cos((latitude*pi()/180)) * cos(((".$longitude."- longitude)* pi()/180))))*180/pi
         $usersid = base64_decode($headerslist['Authorization']);
         if(!empty($usersid)){
             $val['header_user_id'] = $usersid;
-            $payload = ['status' => '1', 'factors' => PilotFactorRating::FACTORS];
+            $singleFactor = $facotrs = [];
+            foreach(PilotFactorRating::FACTORS as $key => $value){
+                $singleFactor['id'] = $key;
+                $singleFactor['factor'] = $value;
+                $facotrs[] = $singleFactor;
+            }
+            $payload = ['status' => '1', 'factors' => $facotrs];
 
         }else{
             $payload = array('status'=>'0','message'=>'Invalid users details');
@@ -1468,7 +1474,13 @@ cos((latitude*pi()/180)) * cos(((".$longitude."- longitude)* pi()/180))))*180/pi
         $usersid = base64_decode($headerslist['Authorization']);
         if(!empty($usersid)){
             $val['header_user_id'] = $usersid;
-            $payload = ['status' => '1', 'factors' => MerchantAmbianceRating::FACTORS];
+            $singleFactor = $facotrs = [];
+            foreach(MerchantAmbianceRating::FACTORS as $key => $value){
+                $singleFactor['id'] = $key;
+                $singleFactor['factor'] = $value;
+                $facotrs[] = $singleFactor;
+            }
+            $payload = ['status' => '1', 'factors' => $facotrs];
 
         }else{
             $payload = array('status'=>'0','message'=>'Invalid users details');
