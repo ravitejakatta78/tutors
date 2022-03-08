@@ -202,8 +202,9 @@ $tabPermissions = (array_column($tabPermissionsArr,'ID'));
                                 <li class="<?php if($actionId == 'reportpilot') { echo "active" ;} ?>"><a href="<?= Url::to(['report/reportpilot']); ?>">Pilot Report </a></li>
                                 <li class="<?php if($actionId == 'reportcategory') { echo "active" ;} ?>"><a href="<?= Url::to(['report/reportcategory']); ?>">Category Wise Report </a></li>
                                 <li class="<?php if($actionId == 'reporttablereservation') { echo "active" ;} ?>"><a href="<?= Url::to(['report/reporttablereservation']); ?>">Table Reservation Report </a></li>
-		 
-		   </ul>
+                                  <li class="<?php if($actionId == 'section-wise-sale') { echo "active" ;} ?>"><a href="<?= Url::to(['report/section-wise-sale']); ?>">Section Wise Sale</a></li>
+
+              </ul>
             </li>
 					  <?php } ?>
 			  		  <?php if($roleId == '0' && in_array('12',$tabPermissions) ) { ?>
