@@ -281,16 +281,16 @@ use yii\helpers\Url;
                   <div class="">
                       <h3 class="float-left">
                         <span>TOTAL SALES - </span>
-                        <i class="fa fa-inr ml-3" aria-hidden="true"></i> 25000
+                        <i class="fa fa-inr ml-3" aria-hidden="true"></i> <?php  echo round($resPaidCOunt['totalamount'],2);?>
         </h3>
-                   <div class="dropdown no-arrow float-right">
+                   <!-- <div class="dropdown no-arrow float-right">
                     <select class="form-control" >
                       <option value="1">Today</option>
                       <option value="2">Week</option>
                       <option value="3">Month</option>
                       <option value="3">Customize</option>
                     </select>
-                  </div>
+                  </div> -->
                   <div class="clearfix"></div>
         </div>
         </div>
