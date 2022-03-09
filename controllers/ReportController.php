@@ -362,6 +362,29 @@ select distinct(count(created_on)) present_dates,employee_id,1 con_join from emp
                 ,'edate'=>$edate, 'res' => $res]);
 
         }
+
+    public function actionPaymentMethodSectionSale()
+    {
+        extract($_POST);
+
+        $sdate = $_POST['sdate'] ?? date('Y-m-d');
+        $edate = $_POST['edate'] ?? date('Y-m-d');
+        $merchantId = Yii::$app->user->identity->merchant_id;
+        $sql = 'select s.section_name
+                ,sum(case when paymenttype = 1 then totalamount else 0 end) cash 
+                ,sum(case when paymenttype = 2 then totalamount else 0 end) online
+                ,sum(case when paymenttype = 3 then totalamount else 0 end) upi
+                ,sum(case when paymenttype = 4 then totalamount else 0 end) card
+                from orders o 
+                    inner join tablename tb on o.tablename = tb.ID
+                    inner join sections s on s.ID = tb.section_id
+                    where date(o.reg_date) between \''.$sdate.'\' and \''.$edate.'\' 
+            and orderprocess in (\'4\') and o.merchant_id = \''.$merchantId.'\' group by s.section_name';
+        $res = Yii::$app->db->createCommand($sql)->queryAll();
+        return $this->render('pay-method-section',['sdate'=>$sdate
+            ,'edate'=>$edate, 'res' => $res]);
+
+    }
         
    	
 

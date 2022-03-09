@@ -202,7 +202,8 @@ $tabPermissions = (array_column($tabPermissionsArr,'ID'));
                                 <li class="<?php if($actionId == 'reportpilot') { echo "active" ;} ?>"><a href="<?= Url::to(['report/reportpilot']); ?>">Pilot Report </a></li>
                                 <li class="<?php if($actionId == 'reportcategory') { echo "active" ;} ?>"><a href="<?= Url::to(['report/reportcategory']); ?>">Category Wise Report </a></li>
                                 <li class="<?php if($actionId == 'reporttablereservation') { echo "active" ;} ?>"><a href="<?= Url::to(['report/reporttablereservation']); ?>">Table Reservation Report </a></li>
-                                  <li class="<?php if($actionId == 'section-wise-sale') { echo "active" ;} ?>"><a href="<?= Url::to(['report/section-wise-sale']); ?>">Section Wise Sale</a></li>
+                                <li class="<?php if($actionId == 'section-wise-sale') { echo "active" ;} ?>"><a href="<?= Url::to(['report/section-wise-sale']); ?>">Section Wise Sale</a></li>
+                                <li class="<?php if($actionId == 'payment-method-section-sale') { echo "active" ;} ?>"><a href="<?= Url::to(['report/payment-method-section-sale']); ?>">Payment Method Report</a></li>
 
               </ul>
             </li>
