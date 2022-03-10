@@ -5010,6 +5010,7 @@ $catModel = AllocatedRooms::findOne($resUpdate['room_alocated']);
         ])
 		->asArray()->all();
 		$bannerStatusCount = array_count_values(array_column($bannerdet,'status'));
+        !empty($bannerStatusCount) ? $bannerStatusCount : $bannerStatusCount[1] = 0;
 		$model = new Banners;
 				if ($model->load(Yii::$app->request->post()) ) {
 			$MerchantGalleryArr = Yii::$app->request->post('Banners');

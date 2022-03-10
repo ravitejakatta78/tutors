@@ -2767,7 +2767,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 							$merchantlist = $merchants = $merchanttables = array(); 
 							$merchantid = $val['merchantid'];
 							$merchantstablearray = MerchantGallery::find()
-							->where(['merchant_id'=>$merchantid])->asArray()->All();
+							->where(['merchant_id'=>$merchantid, 'status' => '1'])->asArray()->All();
 							if(!empty($merchantstablearray)){
 								$tablearray = array();
 								foreach($merchantstablearray as $merchantstable){ 

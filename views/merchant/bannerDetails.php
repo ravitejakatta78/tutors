@@ -33,7 +33,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
             <div class="card">
               <div class="card-header d-flex align-items-center pt-0 pb-0">
                 <h3 class="h4 col-md-6 pl-0 tab-title">Banner List</h3>
-				<?php if($bannerStatusCount['1'] < 3 ) { ?>
+				<?php if(@$bannerStatusCount['1'] < 3 ) { ?>
 				<div class="col-md-6 text-right pr-0">
 	<button type="button" class="btn btn-add btn-xs" id="myBtn" data-toggle="modal" ><i class="fa fa-plus mr-1"></i> Add Banner</button>			
 				</div>
@@ -178,7 +178,8 @@ function deletebanner(id){
 
 $("#myBtn").click(function(){
 	var bannerStatusCountJson = '<?= json_encode($bannerStatusCount); ?>';
-	var bannerStatusCount = JSON.parse(bannerStatusCountJson);  
+	var bannerStatusCount = JSON.parse(bannerStatusCountJson);
+
 	if(bannerStatusCount['1'] < 3){
 		$('#myModal').modal('toggle');
 	}
