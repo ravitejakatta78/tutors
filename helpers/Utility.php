@@ -185,19 +185,27 @@ public static function rewards_details($id,$type){
 	}
 
 }  
-	public static function orderstatus_details($status){ 
-		if($status==1){
+	public static function orderstatus_details($status, $prearationTime = null, $prearationDate = null)
+	{
+		if($status == '1' && $prearationTime > 0 && $prearationTime != '0000-00-00 00:00:00' && empty($prearationDate)){
+			echo 'Preparing';
+		}
+		else if($status == '1' && $prearationTime > 0 && !empty($prearationDate)){
+			echo 'Prepared';
+		}
+		else if($status==1) {
 			return 'Accepted';
-		}else if($status==2){
+		}
+		else if($status==2) {
 			return 'Served';
-		}else if($status==0){
+		}else if($status==0) {
 			return 'New';
-		}else if($status==3){
+		}else if($status==3) {
 			return 'Canceled';
-		}else if($status==4){
+		}else if($status==4) {
 			return 'Delivered';
 		}
-		else if($status==5){
+		else if($status==5) {
 			return 'Available';
 		}
 	}
@@ -753,6 +761,21 @@ return $contents;
 	public function lastDesiredDate(int $days)
 	{
 		return date('Y-m-d', strtotime('-'.$days.' days'));
+	}
+
+	/**
+	 * @param int $val
+	 * @return string
+	 */
+	public function orderTypeText($val)
+	{
+		if($val == '1' && $val == '3') {
+			$orderType = 'Online';
+		}else{
+			$orderType = 'Offline';
+		}
+
+		return $orderType;
 	}
 }
 ?>

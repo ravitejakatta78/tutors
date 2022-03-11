@@ -2401,7 +2401,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 						}
 						$orderarray['paymenttype'] =  $orderlist['paymenttype']=='cash' ? 'Cash' : 'Online';
 						$orderarray['orderprocess'] =  $orderlist['orderprocess'];
-						$orderarray['orderprocesstext'] =  Utility::orderstatus_details($orderlist['orderprocess']);
+						$orderarray['orderprocesstext'] =  Utility::orderstatus_details($orderlist['orderprocess'],$orderlist['preparetime'],$orderlist['preparedate']);
 						$orderarray['orderprocessstatus'] =  $orderlist['orderprocessstatus'];
 						$orderarray['rating'] = !empty($feedbackrating) ? round($feedbackrating['rating'],1) : 0;
 						$orderarray['orderdate'] =  date('d M Y',strtotime($orderlist['reg_date']));

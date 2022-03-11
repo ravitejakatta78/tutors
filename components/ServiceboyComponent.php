@@ -734,85 +734,94 @@ class ServiceboyComponent extends Component{
 
 		return $payload;
 	}
+	
 	public function order($val)
 	{
 		$date = date('Y-m-d');
-					$orderid = $val['orderid'];
-					$sqlorderlist = 'select * from orders where ID = \''.$orderid.'\' order by ID desc';
-					$orderlist = Yii::$app->db->createCommand($sqlorderlist)->queryOne();
+		$orderid = $val['orderid'];
+		
+		$sqlorderlist = 'select * from orders where ID = \''.$orderid.'\' order by ID desc';
+		$orderlist = Yii::$app->db->createCommand($sqlorderlist)->queryOne();
 				
-					$merchantdetails = Merchant::findOne($orderlist['merchant_id']);
-					if(!empty($orderlist)){
-					$tableDetails = Tablename::findOne($orderlist['tablename']);	
-					$orderarray = $totalordersarray = array(); 
-						$totalproductaarray = array();
-						$orderarray['order_id'] =  $orderlist['ID'];
-						$orderarray['merchant_id'] =  $orderlist['merchant_id'];
-						$orderarray['unique_id'] =  $orderlist['order_id']; 
-						$orderarray['username'] = Utility::user_details($orderlist['user_id'],"name") ?? '';
-						$orderarray['storename'] =  !empty($merchantdetails['storename']) ? $merchantdetails['storename'] : '';
-						$orderarray['tablename'] = $tableDetails['name'];
-						$orderarray['section_name'] = $tableDetails->section['section_name']; 
-						$orderarray['enckey'] = Utility::encrypt($orderlist['merchant_id'].','.$orderlist['tablename']);
-						$orderarray['logo'] = !empty($merchantdetails['logo']) ? MERCHANT_LOGO.$merchantdetails['logo'] : '';
-						$orderarray['coverpic'] = !empty($merchantdetails['coverpic']) ? MERCHANT_LOGO.$merchantdetails['coverpic'] : '';
-						$orderarray['amount'] =  sprintf("%.2f", (!empty($orderlist['amount']) ? $orderlist['amount'] : 0));; 
-						$orderarray['tax'] = sprintf("%.2f", (!empty($orderlist['tax']) ?  $orderlist['tax'] : 0));
-						$orderarray['tips'] = sprintf("%.2f", (!empty($orderlist['tips']) ?  $orderlist['tips'] : 0));
-						$orderarray['subscription'] = sprintf("%.2f", (!empty($orderlist['subscription']) ?   $orderlist['subscription'] : 0));
-						$orderarray['couponamount'] = sprintf("%.2f", (!empty($orderlist['couponamount']) ?  $orderlist['couponamount'] : 0));
-						$orderarray['totalamount'] =  sprintf("%.2f", (!empty($orderlist['totalamount']) ?   $orderlist['totalamount'] : 0));;
-						$orderarray['paymenttype'] =  $orderlist['paymenttype'];
-						$orderarray['orderprocess'] =  $orderlist['orderprocess']; 
-						$orderarray['orderprocesstext'] =  Utility::orderstatus_details($orderlist['orderprocess']); 
-						$orderarray['paidstatus'] =  $orderlist['paidstatus'];
-						$orderarray['paidstatustext'] =  Utility::status_details($orderlist['paidstatus']); 
-						$orderarray['reorder'] =  $orderlist['reorderprocess'];
-						$orderarray['reg_date'] =  date('d-M-Y h:i A',strtotime($orderlist['reg_date']) ); 
-						$orderarray['preparedate'] =  $orderlist['preparedate'];
-						$orderarray['preparetime'] = $orderlist['preparetime']; 
-						$orderarray['orderline'] =  $orderlist['orderline'];
-						$orderarray['instructions'] =  $orderlist['instructions'] ?? '';
-						$orderarray['discount_number'] =  sprintf("%.2f", (!empty($orderlist['discount_number']) ?   $orderlist['discount_number'] : 0));;;
-						$sqlpendingamount = "select sum(totalamount) as pendingamount from order_transactions 
+		$merchantdetails = Merchant::findOne($orderlist['merchant_id']);
+		
+		if(!empty($orderlist)){
+			$tableDetails = Tablename::findOne($orderlist['tablename']);	
+			$orderarray = $totalordersarray = array(); 
+			$totalproductaarray = array();
+			$orderarray['order_id'] =  $orderlist['ID'];
+			$orderarray['merchant_id'] =  $orderlist['merchant_id'];
+			$orderarray['unique_id'] =  $orderlist['order_id']; 
+			$orderarray['username'] = Utility::user_details($orderlist['user_id'],"name") ?? '';
+			$orderarray['storename'] =  !empty($merchantdetails['storename']) ? $merchantdetails['storename'] : '';
+			$orderarray['tablename'] = $tableDetails['name'];
+			$orderarray['section_name'] = $tableDetails->section['section_name']; 
+			$orderarray['enckey'] = Utility::encrypt($orderlist['merchant_id'].','.$orderlist['tablename']);
+			$orderarray['logo'] = !empty($merchantdetails['logo']) ? MERCHANT_LOGO.$merchantdetails['logo'] : '';
+			$orderarray['coverpic'] = !empty($merchantdetails['coverpic']) ? MERCHANT_LOGO.$merchantdetails['coverpic'] : '';
+			$orderarray['amount'] =  sprintf("%.2f", (!empty($orderlist['amount']) ? $orderlist['amount'] : 0));; 
+			$orderarray['tax'] = sprintf("%.2f", (!empty($orderlist['tax']) ?  $orderlist['tax'] : 0));
+			$orderarray['tips'] = sprintf("%.2f", (!empty($orderlist['tips']) ?  $orderlist['tips'] : 0));
+			$orderarray['subscription'] = sprintf("%.2f", (!empty($orderlist['subscription']) ?   $orderlist['subscription'] : 0));
+			$orderarray['couponamount'] = sprintf("%.2f", (!empty($orderlist['couponamount']) ?  $orderlist['couponamount'] : 0));
+			$orderarray['totalamount'] =  sprintf("%.2f", (!empty($orderlist['totalamount']) ?   $orderlist['totalamount'] : 0));;
+			$orderarray['paymenttype'] =  $orderlist['paymenttype'];
+			$orderarray['orderprocess'] =  $orderlist['orderprocess']; 
+			$orderarray['orderprocesstext'] =  Utility::orderstatus_details($orderlist['orderprocess']); 
+			$orderarray['paidstatus'] =  $orderlist['paidstatus'];
+			$orderarray['paidstatustext'] =  Utility::status_details($orderlist['paidstatus']); 
+			$orderarray['reorder'] =  $orderlist['reorderprocess'];
+			$orderarray['reg_date'] =  date('d-M-Y h:i A',strtotime($orderlist['reg_date']) ); 
+			$orderarray['preparedate'] =  $orderlist['preparedate'];
+			$orderarray['preparetime'] = $orderlist['preparetime']; 
+			$orderarray['orderline'] =  $orderlist['orderline'];
+			$orderarray['instructions'] =  $orderlist['instructions'] ?? '';
+			$orderarray['discount_number'] =  sprintf("%.2f", (!empty($orderlist['discount_number']) ?   $orderlist['discount_number'] : 0));
+            $orderarray['ordertype'] =  $orderlist['ordertype'];
+            $orderarray['ordertypetext'] =  Utility::orderTypeText($orderlist['ordertype']);
+
+			$sqlpendingamount = "select sum(totalamount) as pendingamount from order_transactions 
 						where order_id = '".$orderlist['ID']."' and merchant_id = '".$orderlist['merchant_id']."' 
 						and user_id = '".$orderlist['user_id']."' and paymenttype = 'cash' and paidstatus = '0'";
-						$pendingamount = Yii::$app->db->createCommand($sqlpendingamount)->queryOne();
-							$orderarray['pendingamount'] =  sprintf("%.2f", $pendingamount['pendingamount'] ?: 0.00); 
-						if($orderarray['pendingamount']>0){
-						$orderarray['paidstatus'] =  '0'; 
-						}
-						$sqlorderproducts = "select * from order_products where order_id = '".$orderlist['ID']."' 
+			$pendingamount = Yii::$app->db->createCommand($sqlpendingamount)->queryOne();
+			
+			$orderarray['pendingamount'] =  sprintf("%.2f", $pendingamount['pendingamount'] ?: 0.00); 
+			if($orderarray['pendingamount']>0){
+				$orderarray['paidstatus'] =  '0'; 
+			}
+			
+			$sqlorderproducts = "select * from order_products where order_id = '".$orderlist['ID']."' 
 						and merchant_id = '".$orderlist['merchant_id']."'  order by inc desc";
-						$orderproducts = Yii::$app->db->createCommand($sqlorderproducts)->queryAll();
+			$orderproducts = Yii::$app->db->createCommand($sqlorderproducts)->queryAll();
 						
-						if(count($orderproducts) > 0){
-						    
-						foreach($orderproducts as $orderproduct){
-						    $productDetails = Product::findOne($orderproduct['product_id']);
-							$productaarray = array();
-							$foodCategoryQuantity = $productDetails['food_category_quantity'];
-							if(!empty($foodCategoryQuantity)){
-							   $foodCategoryQuantityName =  Utility::foodcategory_type($foodCategoryQuantity);
-							}
-						$productaarray['order'] = $orderproduct['inc'];
-						$productaarray['name'] = $productDetails['title'];
-						$productaarray['count'] = $orderproduct['count'];
-						$productaarray['price'] = $orderproduct['price'];
-						$productaarray['reorder'] = $orderproduct['reorder']; 
-						$productaarray['foodqtyname'] = $foodCategoryQuantityName ?? '';
-						$productaarray['item_type'] = $productDetails['item_type'];
-						
-						$totalproductaarray[] = $productaarray;
-							}
-						}
-						$orderarray['products'] =  array_filter($totalproductaarray);
-				 	$payload = array('status'=>'1','orders'=>$orderarray); 
-					}else{
-					$payload = array('status'=>'0','message'=>'Order not found!!');
+			if(count($orderproducts) > 0){
+				foreach($orderproducts as $orderproduct){
+				    $productDetails = Product::findOne($orderproduct['product_id']);
+					$productaarray = array();
+					$foodCategoryQuantity = $productDetails['food_category_quantity'];
+					if(!empty($foodCategoryQuantity)){
+						$foodCategoryQuantityName =  Utility::foodcategory_type($foodCategoryQuantity);
 					}
+					$productaarray['order'] = $orderproduct['inc'];
+					$productaarray['name'] = $productDetails['title'];
+					$productaarray['count'] = $orderproduct['count'];
+					$productaarray['price'] = $orderproduct['price'];
+					$productaarray['reorder'] = $orderproduct['reorder']; 
+					$productaarray['foodqtyname'] = $foodCategoryQuantityName ?? '';
+					$productaarray['item_type'] = $productDetails['item_type'];
+					$totalproductaarray[] = $productaarray;
+				}
+			}
+			
+			$orderarray['products'] =  array_filter($totalproductaarray);
+			 	$payload = array('status'=>'1','orders'=>$orderarray); 
+			}else{
+				$payload = array('status'=>'0','message'=>'Order not found!!');
+			}
+
 		return $payload;
 	}
+	
 	public function acceptorder($val)
 	{
 		$serviceboydetails = Serviceboy::findOne($val['header_user_id']);
@@ -1307,7 +1316,10 @@ class ServiceboyComponent extends Component{
 						$orderarray['orderprocess'] =  $orderlist['orderprocess']; 
 						$orderarray['orderprocesstext'] =  Utility::orderstatus_details($orderlist['orderprocess']); 
 						$orderarray['paidstatus'] =  $orderlist['paidstatus']; 
-						$orderarray['orderline'] =  $orderlist['orderline']; 
+						$orderarray['orderline'] =  $orderlist['orderline'];
+                        $orderarray['ordertype'] =  $orderlist['ordertype'];
+                        $orderarray['ordertypetext'] =  Utility::orderTypeText($orderlist['ordertype']);
+
 						$orderarray['regdate'] =  date('d M Y',strtotime($orderlist['reg_date'])); 
 						$totalOrders = $totalOrders + 1;
 						$totalAmount = $totalAmount + $orderlist['totalamount'];
@@ -1551,7 +1563,7 @@ class ServiceboyComponent extends Component{
 							$userarray['paid_amount'] = !empty($val['totalamount']) ?  $val['totalamount'] : 0.00;
 							$userarray['pending_amount'] = 0.00;
 							$userarray['paymentby'] = '1';
-							$userarray['ordertype'] = 1;
+							$userarray['ordertype'] = 4;
 							$userarray['coupon'] = $couponcode;
 							$userarray['user_id'] = $userId;
 							$userarray['instructions'] = $val['instructions'];

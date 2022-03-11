@@ -100,16 +100,9 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
                               <p class="ordr-dtls">Pilot: <?= $runningOrders[$r]['pilot_name'] ?? "Not Assigned"; ?></p>
                               <p class="ordr-dtls">Order: <?= $runningOrders[$r]['order_id']; ?></p>
                               <p class="ordr-dtls"><?php 
-                              if($runningOrders[$r]['orderprocess'] == '1' && $runningOrders[$r]['preparetime'] > 0 && $runningOrders[$r]['preparetime'] != '0000-00-00 00:00:00' && empty($runningOrders[$r]['preparedate'])){
-                                  echo 'Preparing';
-                              }
-                              else if($runningOrders[$r]['orderprocess'] == '1' && $runningOrders[$r]['preparetime'] > 0 && !empty($runningOrders[$r]['preparedate'])){
-                                  echo 'Prepared';
-                              }
-                              else{
-                                echo \app\helpers\Utility::orderstatus_details($runningOrders[$r]['orderprocess']);    
-                              }
-                               ?></p>
+                                echo \app\helpers\Utility::orderstatus_details($runningOrders[$r]['orderprocess'],$runningOrders[$r]['preparetime'],$runningOrders[$r]['preparedate']);
+                                 ?>
+                              </p>
                               <p class="ordr-dtls">Table No: <?= $runningOrders[$r]['table_name']; ?></p>
                               <p class="ordr-dtls">Bill Amount: <?= round($runningOrders[$r]['totalamount'],2); ?></p>
                           </div>
