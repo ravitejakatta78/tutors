@@ -649,7 +649,7 @@ foreach($secTableIndexArr as $sec_id => $tableDetails ) {
 					<div class="form-group row">
 					<label class="control-label col-md-3">User Mobile</label>
 					<div class="col-md-9">
-          <input type="text" id="usermobile" autocomplete="off" class="form-control" value="<?= $userDet['mobile'] ?? '' ; ?>">
+          <input type="text" id="usermobile" autocomplete="off" class="form-control"  max="10" value="<?= $userDet['mobile'] ?? '' ; ?>">
 					</div>
 					</div>
 			  
@@ -903,7 +903,19 @@ $("#username").change(function(){
 });
 
 $("#usermobile").change(function(){
-  $("#user_mobile").val(this.value);
+    var phoneno = /^\d{10}$/;
+    if(this.value.match(phoneno))
+    {
+        $("#user_mobile").val(this.value);
+    }
+    else
+    {
+        alert("Please Provide A Valid Mobile Number");
+        $("#user_mobile").val("");
+        $("#usermobile").val("");
+        return false;
+    }
+
 });
 
 function discountchange(){
@@ -1695,6 +1707,8 @@ function cancelreject(orderid,orderstatus){
         $(".cr-label").html('Cancel Reason');
     } */
 }
+
+
 
 $("#savecr").click(function(){
         var tableid = '<?= $tableid; ?>';
