@@ -87,7 +87,7 @@ $actionId = Yii::$app->controller->action->id;
 									<td>
                                         <span class="pending">
                                             <?php
-                                            if($orderModel['orderprocess'] == 1 && !empty($orderModel['preparetime']) && empty($orderModel['preparedate'])){
+                                            if($orderModel['orderprocess'] == 1 && !empty($orderModel['preparetime']) && $orderModel['preparetime'] != '0000-00-00 00:00:00' && empty($orderModel['preparedate'])){
                                                 echo 'Preparing';
                                             }
                                             else if($orderModel['orderprocess'] == 1 && !empty($orderModel['preparetime']) && !empty($orderModel['preparedate'])){
