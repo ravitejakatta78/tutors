@@ -818,7 +818,7 @@ class ServiceboyComponent extends Component{
 		$serviceboydetails = Serviceboy::findOne($val['header_user_id']);
 		$date = date('Y-m-d');
 					$orderid = $val['orderid'];
-					$preparetime = $val['preparetime'];
+					$preparetime = !empty($val['preparetime']) ? $val['preparetime'] : null;
 
 					$orderlist = Orders::findOne($orderid);
 					$tableDetails = Tablename::findOne($orderlist['tablename']);
