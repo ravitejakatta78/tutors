@@ -103,8 +103,11 @@ $actionId = Yii::$app->controller->action->id;
 									<td><?php echo $orderModel['tips'];?></td>
 								<!--	<td><?php // $orderModel['subscription'];?></td> -->
 									<td><?php echo round($orderModel['totalamount'],2);?></td>
-									<td class="icons" ><a  onclick="billview('<?= $orderModel['ID'] ?>')" title="bill"><span class="fa fa-credit-card"></span></a>
-									<a  onclick="orderrecipeview('<?= $orderModel['ID'] ?>')" title="Receipe Cost Card"><span class="fa fa-eye"></span></a></td>
+									<td class="icons" ><a  onclick="billview('<?= $orderModel['ID'] ?>',2)" title="customer bill"><span class="fa fa-credit-card"></span></a>
+                                   <?php if($merchantBillDet['merchant_bill_copy'] == 1) { ?>
+                                        <a  onclick="billview('<?= $orderModel['ID'] ?>',1)" title="merchant bill"><span class="fa fa-credit-card"></span></a>
+									<?php } ?>
+                                        <a  onclick="orderrecipeview('<?= $orderModel['ID'] ?>')" title="Receipe Cost Card"><span class="fa fa-eye"></span></a></td>
 								                                   </tr>
 									<?php $x++; }?>
                        </tbody>

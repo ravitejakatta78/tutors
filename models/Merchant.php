@@ -21,12 +21,12 @@ use Yii;
  * @property string $city
  * @property string $location
  * @property string $logo
+ * @property string $status 0=pending,1=active,2-failed
+ * @property int $otp
  * @property string $latitude
  * @property string $longitude
  * @property string $qrlogo
  * @property string $coverpic
- * @property string $status 0=pending,1=active,2-failed
- * @property int $otp
  * @property string $recommend
  * @property string $verify 0=pending,1=verify
  * @property string $description
@@ -40,6 +40,8 @@ use Yii;
  * @property int $used_msgs
  * @property int $popularity
  * @property int $cancel_decision
+ * @property string $gst_number
+ * @property int $merchant_bill_copy 1=Yes,2=No
  */
 class Merchant extends \yii\db\ActiveRecord 
 {
@@ -63,9 +65,10 @@ class Merchant extends \yii\db\ActiveRecord
 			, 'address', 'state', 'city', 'location', 'latitude', 'longitude', 'scan_range'], 'required'],
             [['password', 'mobile', 'storetype', 'storename', 'address', 'state', 'city', 'location'
 			, 'latitude', 'longitude',   'status', 'recommend', 'verify', 'description'
-			, 'servingtype', 'plan', 'useraccess'], 'string'],
+			, 'servingtype', 'plan', 'useraccess', 'gst_number'], 'string'],
 			[['logo','qrlogo','coverpic'], 'file', 'extensions' => ['png', 'jpg', 'gif']],
-            [['otp','owner_type','open_time','close_time','table_res_avail', 'table_occupy_status', 'popularity', 'cancel_decision'], 'integer'],
+            [['otp','owner_type','open_time','close_time','table_res_avail', 'table_occupy_status'
+                , 'popularity', 'cancel_decision', 'merchant_bill_copy'], 'integer'],
 		    [['mod_date', 'food_serve_type', 'subscription_date','allocated_msgs','used_msgs'], 'safe'],
 		    [['scan_range','tax','tip', 'approx_cost'], 'number'],
             [['user_id', 'unique_id', 'name', 'email'], 'string', 'max' => 50],
@@ -118,7 +121,9 @@ class Merchant extends \yii\db\ActiveRecord
 			'tip' => 'Tip',
 			'table_occupy_status' => 'Table Occupy Status',
 			'popularity' => 'Popularity',
-            'cancel_decision' => 'Cancel Decision'
+            'cancel_decision' => 'Cancel Decision',
+            'gst_number' => 'GST Number',
+            'merchant_bill_copy' => 'Merchant Bill Copy'
         ];
     }
 

@@ -762,13 +762,14 @@ else{
 		extract($_POST);
 		$orderDet = Orders::findOne($id);
 		$tableDet = Tablename::findOne($orderDet['tablename']);
-
+        $billType = !empty($_POST['billType']) ? $_POST['billType'] : 2;
 	   $orderDet = Orders::findOne($orderDet['ID']);
 		$sqlOrderProdDet = 'select order_id, merchant_id, product_id, sum(count) as count, (price) as price
 		                 from order_products where order_id=\''.$orderDet['ID'].'\' group by product_id, order_id,price';
 	    $orderProdDet =  Yii::$app->db->createCommand($sqlOrderProdDet)->queryAll();
-	    
-		return $this->renderpartial('testprint',['tableDet'=>$tableDet,'orderDet'=>$orderDet,'orderProdDet'=>$orderProdDet,'orderDet'=>$orderDet]);
+
+		return $this->renderpartial('testprint',['tableDet'=>$tableDet,'orderDet'=>$orderDet
+            ,'orderProdDet'=>$orderProdDet,'orderDet'=>$orderDet, 'billType' => $billType]);
 	}
 	public function actionTablekot()
 	{
@@ -1072,6 +1073,7 @@ if(!empty($_POST['ckcDel'])){
 		$sdate = $_POST['sdate'] ?? date('Y-m-d'); 
 		$edate = $_POST['edate'] ?? date('Y-m-d');
 		$merchantId = Yii::$app->user->identity->merchant_id;
+		$merchantBillDet = Merchant::find()->select('merchant_bill_copy')->where(['ID' => $merchantId])->asArray()->One();
 		$orderprocess = $_REQUEST['orderProcess'] ?? null;
 		/*$orderModel = Orders::find()
 			->where(['between', 'date(reg_date)', $sdate, $edate ])
@@ -1091,7 +1093,8 @@ if(!empty($_POST['ckcDel'])){
 		
 
 		$model = new Orders;
-		return $this->render('orders',['orderModel'=>$orderModel,'model'=>$model,'sdate'=>$sdate,'edate'=>$edate]);
+		return $this->render('orders',['orderModel'=>$orderModel,'model'=>$model
+            ,'sdate'=>$sdate,'edate'=>$edate, 'merchantBillDet' => $merchantBillDet]);
 	}
 	public function userCreation($customer_mobile,$customer_name){
 		$modelUser = new Users;

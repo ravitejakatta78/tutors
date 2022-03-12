@@ -118,7 +118,12 @@ table{border:none;}
             <span class="merchant-subheader"><?= $merchantDet['servingtype'] ?></span>
                 <br>
                 <span class="merchant-address"><?= $merchantDet['address'] ?>, <?=  $merchantDet['city'] ;?>, <?=  $merchantDet['state'] ;?></span>
-
+                <?php if(!empty($merchantDet['gst_number'])) { ?>
+                <br>
+                <span class="merchant-gst">GST Number : <?= $merchantDet['gst_number'] ?></span>
+                <?php } ?>
+                <br>
+                <span class="merchant-copy"><?php echo $billType == 1 ? 'Merchant' : "Customer" ?> Copy</span>
                 </p>
                 <span class="divider">Date:&nbsp;<?= $order_date ?></span><span class="right">Time:&nbsp;<?= $order_time ?></span><br>
                 <span class="divider">Proceessed By:&nbsp;<?= $merchantDet['storename']; ?></span><span class="right">Bill No:&nbsp;<?= $order_det['order_id']; ?></span><br>
