@@ -188,10 +188,10 @@ public static function rewards_details($id,$type){
 	public static function orderstatus_details($status, $prearationTime = null, $prearationDate = null)
 	{
 		if($status == '1' && $prearationTime > 0 && $prearationTime != '0000-00-00 00:00:00' && empty($prearationDate)){
-			echo 'Preparing';
+			return 'Preparing';
 		}
 		else if($status == '1' && $prearationTime > 0 && !empty($prearationDate)){
-			echo 'Prepared';
+			return 'Prepared';
 		}
 		else if($status==1) {
 			return 'Accepted';
