@@ -673,7 +673,9 @@ class ServiceboyComponent extends Component{
 						$orderarray['merchant_id'] = $orderlist['merchant_id'];
 						
 						$orderarray['instructions'] = $orderlist['instructions'];
-						$orderarray['tax'] = $orderlist['tax']; 
+                        $orderarray['ordertypetext'] =  Utility::orderTypeText($orderlist['ordertype']);
+
+                        $orderarray['tax'] = $orderlist['tax'];
 						$orderarray['discount_number'] = $orderlist['discount_number'];
 						$orderarray['userprofilepic'] = !empty($orderlist['user_id']) ? Utility::user_image($orderlist['user_id']) : '';
 						$sqlpendingamount = "select sum(totalamount) as pendingamount from order_transactions where order_id = '".$orderlist['ID']."' 
