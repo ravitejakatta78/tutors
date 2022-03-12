@@ -56,25 +56,35 @@ use yii\helpers\Html;
             <th>Section Name</th>
             <th>Amount</th>
             <th>Tax</th>
+            <th>Tip</th>
+            <th>Coupon Amount</th>
+            <th>Discount</th>
             <th>Total Amount</th>
 	</tr>
 	</thead>
 	<tbody>
         <?php
-        $totalamount = $tax = $amount =[];
+        $totalamount = $tax = $amount =  [];
+        $couponamount = $tips = $discount_number = [];
         for($i=0;$i<count($res);$i++) { ?>
             <tr>
                 <td><?= $i+1; ?></td>
                 <td><?= $res[$i]['section_name']; ?></td>
-                <td><?= $amount[] = $res[$i]['amount']; ?></td>
-                <td><?= $tax[] = $res[$i]['tax']; ?></td>
-                <td><?= $totalamount[] = $res[$i]['totalamount']; ?></td>
+                <td><?= $amount[] = round($res[$i]['amount'],2); ?></td>
+                <td><?= $tax[] = round($res[$i]['tax'],2); ?></td>
+                <td><?= $tips[] = round($res[$i]['tips'],2); ?></td>
+                <td><?= $couponamount[] = round($res[$i]['couponamount'],2); ?></td>
+                <td><?= $discount_number[] = round($res[$i]['discount_number'],2); ?></td>
+                <td><?= $totalamount[] = round($res[$i]['totalamount'],2); ?></td>
             </tr>
         <?php } ?>
             <tr>
                 <td colspan="2" align="center"><b>Total</b></td>
                 <td><b><?= array_sum($amount); ?></b></td>
                 <td><b><?= array_sum($tax); ?></b></td>
+                <td><b><?= array_sum($tips); ?></b></td>
+                <td><b><?= array_sum($couponamount); ?></b></td>
+                <td><b><?= array_sum($discount_number); ?></b></td>
                 <td><b><?= array_sum($totalamount); ?></b></td>
             </tr>
 	</tbody>

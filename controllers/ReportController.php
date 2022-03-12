@@ -352,7 +352,8 @@ select distinct(count(created_on)) present_dates,employee_id,1 con_join from emp
             $sdate = $_POST['sdate'] ?? date('Y-m-d');
             $edate = $_POST['edate'] ?? date('Y-m-d');
             $merchantId = Yii::$app->user->identity->merchant_id;
-            $sql = 'select s.section_name,sum(amount) amount,sum(tax) tax,sum(totalamount) totalamount from orders o 
+            $sql = 'select s.section_name,sum(amount) amount,sum(tax) tax,sum(couponamount) couponamount
+                    ,sum(tips) tips,sum(discount_number) discount_number,sum(totalamount) totalamount from orders o 
                     inner join tablename tb on o.tablename = tb.ID
                     inner join sections s on s.ID = tb.section_id
                     where date(o.reg_date) between \''.$sdate.'\' and \''.$edate.'\' 
