@@ -126,7 +126,7 @@ table{border:none;}
                 <span class="merchant-copy"><?php echo $billType == 1 ? 'Merchant' : "Customer" ?> Copy</span>
                 </p>
                 <span class="divider">Date:&nbsp;<?= $order_date ?></span><span class="right">Time:&nbsp;<?= $order_time ?></span><br>
-                <span class="divider">Proceessed By:&nbsp;<?= $merchantDet['storename']; ?></span><span class="right">Bill No:&nbsp;<?= $order_det['order_id']; ?></span><br>
+                <span class="divider">Proceessed By:&nbsp;<?= Yii::$app->user->identity->emp_name; ?></span><span class="right">Bill No:&nbsp;<?= $order_det['order_id']; ?></span><br>
                 <span class="divider">Customer Info:&nbsp;<?= !empty($user_det['name']) ? $user_det['name'] : 'Guest' ; ?></span><span class="right"> <?= $section_det['section_name']; ?> - <?= $table_det['name']; ?></span><br>
                 <hr>
                 
