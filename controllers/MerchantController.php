@@ -783,7 +783,7 @@ else{
     
 		$orderProdDet = OrderProducts::find()->where(['order_id'=>$orderDet['ID'],'reorder'=>$latestreorder])->asArray()->all();
 
-		return $this->renderpartial('testprintkot',['tableDet'=>$tableDet,'orderDet'=>$orderDet,'orderProdDet'=>$orderProdDet]);
+		return $this->renderpartial('testprint-kot',['tableDet'=>$tableDet,'orderDet'=>$orderDet,'orderProdDet'=>$orderProdDet]);
 	}
 	
 	public function actionRating()
