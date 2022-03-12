@@ -176,8 +176,8 @@ table{border:none;}
                         <td colspan="2" align="right"><?= $orderDet['couponamount']	 ?? 0;?>  </td>
                     </tr>
                      <tr>
-                        <td colspan="2">Service Tax</td>
-                        <td colspan="2" align="right"><?= $orderDet['tax'] ?? 0;?></td>
+                        <td colspan="2">GST</td>
+                        <td colspan="2" align="right"><?= $orderDet['tax'] ?? 0;?> </td>
                     </tr> 
                                         <tr>
                         <td colspan="2">Tip</td>
