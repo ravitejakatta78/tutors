@@ -499,7 +499,7 @@ class ServiceboyComponent extends Component{
 					where merchant_id = '".$serviceboydetails['merchant_id']."' 
 					and serviceboy_id = '".$serviceboydetails['ID']."' 
 					and seen = '0' and reg_date >= '".$date." 00:00:00' 
-					and reg_date <= '".$date." 23:59:59'";
+					and reg_date <= '".$date." 23:59:59' order by ID desc";
 		$notifications = Yii::$app->db->createCommand($sqlnotifications)->queryAll();
 					
 		$countnotifications = !empty($notifications) ? count($notifications) : 0;
