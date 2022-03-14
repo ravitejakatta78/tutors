@@ -29,7 +29,7 @@ class CounterSettlementComponent extends Component{
         $payload['pending_amount'] = !empty($lastPilotSession['pending_amount']) ? $lastPilotSession['pending_amount'] : 0;
 
         $last_cut_order_id = !empty($lastPilotSession['cut_order_id']) ? $lastPilotSession['cut_order_id'] : 0;
-        $runningSession = CounterSettlement::runningPilotSession($val['ID'], $last_cut_order_id);
+        $runningSession = CounterSettlement::runningPilotSession($val['usersid'], $last_cut_order_id);
         $payload['cut_order_id'] = $runningSession['runningCutOrderId'];
         $payload['running_total_amount'] = $runningSession['runningTotalSessionAmount'];
 
