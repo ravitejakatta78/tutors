@@ -1,5 +1,6 @@
 <?php
 namespace app\components;
+use app\helpers\MyConst;
 use app\models\PilotFactorRating;
 use yii;
 use yii\base\Component;
@@ -664,6 +665,7 @@ class ServiceboyComponent extends Component{
 						$orderarray['couponamount'] = (string)(!empty($orderlist['couponamount']) ?  $orderlist['couponamount'] : 0);
 						$orderarray['totalamount'] =  (string)(!empty($orderlist['totalamount']) ?   $orderlist['totalamount'] : 0);
 						$orderarray['paymenttype'] =  $orderlist['paymenttype'];
+                        $orderarray['paymenttypetext'] = !empty($orderlist['paymenttype']) ? MyConst::PAYMENT_METHODS[$orderlist['paymenttype']] : '';
 						$orderarray['orderprocess'] =  $orderlist['orderprocess']; 
 						$orderarray['paidstatus'] =  $orderlist['paidstatus']; 
 						$orderarray['orderline'] =  $orderlist['orderline']; 
@@ -769,7 +771,8 @@ class ServiceboyComponent extends Component{
 			$orderarray['couponamount'] = sprintf("%.2f", (!empty($orderlist['couponamount']) ?  $orderlist['couponamount'] : 0));
 			$orderarray['totalamount'] =  sprintf("%.2f", (!empty($orderlist['totalamount']) ?   $orderlist['totalamount'] : 0));;
 			$orderarray['paymenttype'] =  $orderlist['paymenttype'];
-			$orderarray['orderprocess'] =  $orderlist['orderprocess']; 
+            $orderarray['paymenttypetext'] =  !empty($orderlist['paymenttype']) ? MyConst::PAYMENT_METHODS[$orderlist['paymenttype']] : '';
+            $orderarray['orderprocess'] =  $orderlist['orderprocess'];
 			$orderarray['orderprocesstext'] =  Utility::orderstatus_details($orderlist['orderprocess']); 
 			$orderarray['paidstatus'] =  $orderlist['paidstatus'];
 			$orderarray['paidstatustext'] =  Utility::status_details($orderlist['paidstatus']); 
@@ -1165,6 +1168,7 @@ class ServiceboyComponent extends Component{
 						$roderarray['closed_by'] = $serviceboydetails['ID'];
 						$roderarray['serviceboy_id'] = $serviceboydetails['ID'];
 						$roderarray['paymenttype'] = $val['paymenttype'];
+                        $roderarray['paymenttypetext'] = !empty($val['paymenttype']) ? MyConst::PAYMENT_METHODS[$val['paymenttype']] : '';
 						$roderarray['paidstatus'] = '1';
 						//updateQuery($roderarray,'orders',$roderwharray);
 						$sqlUpdate = 'update orders set reorderprocess = \''.$roderarray['reorderprocess'].'\'
@@ -1261,7 +1265,7 @@ class ServiceboyComponent extends Component{
 						}
 						$merchantNotidication = new MerchantNotifications;
 						$merchantNotidication->merchant_id = $orderlist['merchant_id'];
-						$merchantNotidication->message = \app\helpers\MyConst::PAYMENT_METHODS[$orderlist['paymenttype']].' Payment of Rs. '.$orderlist['totalamount'].'<br> 
+						$merchantNotidication->message = MyConst::PAYMENT_METHODS[$orderlist['paymenttype']].' Payment of Rs. '.$orderlist['totalamount'].'<br> 
 						received on Order '.$orderlist['order_id'].' of '.$tableDetails['name'].'-'.$tableDetails->section['section_name'];
 						$merchantNotidication->seen = '0';
 						$merchantNotidication->created_on = date('Y-m-d H:i:s');
@@ -1315,7 +1319,8 @@ class ServiceboyComponent extends Component{
 						$orderarray['subscription'] = !empty($orderlist['subscription']) ?   $orderlist['subscription'] : 0;
 						$orderarray['couponamount'] = !empty($orderlist['couponamount']) ?  $orderlist['couponamount'] : 0;
 						$orderarray['totalamount'] =  !empty($orderlist['totalamount']) ?   $orderlist['totalamount'] : 0;
-						$orderarray['paymenttype'] =  $orderlist['paymenttype']=='cash' ? 'Cash' : 'Online';
+						$orderarray['paymenttype'] =  $orderlist['paymenttype'];
+                        $orderarray['paymenttypetext'] = !empty($orderlist['paymenttype']) ? MyConst::PAYMENT_METHODS[$orderlist['paymenttype']] : '';
 						$orderarray['orderprocess'] =  $orderlist['orderprocess']; 
 						$orderarray['orderprocesstext'] =  Utility::orderstatus_details($orderlist['orderprocess']); 
 						$orderarray['paidstatus'] =  $orderlist['paidstatus']; 
