@@ -776,7 +776,7 @@ else{
 		extract($_POST);
 		$orderDet = Orders::findOne($id);
 		$tableDet = Tablename::findOne($orderDet['tablename']);
-
+        $merchantDet = Merchant::findOne(Yii::$app->user->identity->merchant_id);
 		$sqlLatestKot = 'select max(CAST(reorder AS UNSIGNED)) as latestreorder from order_products where order_id = \''.$orderDet['ID'].'\'';
 		$resLatestKot = Yii::$app->db->createCommand($sqlLatestKot)->queryOne();
 
@@ -784,7 +784,8 @@ else{
     
 		$orderProdDet = OrderProducts::find()->where(['order_id'=>$orderDet['ID'],'reorder'=>$latestreorder])->asArray()->all();
 
-		return $this->renderpartial('testprint-kot',['tableDet'=>$tableDet,'orderDet'=>$orderDet,'orderProdDet'=>$orderProdDet]);
+		return $this->renderpartial('testprint-kot',['tableDet'=>$tableDet,'orderDet'=>$orderDet
+            ,'orderProdDet'=>$orderProdDet,'merchantDet' => $merchantDet]);
 	}
 	
 	public function actionRating()

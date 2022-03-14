@@ -263,7 +263,7 @@ use app\helpers\Utility;
 
             <div class="d-flex w-100 pt-3">
                 <div class="w-50" style="padding-right: 9px;">
-                    Proceessed By:&nbsp;<?= Yii::$app->user->identity->emp_name; ?>
+                    Proceessed By:&nbsp;<?= $merchantDet['name']; ?>
                 </div>
                 <div class="w-50 pl-1 text-align-center">
                     Bill No:&nbsp;<?= $orderDet['order_id']; ?>
