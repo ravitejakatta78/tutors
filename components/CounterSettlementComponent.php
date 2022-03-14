@@ -24,7 +24,7 @@ class CounterSettlementComponent extends Component{
         $payload = [];
 
         $lastPilotSession = CounterSettlement::lastPilotSession($val['usersid']);
-        $payload['last_session'] = !empty($lastPilotSession['reg_date']) ? $lastPilotSession['reg_date'] : '';
+        $payload['last_session'] = !empty($lastPilotSession['reg_date']) ? $lastPilotSession['reg_date'] : date('Y-m-d H:i:s A');
         $payload['last_session_amount'] = !empty($lastPilotSession['order_amount']) ? $lastPilotSession['order_amount'] : 0;
         $payload['pending_amount'] = !empty($lastPilotSession['pending_amount']) ? $lastPilotSession['pending_amount'] : 0;
 
@@ -32,8 +32,21 @@ class CounterSettlementComponent extends Component{
         $runningSession = CounterSettlement::runningPilotSession($val['usersid'], $last_cut_order_id);
         $payload['cut_order_id'] = $runningSession['runningCutOrderId'];
         $payload['running_total_amount'] = $runningSession['runningTotalSessionAmount'];
+        $latestPayload = ['status' => 1
+            , 'last_session' =>
+                    [
+                        'last_session_date' => $payload['last_session'],
+                        'last_session_amount' => $payload['last_session_amount'],
+                        'pending_amount' => $payload['pending_amount']
+                    ],
+            'current_session' => [
+                'current_session_date' =>date('Y-m-d H:i:s A'),
+                'current_session_amount' => $payload['running_total_amount'],
 
-        return $payload;
+            ],
+            'cut_order_id' => $payload['cut_order_id']
+        ];
+        return $latestPayload;
     }
 
     /**
