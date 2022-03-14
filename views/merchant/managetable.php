@@ -107,7 +107,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
         <div class="modal-body">
 				<?php	$form = ActiveForm::begin([
     		'id' => 'add-table-form',
-		'options' => ['class' => 'form-horizontal','wrapper' => 'col-xs-12',],
+		'options' => ['class' => 'form-horizontal','wrapper' => 'col-xs-12','onsubmit' => 'validateSpot()'],
         	'layout' => 'horizontal',
 			 'fieldConfig' => [
         'horizontalCssClasses' => [
@@ -137,11 +137,11 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
     <tbody>
                 <tr>
             <td>
-                <input type="text"  name="tablename[]" class="form-control" />
+                <input type="text"  name="tablename[]" class="form-control" required/>
             </td>
             
 			<td>
-                <input type="text" name="capacity[]" class="form-control">
+                <input type="text" name="capacity[]" class="form-control" required>
             </td>
             
         </tr>
@@ -246,6 +246,27 @@ JS;
 $this->registerJs($script);
 ?>
 <script>
+    function validateSpot()
+    {
+        var user_input_value;
+        var err_value = 0
+        $('#add-table-form').find('input').each(function(){
+            if($(this).prop('required')){
+                user_input_value  = $(this).val(); // jQuery
+                if(user_input_value == ''){
+                    if(err_value == 0){
+                    }
+                    err_value = err_value + 1;
+                }else{
+
+                }
+            }
+        });
+
+        if(err_value > 0){
+            return false;
+        }
+    }
 function deletetable(id){
 //	var res = confirm('Are you sure want to delete??')
 		    swal({
