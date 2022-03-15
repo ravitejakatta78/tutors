@@ -56,7 +56,11 @@ class CounterSettlementComponent extends Component{
      */
     public function settlementHistory(array $val)
     {
-        $sql = "select * from counter_settlement where date(reg_date) between '".$val['sdate']."' and '".$val['edate']."'
+        $sql = "select *, case 
+			when status = '".MyConst::_NEW."' THEN 'New' 
+			when status = '".MyConst::_COMPLETED."' THEN 'Completed'
+			else 'Rejected' end status_text 
+			from counter_settlement where date(reg_date) between '".$val['sdate']."' and '".$val['edate']."'
         and pilot_id = '".$val['header_user_id']."' order by ID desc";
         $res = Yii::$app->db->createCommand($sql)->queryAll();
 
