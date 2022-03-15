@@ -63,7 +63,7 @@ class CounterSettlementComponent extends Component{
 			from counter_settlement where date(reg_date) between '".$val['sdate']."' and '".$val['edate']."'
         and pilot_id = '".$val['header_user_id']."' ";
 		if(!empty($val['status'])){
-			$sql .= " and status = '".$val['status']."' ";	
+			$sql .= " and status in ('".$val['status']."') ";	
 		}
 		$sql .= " order by ID desc";
         $res = Yii::$app->db->createCommand($sql)->queryAll();
