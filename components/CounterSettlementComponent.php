@@ -36,11 +36,11 @@ class CounterSettlementComponent extends Component{
             , 'last_session' =>
                     [
                         'last_session_date' => $payload['last_session'],
-                        'last_session_amount' => $payload['last_session_amount']
+                        'last_session_amount' => round($payload['last_session_amount'],2)
                     ],
             'current_session' => [
                 'current_session_date' =>date('Y-m-d H:i:s A'),
-                'current_session_amount' => $payload['running_total_amount'],
+                'current_session_amount' => round($payload['running_total_amount'],2),
 
             ],
             'cut_order_id' => $payload['cut_order_id'],
