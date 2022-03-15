@@ -31,7 +31,7 @@ class CounterSettlementComponent extends Component{
         $last_cut_order_id = !empty($lastPilotSession['cut_order_id']) ? $lastPilotSession['cut_order_id'] : 0;
         $runningSession = CounterSettlement::runningPilotSession($val['usersid'], $last_cut_order_id);
         $payload['cut_order_id'] = $runningSession['runningCutOrderId'];
-        $payload['running_total_amount'] = $runningSession['runningTotalSessionAmount'];
+        $payload['running_total_amount'] = round($runningSession['runningTotalSessionAmount'],2);
         $latestPayload = ['status' => 1
             , 'last_session' =>
                     [
