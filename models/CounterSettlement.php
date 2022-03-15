@@ -97,7 +97,7 @@ class CounterSettlement extends \yii\db\ActiveRecord
         $runningTotalSessionAmount = !empty($totalSessionArray) ? array_sum(array_values($totalSessionArray)) : 0;
         $runningCutOrderId = !empty($totalSessionArray) ? current(array_keys($totalSessionArray)) : 0;
 
-        $runningSession = ['runningTotalSessionAmount' => $runningTotalSessionAmount, 'runningCutOrderId' => $runningCutOrderId];
+        $runningSession = ['runningTotalSessionAmount' => round($runningTotalSessionAmount,2), 'runningCutOrderId' => $runningCutOrderId];
 
         return $runningSession;
     }
