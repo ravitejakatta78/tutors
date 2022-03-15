@@ -86,7 +86,7 @@ class CounterSettlement extends \yii\db\ActiveRecord
     {
         $lastMonthDate = Utility::lastDesiredDate(30);
 
-        $sqlRunningSession = "select ID,totalamount from orders where ID > '".$orderId."'  and
+        $sqlRunningSession = "select ID,round(totalamount,2) totalamount from orders where ID > '".$orderId."'  and
         date(reg_date) between '".$lastMonthDate."' and '".date('Y-m-d')."' 
         AND serviceboy_id = '".$pilotId."' and orderprocess = '4'  and closed_by = '".$pilotId."' 
         ORDER BY ID desc";
