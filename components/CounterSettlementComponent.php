@@ -61,7 +61,11 @@ class CounterSettlementComponent extends Component{
 			when status = '".MyConst::_COMPLETED."' THEN 'Completed'
 			else 'Rejected' end status_text 
 			from counter_settlement where date(reg_date) between '".$val['sdate']."' and '".$val['edate']."'
-        and pilot_id = '".$val['header_user_id']."' order by ID desc";
+        and pilot_id = '".$val['header_user_id']."' ";
+		if(!empty($val['status'])){
+			$sql .= " and status = '".$val['status']."' ";	
+		}
+		$sql .= " order by ID desc";
         $res = Yii::$app->db->createCommand($sql)->queryAll();
 
         return ['status' => '1','settlementHistory' => $res];
