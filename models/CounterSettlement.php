@@ -88,7 +88,7 @@ class CounterSettlement extends \yii\db\ActiveRecord
 
         $sqlRunningSession = "select ID,totalamount from orders where ID > '".$orderId."'  and
         date(reg_date) between '".$lastMonthDate."' and '".date('Y-m-d')."' 
-        AND serviceboy_id = '".$pilotId."' and status = '4'  and closed_by = '".$pilotId."' 
+        AND serviceboy_id = '".$pilotId."' and orderprocess = '4'  and closed_by = '".$pilotId."' 
         ORDER BY ID desc";
         $resRunningSession = Yii::$app->db->createCommand($sqlRunningSession)->queryAll();
 
