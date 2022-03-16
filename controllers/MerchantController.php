@@ -794,13 +794,12 @@ else{
 		$sdate = $_POST['sdate'] ?? date('Y-m-d'); 
 		$edate = $_POST['edate'] ?? date('Y-m-d');
 		//$sdate = '2020-02-03';		
-		$sqlRating = 'SELECT u.name as user_name,sb.name service_boy_name,f.order_id,totalamount,rating,message,f.reg_date
-		FROM feedback f 
-		left join orders o on f.order_id = o.ID
-		left join serviceboy sb on o.serviceboy_id = sb.ID
-		left join users u on f.user_id = u.ID
-		where f.merchant_id = \''.Yii::$app->user->identity->merchant_id.'\' 
-		and DATE(f.reg_date) between \''.$sdate.'\' and \''.$edate.'\'';
+		$sqlRating = 'SELECT u.name as user_name,mf.*,avg(rating) rating
+		FROM merchant_feedback mf 
+		left join merchant_ambiance_rating mar on mar.merchant_feedback_id = mf.id
+		left join users u on mf.user_id = u.ID
+		where mf.merchant_id = \''.Yii::$app->user->identity->merchant_id.'\' 
+		and DATE(mf.reg_date) between \''.$sdate.'\' and \''.$edate.'\' group by u.name';
 		$rating = Yii::$app->db->createCommand($sqlRating)->queryAll();
 		return $this->render('ratings',['rating'=>$rating,'sdate'=>$sdate,'edate'=>$edate]);
 	}

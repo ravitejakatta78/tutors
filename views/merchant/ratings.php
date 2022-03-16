@@ -46,11 +46,8 @@ use yii\helpers\Html;
                     <thead>
                       <tr>
 						<th>S No</th>
-                        <th>Piolet</th>
-                        <th>Customer</th>
-                        <th>Order id</th> 
-                        <th>Total amount</th> 
-					    <th>Rating</th> 
+                        <th>Customer</th>  
+						<th>Rating</th>
 						<th>Message</th> 
 						<th>Date</th> 
                        </tr>
@@ -63,12 +60,9 @@ use yii\helpers\Html;
 												?>
                                   <tr>
                                  	<td><?php echo $x;?></td>
-                                 	<td><?php echo $rating['service_boy_name'];?></td> 
                                  	<td><?php echo $rating['user_name'];?></td> 
-                                 	<td><?php echo $rating['order_id'];?></td>  
-                                 	<td><?php echo $rating['totalamount'];?></td>  
-                                 	<td><?php echo $rating['rating'];?></td>
-                                 	<td><?php echo $rating['message'];?></td>  
+                                 	<td><?php echo round($rating['rating'],1);?></td>
+                                 	<td><?php echo $rating['feedback'];?></td>  
                                  	<td><?php echo date('d M Y',strtotime($rating['reg_date']));?></td>  
 									 
 									</tr>
