@@ -941,7 +941,7 @@ FusionCharts.ready(function(){
             "label": "Food",
             "value": "28504"
         }, {
-            "label": "Apparels",
+            "label": "Beverages",
             "value": "14633"
         }]
     }
