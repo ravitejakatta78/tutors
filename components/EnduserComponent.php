@@ -760,7 +760,7 @@ class EnduserComponent extends Component {
 
                             $merchantInfo = \app\models\MerchantInfo::find()->select('merchant_description')->where(['merchant_id' => $merchantsdata['ID']])->asArray()->all();
 
-                            $merchantAmenities = \app\models\MerchantAmenities::find()->select('amenity_id, amenity_visibility','status')->where(['merchant_id' => $merchantsdata['ID']])->asArray()->All();
+                            $merchantAmenities = \app\models\MerchantAmenities::find()->select('amenity_id, amenity_visibility, status')->where(['merchant_id' => $merchantsdata['ID']])->asArray()->All();
                             $merchantAmenityIdArray = array_column($merchantAmenities,'amenity_id');
                             $amenityVisibilityArray = array_column($merchantAmenities,'amenity_visibility', 'amenity_id');
 							$amenityStatusArray = array_column($merchantAmenities,'status', 'amenity_id');
