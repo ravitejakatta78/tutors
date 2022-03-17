@@ -769,7 +769,7 @@ class EnduserComponent extends Component {
                             foreach($allAmenites as $amenityId => $amenity){
                                 $amenitySingleArray['amenity'] = $amenity;
                                 if(in_array($amenityId,$merchantAmenityIdArray)){
-                                    $amenitySingleArray['isPresent'] = $amenityStatusArray['amenity_id'] == 1 ? true : false;
+                                    $amenitySingleArray['isPresent'] = ($amenityStatusArray[$amenityId] == 1) ? true : false;
                                 }
                                 else{
                                     $amenitySingleArray['isPresent'] = false;
