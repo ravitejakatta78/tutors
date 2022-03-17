@@ -17,7 +17,7 @@ define('ADMIN_URL',SITE_URL.'foodq-master/');
 define('SERVICEBOY_URL',SITE_URL.'foodq-service/');
 define('MERCHANT_URL',SITE_URL.'foodq-merchant/');
 define('MERCHANT_PRODUCT_URL',SITE_URL.'/tutors/web/uploads/productimages/');
-define('UPLOADS_URL',SITE_URL.'merchantgallery/');
+define('MERCHANT_GALLERY_URL',UPLOADS_URL.'merchantgallery/');
 define('MERCHANT_LOGO',SITE_URL.'merchantimages/');
 define('USER_LOGO',SITE_URL.'userprofilepic/');
 define('BRAND_LOGO',SITE_URL.'brandlogo/');
