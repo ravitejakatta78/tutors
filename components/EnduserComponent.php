@@ -760,15 +760,16 @@ class EnduserComponent extends Component {
 
                             $merchantInfo = \app\models\MerchantInfo::find()->select('merchant_description')->where(['merchant_id' => $merchantsdata['ID']])->asArray()->all();
 
-                            $merchantAmenities = \app\models\MerchantAmenities::find()->select('amenity_id, amenity_visibility')->where(['merchant_id' => $merchantsdata['ID']])->asArray()->All();
+                            $merchantAmenities = \app\models\MerchantAmenities::find()->select('amenity_id, amenity_visibility','status')->where(['merchant_id' => $merchantsdata['ID']])->asArray()->All();
                             $merchantAmenityIdArray = array_column($merchantAmenities,'amenity_id');
                             $amenityVisibilityArray = array_column($merchantAmenities,'amenity_visibility', 'amenity_id');
+							$amenityStatusArray = array_column($merchantAmenities,'status', 'amenity_id');
                             $allAmenites = \app\models\MerchantAmenities::AMENITIES;
                             $amenityArray = $amenitySingleArray = [];
                             foreach($allAmenites as $amenityId => $amenity){
                                 $amenitySingleArray['amenity'] = $amenity;
                                 if(in_array($amenityId,$merchantAmenityIdArray)){
-                                    $amenitySingleArray['isPresent'] = true;
+                                    $amenitySingleArray['isPresent'] = $amenityStatusArray['amenity_id'] == 1 ? true : false;
                                 }
                                 else{
                                     $amenitySingleArray['isPresent'] = false;
