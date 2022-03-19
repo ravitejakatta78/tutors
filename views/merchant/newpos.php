@@ -290,7 +290,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
                 <?php if(!empty($prevFullSingleOrderDet) && @$prevFullSingleOrderDet['orderprocess'] == 0){ ?>
                   <button class="btn btn-Info mb-2 fnt" data-toggle="modal" onclick="acceptandserveorder('<?= !empty($prevOrderDetails) ? $prevOrderDetails[0]['order_id'] : "" ; ?>','1')">Accept</button>    
                 <?php }else if(!empty($prevFullSingleOrderDet) && @$prevFullSingleOrderDet['orderprocess'] == 1 &&  @$prevFullSingleOrderDet['preparetime'] == 0){ ?>    
-                  <button class="btn btn-Info mb-2 fnt" data-toggle="modal" onclick="openprepmodal('<?= !empty($prevOrderDetails) ? $prevOrderDetails[0]['order_id'] : "" ; ?>')">Prepare</button>    
+                  <button class="btn btn-Info mb-2 fnt" data-toggle="modal" onclick="openprepmodal('<?= !empty($prevOrderDetails) ? $prevOrderDetails[0]['order_id'] : "" ; ?>')">Start Preparing</button>    
                 <?php } else if(!empty($prevFullSingleOrderDet) && @$prevFullSingleOrderDet['orderprocess'] == 1 &&  @$prevFullSingleOrderDet['preparetime'] > 0 &&  empty($prevFullSingleOrderDet['preparedate'])){ ?>    
                   <button class="btn btn-Info mb-2 fnt"  onclick="isFoodPrepared('<?= !empty($prevOrderDetails) ? $prevOrderDetails[0]['order_id'] : "" ; ?>')">Prepared ?</button>    
                 <?php }else if(!empty($prevFullSingleOrderDet) && @$prevFullSingleOrderDet['orderprocess'] == 1 &&  @$prevFullSingleOrderDet['preparetime'] > 0 &&  !empty($prevFullSingleOrderDet['preparedate'])){ ?>    
