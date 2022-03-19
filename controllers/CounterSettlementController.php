@@ -34,7 +34,7 @@ class CounterSettlementController extends GoController
         $sql = "select cs.ID, cs.reg_date, s.name, cs.pending_amount, cs.order_amount, cs.status 
         from counter_settlement cs 
         inner join serviceboy s on s.ID = cs.pilot_id 
-        where date(cs.reg_date) between '".$sdate."' and '".$edate."'
+        where date(cs.reg_date) between '".$sdate."' and '".$edate."' and s.merchant_id = '".$this->merchantId."'  
         order by cs.ID desc";
         $res = Yii::$app->db->createCommand($sql)->queryAll();
 

@@ -21,7 +21,7 @@ $actionId = Yii::$app->controller->action->id;
 
 
               <div class="card-body">
-			  <form class="form-inline" method="POST" action="counter-settlement">
+			  <form class="form-inline" method="POST" action="index">
                   <div class="form-group">
                     <label class="control-label">Start Date:</label>
                   <div class="input-group mb-3 mr-3">
@@ -82,9 +82,11 @@ $actionId = Yii::$app->controller->action->id;
                                         ?>
                                 </td>
                                 <td class="icons">
+								<?php if($res[$i]['status'] == \app\helpers\MyConst::_NEW) { ?>
                                     <a onclick="settleSession('<?= $res[$i]['ID'];?>','33')"><span class="fa fa-check"></span></a>
                                     <a title="Product - Delete" onClick="settleSession('<?= $res[$i]['ID']; ?>','17')"><span class="fa fa-close"></span></a>
-                                </td>
+                                <?php } ?>
+								</td>
 					       </tr>     
 					    <?php } ?>			
                     </tbody>
