@@ -310,70 +310,90 @@ use yii\helpers\Url;
         </div>
                     </div>
                     </div>
-                    <div class="col-md-12 pl-0 pr-0">
-            <div class="card">
+    <div class="col-md-12 pl-0 pr-0">
+		<div class="card">
           <div class="card-header">
-            <div class="row p-0">
-            <div class="col-md-4">
-            <h3 class="h4 pl-0 tab-title">Sale Report</h3>
-            </div>
-            <div class="col-md-8">
-            <div class="row p-0">
-            <div class="col-md-3">
-            <input type="text" class="form-control datepicker1" id="datepicker1" value="<?= date('Y-m-d'); ?>" 
-            style = "display:none">
-            </div>
-            <div class="col-md-3">
-            <input type="text" class="form-control datepicker2" id="datepicker2" value="<?= date('Y-m-d'); ?>"
-            style = "display:none">
-            </div>
-            <div class="col-md-3">
-            <div>
-					<select class="form-control" id="saleselect" name="saleselect" >
-						<option value="1">Today</option>
-						<option value="2">Month</option>
-            <option value="3">Date</option>
-            <option value="4">Date Range</option>
-					</select>
+				<div class="row p-0">
+					<div class="col-md-2">
+						<h3 class="h4 pl-0 tab-title">Sale Report</h3>
+					</div>
+					<div class="col-md-10">
+						<div class="row p-0">
+							<div class="col-md-4">
+								<input type="text" class="form-control datepicker3" id="datepicker3" value="<?= date('Y-m-d'); ?>" 
+								style = "display:none">
+							</div>
+							<div class="col-md-4">
+								<input type="text" class="form-control datepicker4" id="datepicker4" value="<?= date('Y-m-d'); ?>"
+								style = "display:none">
+							</div>
+							<div class="col-md-3">
+								<div>
+									<select class="form-control" id="saleselect" name="saleselect" >
+										<option value="1">Today</option>
+										<option value="2">Month</option>
+										<option value="3">Date</option>
+										<option value="4">Date Range</option>
+									</select>
+								</div>
+							</div>
+						
+							<div class="col-md-1">
+								<button class="btn btn-primary" id="searchsale">Go</button>
+							</div>
+						</div>
+					</div>
 				</div>
-            </div>
-            
-            <div class="col-md-3">
-            <button class="btn btn-primary" id="searchsale">Go</button>
-            </div>
-            </div>
-            </div>
-            </div>
-            </div>
+			</div>
             <div class="card-body">
-              <div class="row">
-                <!-- Statistics -->
-               
-                <!-- Line Chart            -->
-                <div class="chart col-lg-12 col-12">
-                <div class="clearfix"></div>
-                  <div id="chart-container"></div>
+				<div class="row">
+					<!-- Statistics -->
+				   
+					<!-- Line Chart            -->
+					<div class="chart col-lg-12 col-12">
+						<div class="clearfix"></div>
+						<div id="chart-container"></div>
+					</div>	
                 </div>
-                
-              </div>
-              </div>
               </div>
         </div>
-        <div class="col-md-12 pl-0 pr-0">
-                <div class="card">
-                <div class="card-header d-flex">
-                  <h3 class="col-md-10">Customer Map</h3>
-                  <div class="col-md-2">
-                    <select class="form-control">
-                      <option>Select</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="card-body">
+    </div>
+    <div class="col-md-12 pl-0 pr-0">
+        <div class="card">
+			<div class="card-header d-flex">
+                <h3 class="col-md-2">Sales Report</h3>
+                <div class="col-md-10">
+						<div class="row p-0">
+							<div class="col-md-4">
+								<input type="text" class="form-control datepicker5" id="datepicker5" value="<?= date('Y-m-d'); ?>" 
+								style = "display:none">
+							</div>
+							<div class="col-md-4">
+								<input type="text" class="form-control datepicker6" id="datepicker6" value="<?= date('Y-m-d'); ?>"
+								style = "display:none">
+							</div>
+							<div class="col-md-3">
+								<div>
+									<select class="form-control" id="select1" name="select1" >
+										<option value="1">Today</option>
+										<option value="2">Month</option>
+										<option value="3">Date</option>
+										<option value="4">Date Range</option>
+									</select>
+								</div>
+							</div>
+						
+							<div class="col-md-1">
+								<button class="btn btn-primary" id="search1">Go</button>
+							</div>
+						</div>
+					</div>
+            </div>
+            <div class="card-body">
                 <div id="chart-customermap"></div>
-                </div>
-                </div>
-              </div>
+            </div>
+        </div>
+    </div>
               <div class="col-md-12 pl-0 pr-0">
                 <div class="card">
                 <div class="card-header d-flex">
@@ -656,23 +676,13 @@ use yii\helpers\Url;
 		  <script src='https://cdn.fusioncharts.com/fusioncharts/latest/fusioncharts.js'></script>
 <script src='https://cdn.fusioncharts.com/fusioncharts/latest/themes/fusioncharts.theme.fusion.js'></script>
 <script src='https://unpkg.com/jquery-fusioncharts@1.1.0/dist/fusioncharts.jqueryplugin.js'></script>
-			<script src='http://cdnjs.cloudflare.com/ajax/libs/waypoints/2.0.3/waypoints.min.js'></script>
-			<script src='https://cdn.jsdelivr.net/jquery.counterup/1.0/jquery.counterup.min.js'></script>	
-			<script>
-				$(document).ready(function(){
-					$('.counter').counterUp({
-  delay: 10,
-  time: 2000
-});
-
-
-				})
 			
-			</script>
 		  <script>
 	$(document).ready(function(){
    var str =  '<?= $str;?>';
-	saleChart(str)
+   var orderMainStatusStr =  '<?= $strOrderMainStatus;?>';
+	saleChart(str);
+	orderMainStatus(orderMainStatusStr);
 });
 
 
@@ -767,8 +777,8 @@ FusionCharts.ready(function(){
 		
 });
 $("#searchsale").click(function(){
-var date1 = $("#datepicker1").val();
-var date2 = $("#datepicker2").val();
+var date1 = $("#datepicker3").val();
+var date2 = $("#datepicker4").val();
 var saleselect = $("#saleselect").val();
 
 var request = $.ajax({
@@ -787,17 +797,34 @@ var request = $.ajax({
 $("#saleselect").change(function(){
   var selectedvalue = this.value;
   if(selectedvalue == '3' || selectedvalue == '4' ){
-    $("#datepicker2").show(); 
+    $("#datepicker4").show(); 
   }
   else{
-    $("#datepicker2").hide();
+    $("#datepicker4").hide();
   } 
 
   if( selectedvalue == '4' ){
-    $("#datepicker1").show(); 
+    $("#datepicker3").show(); 
   }
   else{
-    $("#datepicker1").hide();
+    $("#datepicker3").hide();
+  } 
+});
+
+$("#select1").change(function(){
+  var selectedvalue = this.value;
+  if(selectedvalue == '3' || selectedvalue == '4' ){
+    $("#datepicker6").show(); 
+  }
+  else{
+    $("#datepicker6").hide();
+  } 
+
+  if( selectedvalue == '4' ){
+    $("#datepicker5").show(); 
+  }
+  else{
+    $("#datepicker5").hide();
   } 
 });
 
@@ -812,109 +839,57 @@ dataSource: str
 });
 }
 
-$(document).ready(function(){
-		$("#chart-customermap").insertFusionCharts({
+
+$("#search1").click(function(){
+var date1 = $("#datepicker5").val();
+var date2 = $("#datepicker6").val();
+var selected = $("#select1").val();
+var request = $.ajax({
+  url: "ajax-sale-order-report-chart",
+  type: "POST",
+  data: {sdate:date1,
+          edate:date2,
+          selected : selected },
+}).done(function(msg) {
+  orderMainStatus(msg);
+});
+
+
+});
+
+function orderMainStatus(orderMainStatusJson)
+{
+	var orderMainStatusArr = JSON.parse(orderMainStatusJson);
+	
+
+$("#chart-customermap").insertFusionCharts({
   type: "mscolumn2d",
   width: "100%",
   height: "520",
   dataFormat: "json",
   dataSource: {
     chart: {
-      caption: "App Publishing Trend",
-      subcaption: "2012-2016",
-      xaxisname: "Years",
-      yaxisname: "Total number of apps in store",
+      caption: "Sales Report (Completed , Cancelled Orders)",
+      xaxisname: "Date",
+      yaxisname: "Orders",
       formatnumberscale: "1",
       plottooltext:
-        "<b>$dataValue</b> apps were available on <b>$seriesName</b> in $label",
+        "<b>$dataValue</b> <b>$seriesName</b> orders on $label",
       theme: "fusion",
       drawcrossline: "1"
     },
     categories: [
       {
-        category: [
-          {
-            label: "2012"
-          },
-          {
-            label: "2013"
-          },
-          {
-            label: "2014"
-          },
-          {
-            label: "2015"
-          },
-          {
-            label: "2016"
-          }
-        ]
+        category: orderMainStatusArr['category']
       }
     ],
-    dataset: [
-      {
-        seriesname: "iOS App Store",
-        data: [
-          {
-            value: "125000"
-          },
-          {
-            value: "300000"
-          },
-          {
-            value: "480000"
-          },
-          {
-            value: "800000"
-          },
-          {
-            value: "1100000"
-          }
-        ]
-      },
-      {
-        seriesname: "Google Play Store",
-        data: [
-          {
-            value: "70000"
-          },
-          {
-            value: "150000"
-          },
-          {
-            value: "350000"
-          },
-          {
-            value: "600000"
-          },
-          {
-            value: "1400000"
-          }
-        ]
-      },
-      {
-        seriesname: "Amazon AppStore",
-        data: [
-          {
-            value: "10000"
-          },
-          {
-            value: "100000"
-          },
-          {
-            value: "300000"
-          },
-          {
-            value: "600000"
-          },
-          {
-            value: "900000"
-          }
-        ]
-      }
-    ]
+    dataset: orderMainStatusArr['dataSeries']
   }
 });
+}
+
+$(document).ready(function(){
+
 FusionCharts.ready(function(){
 			var chartObj = new FusionCharts({
     type: 'doughnut2d',

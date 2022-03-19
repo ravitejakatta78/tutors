@@ -1,3 +1,4 @@
+$(document).ready(function(){
 var nowDate = new Date();
 var today = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), 0, 0, 0, 0);
  $('.datepicker1 ').datepicker({
@@ -10,7 +11,27 @@ var today = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(
 			format: 'yyyy-mm-dd',
 			
         });
-
+		$('.datepicker3 ').datepicker({
+            uiLibrary: 'bootstrap',
+			format: 'yyyy-mm-dd',
+			startDate: nowDate 
+        });
+		$('.datepicker4 ').datepicker({
+            uiLibrary: 'bootstrap',
+			format: 'yyyy-mm-dd',
+			startDate: nowDate 
+        });
+		$('.datepicker5 ').datepicker({
+            uiLibrary: 'bootstrap',
+			format: 'yyyy-mm-dd',
+			startDate: nowDate 
+        });
+		$('.datepicker6 ').datepicker({
+            uiLibrary: 'bootstrap',
+			format: 'yyyy-mm-dd',
+			startDate: nowDate 
+        });
+});
 $('form').on('beforeSubmit', function (e) {
     $(".loading").show();
     $('.btn-hide').hide();
@@ -47,19 +68,6 @@ function changeloginaccess(tablename,tableid){
 	$.ajax({
 				 type: 'post',
 				 url: 'changeloginaccess',
-				 data: {
-				 tablename:tablename,
-				 tableid:tableid
-				 },		
-				 success: function (response) {
-					/* silence is golden */ 
-				 }	 
-				 });
-}
- function changeloginstatus(tablename,tableid){
-	$.ajax({
-				 type: 'post',
-				 url: 'changeloginstatus',
 				 data: {
 				 tablename:tablename,
 				 tableid:tableid
@@ -150,7 +158,7 @@ var request = $.ajax({
 	$('#editsection').modal('show');
 });		
 }
-function billview(id,billType){
+function billview(id){
   if(id == 0 || id == '' ){
     swal(
       'Warning!',
@@ -169,12 +177,6 @@ function billview(id,billType){
     hiddenField.setAttribute("name", "id");
     hiddenField.setAttribute("type", "hidden");
     hiddenField.setAttribute("value", id);
-    form.appendChild(hiddenField);
-
-    var hiddenField = document.createElement("input");
-    hiddenField.setAttribute("name", "billType");
-    hiddenField.setAttribute("type", "hidden");
-    hiddenField.setAttribute("value", billType);
     form.appendChild(hiddenField);
 
     document.body.appendChild(form);
@@ -258,7 +260,7 @@ function placeOrder(id,name,current_order_id)
 {
 	        var form=document.createElement('form');
         form.setAttribute('method','post');
-        form.setAttribute('action','newpos');
+        form.setAttribute('action','placeorder');
         //form.setAttribute('target','_blank');
 
     var hiddenField = document.createElement("input");

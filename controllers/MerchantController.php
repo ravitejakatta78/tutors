@@ -2725,7 +2725,7 @@ if ($model->load(Yii::$app->request->post()) ) {
 	{
 		$date = date('Y-m-d');
 		extract($_POST);
-            $merchant_id = Yii::$app->user->identity->merchant_id;
+        $merchant_id = Yii::$app->user->identity->merchant_id;
 		
 		$sqlTotalCustomers = 'select user_id from orders 
 		where merchant_id = \''.Yii::$app->user->identity->merchant_id.'\'
@@ -2775,40 +2775,15 @@ if ($model->load(Yii::$app->request->post()) ) {
 		$yearStartDate = date('Y').'-01-01';
 		//echo json_encode($resSales);exit;
 
-		$sqlChart = 'select mon_name,coalesce(sale_amount,0) sale_amount from (
-select 1 mon_num,\'Jan\' mon_name
-UNION
-select 2,\'Feb\'
-    UNION
-select 3,\'Mar\'
-    UNION
-select 4,\'Apr\'
-    UNION
-select 5,\'May\'
-    UNION
-select 6,\'Jun\'
-    UNION
-select 7,\'Jul\'
-    UNION
-select 8,\'Aug\'
-    UNION
-select 9,\'Sep\'
-    UNION
-select 10,\'Oct\'
-    UNION
-select 11,\'Nov\'
-    UNION
-select 12,\'Dec\'
-    ) as A left join (
 
-SELECT sum(totalamount) sale_amount,month(reg_date) num_mon FROM orders where merchant_id= \''.Yii::$app->user->identity->merchant_id.'\' and date(reg_date) between \''.$yearStartDate.'\' and \''.date('Y-m-d').'\'
-group by month(reg_date)
-        ) as B on A.mon_num = B.num_mon';
-
-$resChart1 = Yii::$app->db->createCommand($sqlChart)->queryAll();
-$saleselect = isset($saleselect) ? $saleselect : '4';
-$saleChartArr = ['saleselect' => $saleselect,'date'=>$date,'date2'=>$date];
+	$saleselect = isset($saleselect) ? $saleselect : '4';
+	$saleChartArr = ['saleselect' => $saleselect,'date'=>$date,'date2'=>$date];
 	$str = $this->saleChart($saleChartArr);
+	
+	$selected = isset($selected) ? $selected : '4';
+
+	$orderMainStatusChartArr = ['selected' => $selected,'sdate'=>$date,'edate'=>$date];
+	$strOrderMainStatus = $this->orderMainStatus($orderMainStatusChartArr);
 
          $sqlpilot = 'SELECT sb.name,count(o.ID) total_served_orders,
                          sum(case when o.orderprocess = \'4\' then 1 else 0 end) completed_orders,
@@ -2830,23 +2805,22 @@ $saleChartArr = ['saleselect' => $saleselect,'date'=>$date,'date2'=>$date];
 	group by s.section_name';
 			   $resTableDetails = Yii::$app->db->createCommand($sqlTableDetails)->queryAll();
 			 
-$completedPie = [];
-$runningPie = [];
- for($p=0;$p<count($resTableDetails);$p++)
-{
-	if($resTableDetails[$p]['completedamount'] > 0){
-		$completedPie[$p]['label'] = $resTableDetails[$p]['label'];
-		$completedPie[$p]['value'] = $resTableDetails[$p]['completedamount']; 
+	$completedPie = [];
+	$runningPie = [];
+	 for($p=0;$p<count($resTableDetails);$p++)
+	{
+		if($resTableDetails[$p]['completedamount'] > 0){
+			$completedPie[$p]['label'] = $resTableDetails[$p]['label'];
+			$completedPie[$p]['value'] = $resTableDetails[$p]['completedamount']; 
+		}
+		 if($resTableDetails[$p]['runningamount'] > 0 ){
+			$runningPie[$p]['label'] = $resTableDetails[$p]['label'];
+			$runningPie[$p]['value'] = $resTableDetails[$p]['runningamount']; 
+		}
 	}
-	 if($resTableDetails[$p]['runningamount'] > 0 ){
-		$runningPie[$p]['label'] = $resTableDetails[$p]['label'];
-		$runningPie[$p]['value'] = $resTableDetails[$p]['runningamount']; 
-	}
-}
 
-//echo "<pre>";print_r($resTableDetails);print_r($runningPie);exit;
 		return $this->render('dashboard',['ordStatusCount'=>$ordStatusCount
-		,'str'=>$str,'resPaidCOunt'=>$resPaidCOunt,'pilotdet'=>$pilotdet
+		,'str'=>$str , 'strOrderMainStatus' => $strOrderMainStatus, 'resPaidCOunt'=>$resPaidCOunt,'pilotdet'=>$pilotdet
 		,'totalCustomers' => $totalCustomers, 'repeatCustomers' => $repeatCustomers
 		,'restablereservation' => $restablereservation,'productCount' => $productCount
 		,'runningPie' => array_values($runningPie),'completedPie' => array_values($completedPie)
@@ -2874,7 +2848,29 @@ $runningPie = [];
 		$saleChartArr = ['saleselect' => $_POST['saleselect'],'date'=> $date1 ,'date2' => $date2 ?? date('Y-m-d')];
 		return $this->saleChart($saleChartArr);
 	}
+	
+	public function actionAjaxSaleOrderReportChart(){
+		$yearStartDate = date('Y').'-01-01';
 
+		if($_POST['selected'] == 3){
+			$date1 = $_POST['edate'];
+		}
+
+		if ($_POST['selected'] == 2) {
+			$date1 = $yearStartDate;
+			$date2 = date('Y-m-d');
+		}
+
+		if($_POST['selected'] == 4){
+			$date1 = $_POST['sdate'];
+			$date2 = $_POST['edate'];
+		}
+
+
+		$saleChartArr = ['selected' => $_POST['selected'],'sdate'=> $date1 ,'edate' => $date2 ?? date('Y-m-d')];
+		return $this->orderMainStatus($saleChartArr);	
+	}
+	
 	public function saleChart($arr = '')
 	{
 		$yearStartDate = date('Y').'-01-01';
@@ -2942,6 +2938,70 @@ $runningPie = [];
 		return $str;
 	}
 	
+	public function orderMainStatus($arr)
+	{
+		$yearStartDate = date('Y').'-01-01';
+		$arr['edate'] = isset($arr['edate']) ? $arr['edate'] : date('Y-m-d');
+		
+		$sql = 'select  ';
+		if($arr['selected'] == '1' || $arr['selected'] == '3' ){
+			$sql .= ' date(reg_date) col_name '; 
+		}
+		else if($arr['selected'] == '2'){
+			$sql .= ' month(reg_date) col_name ';
+		}
+		else if($arr['selected'] == '4'){
+			$sql .= ' date(reg_date) col_name ';
+		}
+		$sql .= ' ,sum(case when orderprocess = \'4\' then 1 else 0 end) orderCount_4
+					,sum(case when orderprocess = \'3\' then 1 else 0 end) orderCount_3 
+		from orders 
+				where orderprocess in (\'3\',\'4\') ';	
+		if($arr['selected'] == '1' || $arr['selected'] == '3'){
+		$sql .=' and date(reg_date) = \''.$arr['sdate'].'\'  ';
+		}
+		else if($arr['selected'] == '2'){
+			$sql .=' and date(reg_date) between \''.$yearStartDate.'\' and \''.date('Y-m-d').'\' ';
+		}
+		else if($arr['selected'] == '4'){
+			$sql .=' and date(reg_date) between \''.$arr['sdate'].'\' and \''.$arr['edate'].'\' ';
+		}
+
+		if($arr['selected'] == '1' || $arr['selected'] == '3'){
+			$sql .=' group by date(reg_date) order by date(reg_date) ';
+		}	
+		else if($arr['selected'] == '2'){
+			$sql .= ' group by month(reg_date)  order by month(reg_date)';
+		}
+		else if($arr['selected'] == '4'){
+			$sql .= ' group by date(reg_date)  order by date(reg_date)';
+		}
+		$res = Yii::$app->db->createCommand($sql)->queryAll();
+		
+		$category = []; 
+		
+		
+		
+		for($i=0; $i < count($res); $i++)
+		{
+			$category[$i]['label'] = $res[$i]['col_name'];
+			
+		}
+		
+		$orderStatusArraay = ['3' => 'Cancelled', '4' => 'Completed'];
+		
+		$dataSeries = [];
+		foreach($orderStatusArraay as $k => $v){
+			$dataSeriesSingle['seriesname'] = $v; 
+			for($i=0; $i < count($res); $i++)
+			{
+				$dataSeriesSingle['data'][$i]['value'] = $res[$i]['orderCount_'.$k];
+			}
+			$dataSeries[] = $dataSeriesSingle;
+		}
+	
+		return json_encode(['category' =>  $category, 'dataSeries' => $dataSeries]) ;
+	}
 	public function actionTranscationdashboard()
 	{
 		extract($_POST);
