@@ -793,7 +793,7 @@ class EnduserComponent extends Component {
 
 
                          $payload = ["status"=>'1', "merchant"=>$merchants, 'merchantInfo' => $merchantInfo
-                                , 'amenityArray' => $amenityArray
+                                , 'amenityArray' => $amenityArray, 'factors' => \app\models\MerchantAmbianceRating::FACTORS
                             ];
 					}else{
 						
@@ -2495,7 +2495,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 			$orderarray['couponamount'] = !empty($orderlist['couponamount']) ? (string)trim($orderlist['couponamount']) : '0';
 		
 			$orderarray['paymenttype'] =  $orderlist['paymenttype']== '1' ? 'Cash' : 'Online';
-			$orderarray['orderprocesstext'] =  Utility::orderstatus_details($orderlist['orderprocess']);
+			$orderarray['orderprocesstext'] =  Utility::orderstatus_details($orderlist['orderprocess'],$orderlist['preparetime'],$orderlist['preparedate']);
 			$orderarray['orderprocess'] = $orderlist['orderprocess'];
 			$orderarray['ordertype'] = $orderlist['ordertype'] == 2 ? 'Offline' : 'Online';
 			$orderarray['paidstatus'] =   Utility::status_details($orderlist['paidstatus']);  

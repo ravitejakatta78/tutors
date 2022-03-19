@@ -420,6 +420,10 @@ class ServiceboyComponent extends Component{
 			  and paidstatus = '1' and orderprocess != '3'
 			  and closed_by = '".$row['ID']."'
 			  ) then totalamount else 0 end) OfflinePay
+			  ,sum(case when  (paymenttype = '1' 
+			  and paidstatus = '1' and orderprocess != '3'
+			  and closed_by = '".$row['merchant_id']."'
+			  ) then totalamount else 0 end) CounterCollectedCash
 			  ,sum( case when (paymenttype = '2' and paidstatus = '1' ) then totalamount else 0 end) OnlinePay
 			  ,sum( case when (paymenttype = '3' or paymenttype = '4' and paidstatus = '1') then totalamount else 0 end) CounterPay
 			  ,sum(case when (orderprocess != '4' and orderprocess != '3' and paidstatus != '1' and  paidstatus != '2') then totalamount else 0 end) rununing_amount
@@ -466,6 +470,7 @@ class ServiceboyComponent extends Component{
 				  $customerdetails['running_amount'] =  $restodayorders['rununing_amount'] ?: '0';
 				  $customerdetails['payable_amount'] =  $restodayorders['OfflinePay'] ?: '0';
 				  $customerdetails['inpocket_amount'] =  $restodayorders['OfflinePay'] ?: '0';
+				  $customerdetails['CounterCollectedCash'] =  $restodayorders['CounterCollectedCash'] ?: '0';
 				  $customerdetails['CounterPay'] = $restodayorders['CounterPay'] ?: '0';
 				  $customerdetails['store_open_time'] =  $merchant['open_time'];
 				  $customerdetails['store_close_time'] =  $merchant['close_time'];
