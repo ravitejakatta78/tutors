@@ -397,12 +397,38 @@ use yii\helpers\Url;
               <div class="col-md-12 pl-0 pr-0">
                 <div class="card">
                 <div class="card-header d-flex">
-                  <h3 class="col-md-10">Expenses</h3>
                   <div class="col-md-2">
-                    <select class="form-control">
-                      <option>Select</option>
-                    </select>
-                  </div>
+					<select id="chartType">
+						<option value="1">Quantity</option>
+						<option value="2">Amount</option>
+					</select>
+				  </div>
+                  <div class="col-md-10">
+						<div class="row p-0">
+							<div class="col-md-4">
+								<input type="text" class="form-control datepicker7" id="datepicker7" value="<?= date('Y-m-d'); ?>" 
+								style = "display:none">
+							</div>
+							<div class="col-md-4">
+								<input type="text" class="form-control datepicker8" id="datepicker8" value="<?= date('Y-m-d'); ?>"
+								style = "display:none">
+							</div>
+							<div class="col-md-3">
+								<div>
+									<select class="form-control" id="select3" name="select3" >
+										<option value="1">Today</option>
+										<option value="2">Month</option>
+										<option value="3">Date</option>
+										<option value="4">Date Range</option>
+									</select>
+								</div>
+							</div>
+						
+							<div class="col-md-1">
+								<button class="btn btn-primary" id="search2">Go</button>
+							</div>
+						</div>
+					</div>
                 </div>
                 <div class="card-body">
                 <div id="chart-expenses"></div>
@@ -416,7 +442,7 @@ use yii\helpers\Url;
         <div class="col-md-4">
           <div class="card">
           <div class="card-header d-flex">
-            <h3 class="col-md-8 pl-0">Daily Target Income</h3>
+            <h3 class="col-md-8 pl-0">Order Performance</h3>
             <div class="col-md-4 pr-0">
               <select class="form-control">
                 <option>Select</option>
@@ -677,13 +703,34 @@ use yii\helpers\Url;
 <script src='https://cdn.fusioncharts.com/fusioncharts/latest/themes/fusioncharts.theme.fusion.js'></script>
 <script src='https://unpkg.com/jquery-fusioncharts@1.1.0/dist/fusioncharts.jqueryplugin.js'></script>
 			
-		  <script>
+<script>
 	$(document).ready(function(){
-   var str =  '<?= $str;?>';
-   var orderMainStatusStr =  '<?= $strOrderMainStatus;?>';
-	saleChart(str);
-	orderMainStatus(orderMainStatusStr);
-});
+		var str =  '<?= $str;?>';
+		var orderMainStatusStr =  '<?= $strOrderMainStatus;?>';
+		var topSaleChartDet = '<?= $topSaleChartDet; ?>';
+		saleChart(str);
+		orderMainStatus(orderMainStatusStr);
+	topOrderAmountChart(topSaleChartDet);
+	});
+	
+	function topOrderAmountChart(topSaleChartDet){
+		var topSaleChart = JSON.parse(topSaleChartDet); 
+		$("#chart-expenses").insertFusionCharts({
+		  type: "bar2d",
+		  width: "100%",
+		  height: "550",
+		  dataFormat: "json",
+		  dataSource: {
+			chart: {
+			  caption: "Trending Items",
+			  xaxisname: "Items",
+			  yaxisname: "Top Sale",
+			  theme: "fusion"
+			},
+			data: topSaleChart
+		  }
+		});
+	}	
 
 
 
@@ -828,6 +875,23 @@ $("#select1").change(function(){
   } 
 });
 
+$("#select3").change(function(){
+  var selectedvalue = this.value;
+  if(selectedvalue == '3' || selectedvalue == '4' ){
+    $("#datepicker8").show(); 
+  }
+  else{
+    $("#datepicker8").hide();
+  } 
+
+  if( selectedvalue == '4' ){
+    $("#datepicker7").show(); 
+  }
+  else{
+    $("#datepicker7").hide();
+  } 
+});
+
 function saleChart(str){
 
 $("#chart-container").insertFusionCharts({
@@ -852,6 +916,26 @@ var request = $.ajax({
           selected : selected },
 }).done(function(msg) {
   orderMainStatus(msg);
+});
+
+
+});
+
+$("#search2").click(function(){
+var date1 = $("#datepicker7").val();
+var date2 = $("#datepicker8").val();
+var selected = $("#select3").val();
+var chartType = $("#chartType").val();
+var request = $.ajax({
+  url: "ajax-top-amount-chart",
+  type: "POST",
+  data: {sdate:date1,
+          edate:date2,
+          selected : selected,
+		  chartType : chartType
+		  },
+}).done(function(msg) {
+  topOrderAmountChart(msg);
 });
 
 
@@ -899,11 +983,13 @@ FusionCharts.ready(function(){
     dataFormat: 'json',
     dataSource: {
         "chart": {
-            "numberPrefix": "₹",
+            
             "bgColor": "#ffffff",
             "startingAngle": "310",
             "showLegend": "1",
-            "defaultCenterLabel": "₹44K",
+		"legendNumRows": "2",
+        "legendNumColumns": "2",
+		"defaultCenterLabel": "",
             "centerLabel": "$value",
             "centerLabelBold": "1",
             "showTooltip": "0",
@@ -912,13 +998,7 @@ FusionCharts.ready(function(){
 			"showLabels" : "0",
             "showValues" : "0"
         },
-        "data": [{
-            "label": "Food",
-            "value": "28504"
-        }, {
-            "label": "Beverages",
-            "value": "14633"
-        }]
+        "data": <?= json_encode($orderPerformanceArray); ?>
     }
 }
 );
@@ -934,86 +1014,27 @@ FusionCharts.ready(function(){
     dataFormat: 'json',
     dataSource: {
         "chart": {
-            "numberPrefix": "₹",
             "bgColor": "#ffffff",
             "startingAngle": "310",
             "showLegend": "1",
-            "defaultCenterLabel": "₹44K",
+            "defaultCenterLabel": "",
             "centerLabel": "$value",
             "centerLabelBold": "1",
             "showTooltip": "0",
-            "decimals": "0",
+            "decimals": "1",
             "theme": "fusion",
 			"showLabels" : "0",
             "showValues" : "0"
         },
-        "data": [{
-            "label": "Good",
-            "value": "28504"
-        }, {
-            "label": "Bad",
-            "value": "14633"
-        }, {
-            "label": "Avg",
-            "value": "14633"
-        }]
+        "data": <?= json_encode($merchantRatingArray) ?>
     }
 }
 );
 			chartObj.render();
 		});
 		
+
 		
-		$("#chart-expenses").insertFusionCharts({
-  type: "column2d",
-  width: "100%",
-  height: "550",
-  dataFormat: "json",
-  dataSource: {
-    chart: {
-      caption: "Countries With Most Oil Reserves [2017-18]",
-      subcaption: "In MMbbl = One Million barrels",
-      xaxisname: "Country",
-      yaxisname: "Reserves (MMbbl)",
-      numbersuffix: "K",
-      theme: "fusion"
-    },
-    data: [
-      {
-        label: "Venezuela",
-        value: "290"
-      },
-      {
-        label: "Saudi",
-        value: "260"
-      },
-      {
-        label: "Canada",
-        value: "180"
-      },
-      {
-        label: "Iran",
-        value: "140"
-      },
-      {
-        label: "Russia",
-        value: "115"
-      },
-      {
-        label: "UAE",
-        value: "100"
-      },
-      {
-        label: "US",
-        value: "30"
-      },
-      {
-        label: "China",
-        value: "30"
-      }
-    ]
-  }
-});
 
 $("#chart-retension").insertFusionCharts({
   type: "msarea",

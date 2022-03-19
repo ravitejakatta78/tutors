@@ -31,6 +31,16 @@ var today = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(
 			format: 'yyyy-mm-dd',
 			startDate: nowDate 
         });
+				$('.datepicker7 ').datepicker({
+            uiLibrary: 'bootstrap',
+			format: 'yyyy-mm-dd',
+			startDate: nowDate 
+        });
+				$('.datepicker8 ').datepicker({
+            uiLibrary: 'bootstrap',
+			format: 'yyyy-mm-dd',
+			startDate: nowDate 
+        });
 });
 $('form').on('beforeSubmit', function (e) {
     $(".loading").show();

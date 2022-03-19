@@ -2784,6 +2784,9 @@ if ($model->load(Yii::$app->request->post()) ) {
 
 	$orderMainStatusChartArr = ['selected' => $selected,'sdate'=>$date,'edate'=>$date];
 	$strOrderMainStatus = $this->orderMainStatus($orderMainStatusChartArr);
+	
+	$topSaleArr = ['selected' => $selected,'sdate'=>$date,'edate'=>$date,'chartType' => 1];
+	$topSaleChartDet = $this->topSaleChart($topSaleArr);
 
          $sqlpilot = 'SELECT sb.name,count(o.ID) total_served_orders,
                          sum(case when o.orderprocess = \'4\' then 1 else 0 end) completed_orders,
@@ -2797,14 +2800,24 @@ if ($model->load(Yii::$app->request->post()) ) {
 	,sum(case when orderprocess = \'4\' then totalamount else 0 end) completedamount
 	,sum(case when (orderprocess != \'4\') then totalamount else 0
 	end) runningamount
-	from tablename tn
+	,sum(case when order_performance = 1 then 1 else 0 end) performance_1
+	,sum(case when order_performance = 2 then 1 else 0 end) performance_2
+	,sum(case when order_performance = 3 then 1 else 0 end) performance_3
+	,sum(case when order_performance = 4 then 1 else 0 end) performance_4
+	from orders  o
+	left join tablename tn on tn.ID = o.tablename
 	inner join sections s on s.ID = tn.section_id
-	left join orders o on tn.ID = o.tablename
 	where tn.merchant_id = \''.$merchant_id.'\'
 	and date(o.reg_date) = \''.$date.'\' and o.orderprocess != \'3\'
 	group by s.section_name';
-			   $resTableDetails = Yii::$app->db->createCommand($sqlTableDetails)->queryAll();
-			 
+	$resTableDetails = Yii::$app->db->createCommand($sqlTableDetails)->queryAll();
+	
+	$orderPerformanceArray = [];
+	foreach(Orders::ORDER_PERFORMACE as $k => $v){
+		$singleArray['label'] = $v;
+		$singleArray['value'] = array_sum(array_column($resTableDetails,'performance_'.$k)) ?? 0;
+		$orderPerformanceArray[] = $singleArray;
+	}
 	$completedPie = [];
 	$runningPie = [];
 	 for($p=0;$p<count($resTableDetails);$p++)
@@ -2818,12 +2831,26 @@ if ($model->load(Yii::$app->request->post()) ) {
 			$runningPie[$p]['value'] = $resTableDetails[$p]['runningamount']; 
 		}
 	}
+	
+	$sqlMerchantRating = 'select round(avg(rating),1) rating,ambiance_id from merchant_feedback mf 
+							inner join merchant_ambiance_rating mar on mf.ID = mar.merchant_feedback_id
+							where mf.merchant_id = \''.$merchant_id.'\' group by ambiance_id';
+	$resMerchantRating = Yii::$app->db->createCommand($sqlMerchantRating)->queryAll();
+	$merchantRateReArrange = array_column($resMerchantRating,'rating','ambiance_id');
+	$merchantRatingArray = [];
+	foreach(\app\models\MerchantAmbianceRating::FACTORS as $k => $v){
+		$singleArray['label'] = $v;
+		$singleArray['value'] = @$merchantRateReArrange[$k] ?? 0;
+		$merchantRatingArray[] = $singleArray;
+	}
 
 		return $this->render('dashboard',['ordStatusCount'=>$ordStatusCount
 		,'str'=>$str , 'strOrderMainStatus' => $strOrderMainStatus, 'resPaidCOunt'=>$resPaidCOunt,'pilotdet'=>$pilotdet
 		,'totalCustomers' => $totalCustomers, 'repeatCustomers' => $repeatCustomers
 		,'restablereservation' => $restablereservation,'productCount' => $productCount
-		,'runningPie' => array_values($runningPie),'completedPie' => array_values($completedPie)
+		,'runningPie' => array_values($runningPie)
+		,'completedPie' => array_values($completedPie), 'orderPerformanceArray' => $orderPerformanceArray
+		,'merchantRatingArray' => $merchantRatingArray,'topSaleChartDet' => $topSaleChartDet
 		]);
 	}
 	
@@ -3002,6 +3029,72 @@ if ($model->load(Yii::$app->request->post()) ) {
 	
 		return json_encode(['category' =>  $category, 'dataSeries' => $dataSeries]) ;
 	}
+	public function actionAjaxTopAmountChart(){
+		$yearStartDate = date('Y').'-01-01';
+
+		if($_POST['selected'] == 3){
+			$date1 = $_POST['edate'];
+		}
+
+		if ($_POST['selected'] == 2) {
+			$date1 = $yearStartDate;
+			$date2 = date('Y-m-d');
+		}
+
+		if($_POST['selected'] == 4){
+			$date1 = $_POST['sdate'];
+			$date2 = $_POST['edate'];
+		}
+
+
+		$saleChartArr = ['selected' => $_POST['selected'],'sdate'=> $date1 ?? date('Y-m-d') 
+		,'edate' => $date2 ?? date('Y-m-d'), 'chartType' => $_POST['chartType']];
+		return $this->topSaleChart($saleChartArr);	
+	}
+	
+	public function topSaleChart($arr)
+	{
+		$yearStartDate = date('Y').'-01-01';
+		$arr['edate'] = isset($arr['edate']) ? $arr['edate'] : date('Y-m-d');
+
+		$sql = 'select * from (select 
+		case when concat(title , " ",food_type_name) is null then title else concat(title , " ",food_type_name) end   label ';
+		if($arr['chartType'] == 1){
+			$sql .= ' ,sum(count) value	';
+		}
+		else{
+			$sql .= ' ,sum(count*op.price) value ';
+		}
+		$sql .= '  from orders o inner join order_products op on o.ID = op.order_id
+		inner join product p on op.product_id = p.ID 
+		left join food_categeries fc on fc.ID = p.foodtype  
+		left join food_category_types fct on fct.ID =  p.food_category_quantity 
+		where o.merchant_id = \''.Yii::$app->user->identity->merchant_id.'\' ';
+		if($arr['selected'] == '1' || $arr['selected'] == '3'){
+		$sql .=' and date(o.reg_date) = \''.$arr['sdate'].'\'  ';
+		}
+		else if($arr['selected'] == '2'){
+			$sql .=' and date(o.reg_date) between \''.$yearStartDate.'\' and \''.date('Y-m-d').'\' ';
+		}
+		else if($arr['selected'] == '4'){
+			$sql .=' and date(o.reg_date) between \''.$arr['sdate'].'\' and \''.$arr['edate'].'\' ';
+		}
+		$sql .=' group by title,food_type_name limit 10 ) A  order by value desc';
+		
+		$res = Yii::$app->db->createCommand($sql)->queryAll();
+	
+		
+		return json_encode($res);
+	}
+	
+	function removeElementWithValue($array,$key){
+		for($i=0;$i < count($array); $i++)
+		{
+			unset($array[$i][$key]);
+		}
+		return $array;
+	}
+
 	public function actionTranscationdashboard()
 	{
 		extract($_POST);
