@@ -791,7 +791,7 @@ class EnduserComponent extends Component {
                          $feedbackFactorRating = Yii::$app->db->createCommand($sqlFeedbackFactorRating)->queryAll();
 						 
 						for($f = 0;$f <count($feedbackFactorRating);$f++){
-							$feedbackFactorRating[$i]['factor_name'] = \app\models\MerchantAmbianceRating::FACTORS[$feedbackFactorRating[$f]['ambiance_id']]; 
+							$feedbackFactorRating[$f]['factor_name'] = \app\models\MerchantAmbianceRating::FACTORS[$feedbackFactorRating[$f]['ambiance_id']]; 
 						}
 						 $merchants['factor_rating'] = !empty($feedbackFactorRating) ? $feedbackFactorRating  : null;
 
