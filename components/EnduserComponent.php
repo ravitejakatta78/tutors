@@ -3349,16 +3349,18 @@ order by remain_coins desc limit '.$val['userCount'] ;
             $model = new MerchantFeedback;
             $model->merchant_id = $val['merchantId'];
             $model->user_id = $val['header_user_id'];
-            $model->feedback = !empty($val['feedback']) ? $val['feedback'] : null;
+            $model->feedback = !empty($val['message']) ? $val['message'] : null;
             $model->reg_date = date('Y-m-d H:i:s');
             $model->save();
 
             $data = [];
-            for($i=0;$i<count(json_decode($val['factor_id']));$i++){
+			$ambianceIdArr = json_decode($val['factor_id']);
+			$ratingArr = json_decode($val['rating']);
+            for($i=0;$i<count($ambianceIdArr);$i++){
                 $data[$i]['merchant_id'] = $val['merchantId'];
                 $data[$i]['merchant_feedback_id'] = $model->ID;
-                $data[$i]['ambiance_id'] = $val['factor_id'][$i];
-                $data[$i]['rating'] = $val['rating'][$i];
+                $data[$i]['ambiance_id'] = $ambianceIdArr[$i];
+                $data[$i]['rating'] = $ratingArr[$i];
                 $data[$i]['reg_date'] = date('Y-m-d H:i:s');
             }
 
