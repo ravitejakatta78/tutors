@@ -2818,19 +2818,11 @@ if ($model->load(Yii::$app->request->post()) ) {
 		$singleArray['value'] = array_sum(array_column($resTableDetails,'performance_'.$k)) ?? 0;
 		$orderPerformanceArray[] = $singleArray;
 	}
-	$completedPie = [];
-	$runningPie = [];
-	 for($p=0;$p<count($resTableDetails);$p++)
-	{
-		if($resTableDetails[$p]['completedamount'] > 0){
-			$completedPie[$p]['label'] = $resTableDetails[$p]['label'];
-			$completedPie[$p]['value'] = $resTableDetails[$p]['completedamount']; 
-		}
-		 if($resTableDetails[$p]['runningamount'] > 0 ){
-			$runningPie[$p]['label'] = $resTableDetails[$p]['label'];
-			$runningPie[$p]['value'] = $resTableDetails[$p]['runningamount']; 
-		}
-	}
+
+	$totalSalesChartArr = ['selected' => $selected,'sdate'=>$date,'edate'=>$date];
+	$toalSalesChart = $this->totalSalesChartArr($totalSalesChartArr);
+	
+	
 	
 	$sqlMerchantRating = 'select round(avg(rating),1) rating,ambiance_id from merchant_feedback mf 
 							inner join merchant_ambiance_rating mar on mf.ID = mar.merchant_feedback_id
@@ -2845,16 +2837,18 @@ if ($model->load(Yii::$app->request->post()) ) {
 	}
 
 		return $this->render('dashboard',['ordStatusCount'=>$ordStatusCount
-		,'str'=>$str , 'strOrderMainStatus' => $strOrderMainStatus, 'resPaidCOunt'=>$resPaidCOunt,'pilotdet'=>$pilotdet
+		,'str'=>$str , 'strOrderMainStatus' => $strOrderMainStatus, 'resPaidCOunt'=>$resPaidCOunt
+		,'pilotdet'=>$pilotdet
 		,'totalCustomers' => $totalCustomers, 'repeatCustomers' => $repeatCustomers
 		,'restablereservation' => $restablereservation,'productCount' => $productCount
-		,'runningPie' => array_values($runningPie)
-		,'completedPie' => array_values($completedPie), 'orderPerformanceArray' => $orderPerformanceArray
+		,'toalSalesChart' => $toalSalesChart
+		, 'orderPerformanceArray' => $orderPerformanceArray
 		,'merchantRatingArray' => $merchantRatingArray,'topSaleChartDet' => $topSaleChartDet
 		]);
 	}
 	
 	public function actionAjaxsalechart(){
+		extract($_POST);
 		$yearStartDate = date('Y').'-01-01';
 
 		if($_POST['saleselect'] == 3){
@@ -2876,7 +2870,9 @@ if ($model->load(Yii::$app->request->post()) ) {
 		return $this->saleChart($saleChartArr);
 	}
 	
-	public function actionAjaxSaleOrderReportChart(){
+	public function actionAjaxSaleOrderReportChart()
+	{
+		extract($_POST);
 		$yearStartDate = date('Y').'-01-01';
 
 		if($_POST['selected'] == 3){
@@ -2897,7 +2893,57 @@ if ($model->load(Yii::$app->request->post()) ) {
 		$saleChartArr = ['selected' => $_POST['selected'],'sdate'=> $date1 ,'edate' => $date2 ?? date('Y-m-d')];
 		return $this->orderMainStatus($saleChartArr);	
 	}
-	
+
+	public function totalSalesChartArr($arr)
+	{
+		$yearStartDate = date('Y').'-01-01';
+		$arr['edate'] = isset($arr['edate']) ? $arr['edate'] : date('Y-m-d');
+
+		$sqlTableDetails = 'select s.section_name as label
+		,sum(case when orderprocess = \'4\' then totalamount else 0 end) completedamount
+		,sum(case when (orderprocess != \'4\') then totalamount else 0
+		end) runningamount
+
+		from orders  o
+		left join tablename tn on tn.ID = o.tablename
+		inner join sections s on s.ID = tn.section_id
+		where tn.merchant_id = \''.Yii::$app->user->identity->merchant_id.'\' ';
+		if($arr['selected'] == '1' || $arr['selected'] == '3'){
+			$sqlTableDetails .=' and date(o.reg_date) = \''.$arr['sdate'].'\'  ';
+			}
+			else if($arr['selected'] == '2'){
+				$sqlTableDetails .=' and date(o.reg_date) between \''.$yearStartDate.'\' and \''.date('Y-m-d').'\' ';
+			}
+			else if($arr['selected'] == '4'){
+				$sqlTableDetails .=' and date(o.reg_date) between \''.$arr['sdate'].'\' and \''.$arr['edate'].'\' ';
+			}
+		
+		$sqlTableDetails .= ' and o.orderprocess != \'3\'
+		group by s.section_name';
+		//echo $sqlTableDetails;exit;
+		$resTableDetails = Yii::$app->db->createCommand($sqlTableDetails)->queryAll();
+		
+		$completedPie = [];
+		$runningPie = [];
+		for($p=0;$p<count($resTableDetails);$p++)
+		{
+			if($resTableDetails[$p]['completedamount'] > 0){
+				$completedPie[$p]['label'] = $resTableDetails[$p]['label'];
+				$completedPie[$p]['value'] = $resTableDetails[$p]['completedamount']; 
+			}
+			 if($resTableDetails[$p]['runningamount'] > 0 ){
+				$runningPie[$p]['label'] = $resTableDetails[$p]['label'];
+				$runningPie[$p]['value'] = $resTableDetails[$p]['runningamount']; 
+			}
+		}
+		$runningTotalAmount = array_sum(array_column($runningPie,'value'));
+		$completedTotalAmount = array_sum(array_column($completedPie,'value'));
+
+		return json_encode(['completedPie' => array_values($completedPie), 'runningPie' => array_values($runningPie)
+			,'runningTotalAmount' => $runningTotalAmount, 'completedTotalAmount' => $completedTotalAmount
+	]);
+
+	}
 	public function saleChart($arr = '')
 	{
 		$yearStartDate = date('Y').'-01-01';
@@ -3029,7 +3075,33 @@ if ($model->load(Yii::$app->request->post()) ) {
 	
 		return json_encode(['category' =>  $category, 'dataSeries' => $dataSeries]) ;
 	}
+
+	public function actionAjaxTotalSalesChart()
+	{
+		extract($_POST);
+		$yearStartDate = date('Y').'-01-01';
+
+		if($_POST['selected'] == 3){
+			$date1 = $_POST['edate'];
+		}
+
+		if ($_POST['selected'] == 2) {
+			$date1 = $yearStartDate;
+			$date2 = date('Y-m-d');
+		}
+
+		if($_POST['selected'] == 4){
+			$date1 = $_POST['sdate'];
+			$date2 = $_POST['edate'];
+		}
+
+
+		$saleChartArr = ['selected' => $_POST['selected'],'sdate'=> $sdate ?? date('Y-m-d') 
+		,'edate' => $edate ?? date('Y-m-d')];
+		return $this->totalSalesChartArr($saleChartArr);			
+	}
 	public function actionAjaxTopAmountChart(){
+		extract($_POST);
 		$yearStartDate = date('Y').'-01-01';
 
 		if($_POST['selected'] == 3){
