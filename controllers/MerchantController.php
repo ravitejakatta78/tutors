@@ -2983,7 +2983,7 @@ if ($model->load(Yii::$app->request->post()) ) {
 		$sql .= ' ,sum(case when orderprocess = \'4\' then 1 else 0 end) orderCount_4
 					,sum(case when orderprocess = \'3\' then 1 else 0 end) orderCount_3 
 		from orders 
-				where orderprocess in (\'3\',\'4\') ';	
+				where orderprocess in (\'3\',\'4\') and merchant_id= \''.Yii::$app->user->identity->merchant_id.'\'';	
 		if($arr['selected'] == '1' || $arr['selected'] == '3'){
 		$sql .=' and date(reg_date) = \''.$arr['sdate'].'\'  ';
 		}
