@@ -789,12 +789,15 @@ class EnduserComponent extends Component {
                          $sqlFeedbackFactorRating = "select mar.ambiance_id ,round(avg(mar.rating),1) as rating from
                                 merchant_ambiance_rating mar where mar.merchant_id =  '".$merchantsdata['ID']."' group by mar.ambiance_id ";
                          $feedbackFactorRating = Yii::$app->db->createCommand($sqlFeedbackFactorRating)->queryAll();
-                         $merchants['factor_rating'] = !empty($feedbackFactorRating) ? $feedbackFactorRating  : null;
+						 
+						for($f = 0;$f <count($feedbackFactorRating);$f++){
+							$feedbackFactorRating[$i]['factor_name'] = \app\models\MerchantAmbianceRating::FACTORS[$feedbackFactorRating[$f]['ambiance_id']]; 
+						}
+						 $merchants['factor_rating'] = !empty($feedbackFactorRating) ? $feedbackFactorRating  : null;
 
 
                          $payload = ["status"=>'1', "merchant"=>$merchants, 'merchantInfo' => $merchantInfo
-                                , 'amenityArray' => $amenityArray, 'factors' => \app\models\MerchantAmbianceRating::FACTORS
-                            ];
+                                , 'amenityArray' => $amenityArray];
 					}else{
 						
 						$payload = array("status"=>'0',"text"=>"Invalid Merchant");
