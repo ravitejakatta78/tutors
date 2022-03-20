@@ -652,7 +652,7 @@ return  $this->asJson($payload);
                                 merchant_ambiance_rating mar where mar.merchant_id =  '".$merchantsdata['ID']."' group by mar.ambiance_id ";
                                 $feedbackFactorRating = Yii::$app->db->createCommand($sqlFeedbackFactorRating)->queryAll();
 
-                                $merchants['rating'] = !empty($feedbackrating) ? round($feedbackrating['rating'],1) : 0;
+                                $merchants['rating'] = !empty($feedbackrating) ? number_format($feedbackrating['rating'],1) : '0';
                                 $merchants['logo'] = !empty($merchantsdata['logo']) ?  MERCHANT_LOGO.$merchantsdata['logo'] : '';
                                 $merchants['coverpic'] = !empty($merchantsdata['coverpic']) ? MERCHANT_LOGO.$merchantsdata['coverpic'] : '';
                                 $merchants['qrlogo'] = !empty($merchantsdata['qrlogo']) ? MERCHANT_LOGO.$merchantsdata['qrlogo'] : "";
