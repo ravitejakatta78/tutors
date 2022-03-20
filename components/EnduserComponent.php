@@ -756,7 +756,7 @@ class EnduserComponent extends Component {
                                 inner join merchant_ambiance_rating mar on mf.ID = mar.merchant_feedback_id
                                 where mf.merchant_id =  '".$merchantsdata['ID']."' group by mf.ID) A ";
                             $feedbackrating = Yii::$app->db->createCommand($sqlfeedbackrating)->queryOne();
-                             $merchants['rating'] = !empty($feedbackrating) ? number_format($feedbackrating['rating'],1) : 0;
+                             $merchants['rating'] = !empty($feedbackrating) ? number_format($feedbackrating['rating'],1) : '0';
 
                             $merchantInfo = \app\models\MerchantInfo::find()->select('merchant_description')->where(['merchant_id' => $merchantsdata['ID']])->asArray()->all();
 
