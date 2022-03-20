@@ -3354,7 +3354,7 @@ order by remain_coins desc limit '.$val['userCount'] ;
             $model->save();
 
             $data = [];
-            for($i=0;$i<count($val['ambiance_id']);$i++){
+            for($i=0;$i<count(json_decode($val['ambiance_id']));$i++){
                 $data[$i]['merchant_id'] = $val['merchantId'];
                 $data[$i]['merchant_feedback_id'] = $model->ID;
                 $data[$i]['ambiance_id'] = $val['ambiance_id'][$i];
