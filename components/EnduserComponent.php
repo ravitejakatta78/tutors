@@ -2362,11 +2362,8 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 					foreach($orderlistarray as $orderlist){
 						$merchantdetails = Merchant::findOne($orderlist['merchant_id']);
 
-                        $sqlfeedbackrating = "select sum(rating)/count(ID) rating from (select mf.ID,avg(rating) as rating from merchant_feedback mf
-                                inner join merchant_ambiance_rating mar on mf.ID = mar.merchant_feedback_id
-                                where mf.merchant_id =  '".$merchantdetails['ID']."' group by mf.ID) A ";
-                        $feedbackrating = Yii::$app->db->createCommand($sqlfeedbackrating)->queryOne();
-
+						$feedbackrating = $this->getMerchantRating($merchantdetails['ID']);
+						$pilotFeedback = Yii::$app->serviceboy->pilotFeedback(['header_user_id' => $orderlist['serviceboy_id'], 'order_id' => $orderlist['ID']]);
 						$totalproductaarray = array();
 						$orderarray['order_id'] =  $orderlist['ID'];
 						$orderarray['unique_id'] =  $orderlist['order_id'];
@@ -2407,7 +2404,8 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 						$orderarray['orderprocess'] =  $orderlist['orderprocess'];
 						$orderarray['orderprocesstext'] =  Utility::orderstatus_details($orderlist['orderprocess'],$orderlist['preparetime'],$orderlist['preparedate']);
 						$orderarray['orderprocessstatus'] =  $orderlist['orderprocessstatus'];
-						$orderarray['rating'] = !empty($feedbackrating) ? round($feedbackrating['rating'],1) : 0;
+						$orderarray['rating'] = !empty($feedbackrating) ? number_format($feedbackrating['rating'],1) : '0';
+						$orderarray['pilot_rating'] = !empty($pilotFeedback['overAllRating']) ? $pilotFeedback['overAllRating'] : '0'; 
 						$orderarray['orderdate'] =  date('d M Y',strtotime($orderlist['reg_date']));
 						$orderarray['enckey'] =  Utility::encrypt($orderlist['merchant_id'].','.$orderlist['tablename']); 
 						/* code for alert disapper in app */
@@ -2459,7 +2457,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 						$orderarray['products'] =  array_filter($totalproductaarray);
 					$totalordersarray[] = $orderarray;
 					}
-				 	$payload = array('orders'=>$totalordersarray); 
+				 	$payload = array('status' => '1', 'orders'=>$totalordersarray ); 
 					}else{
 					$payload = array('status'=>'0','message'=>'Order not found!!');
 					}
@@ -3383,5 +3381,14 @@ order by remain_coins desc limit '.$val['userCount'] ;
 
         return $payload;
     }
+
+	public function getMerchantRating($merchantId){
+		$sqlfeedbackrating = "select sum(rating)/count(ID) rating from (select mf.ID,avg(rating) as rating from merchant_feedback mf
+		inner join merchant_ambiance_rating mar on mf.ID = mar.merchant_feedback_id
+		where mf.merchant_id =  '".$merchantId."' group by mf.ID) A ";
+		$feedbackrating = Yii::$app->db->createCommand($sqlfeedbackrating)->queryOne();
+
+		return $feedbackrating;
+	}
 }
 ?>

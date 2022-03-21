@@ -1920,14 +1920,18 @@ class ServiceboyComponent extends Component{
 
        $sqlfeedbackrating = "select mfr.factor_id ID,avg(rating) as rating from feedback f
                                 inner join pilot_factor_rating mfr on f.ID = mfr.feedback_id
-                                where f.pilot_id =  '".$val['header_user_id']."' group by mfr.factor_id";
+                                where f.pilot_id =  '".$val['header_user_id']."' ";
+		if(!empty($val['order_id'])){
+			$sqlfeedbackrating .= " and f.order_id = '".$val['order_id']."' "; 
+		}
+		$sqlfeedbackrating .= "	group by mfr.factor_id";
         $feedbackFactorRating = Yii::$app->db->createCommand($sqlfeedbackrating)->queryAll();
         $factorRatingArray =  array_column($feedbackFactorRating,'rating');
         if(!empty($factorRatingArray)){
             $overAllRating = array_sum($factorRatingArray)/count($factorRatingArray);
         }
         else{
-            $overAllRating = 0.00;
+            $overAllRating = "0";
         }
         $pilotFactors = PilotFactorRating::FACTORS;
         $singleFactor = $factorRating = [];
