@@ -784,7 +784,7 @@ class ServiceboyComponent extends Component{
 			$orderarray['reorder'] =  $orderlist['reorderprocess'];
 			$orderarray['reg_date'] =  date('d-M-Y h:i A',strtotime($orderlist['reg_date']) ); 
 			$orderarray['preparedate'] =  $orderlist['preparedate'];
-			$orderarray['preparetime'] = !empty($orderlist['preparetime']) ? date('Y-m-d h:i:s A',strtotime($orderlist['preparetime'])) : ""; 
+			$orderarray['preparetime'] = !empty($orderlist['preparetime']) ? date('Y-m-d h:i:s A',strtotime($orderlist['preparetime'])) : null; 
 			$orderarray['orderline'] =  $orderlist['orderline'];
 			$orderarray['instructions'] =  $orderlist['instructions'] ?? '';
 			$orderarray['discount_number'] =  sprintf("%.2f", (!empty($orderlist['discount_number']) ?   $orderlist['discount_number'] : 0));
