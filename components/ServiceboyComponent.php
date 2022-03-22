@@ -484,7 +484,7 @@ class ServiceboyComponent extends Component{
 				  }
 
 				  $notificationDetails = ServiceboyNotifications::find()->where(['serviceboy_id' => $val['usersid']
-				  ,'seen' => '0'])->asArray()->All();
+				  ,'seen' => '0','date(reg_date)' => date('Y-m-d') ])->asArray()->All();
 				
 					$payload = array("status"=>'1',"users"=>$customerdetails
                     ,'ratingDetails' => $this->pilotFeedback(['header_user_id' => $row['ID']])
