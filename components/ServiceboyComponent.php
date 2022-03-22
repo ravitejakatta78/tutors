@@ -483,11 +483,12 @@ class ServiceboyComponent extends Component{
                       $overAllPerformance[] = $singlePerformance;
 				  }
 
-				  //ServiceboyNotifications::find()->where([''])
+				  $notificationDetails = ServiceboyNotifications::find()->where(['serviceboy_id' => $val['usersid']
+				  ,'seen' => '0'])->asArray()->All();
 				
 					$payload = array("status"=>'1',"users"=>$customerdetails
                     ,'ratingDetails' => $this->pilotFeedback(['header_user_id' => $row['ID']])
-                    ,'performance' => $overAllPerformance
+                    ,'performance' => $overAllPerformance, 'notificationCount' => !empty($notificationDetails) ? count($notificationDetails) : 0
                     );
 				  }  else {
 						
