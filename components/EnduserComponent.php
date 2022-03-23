@@ -343,7 +343,7 @@ class EnduserComponent extends Component {
 						$userarray['user_id'] = $val['header_user_id'];
 						$userarray['order_id'] = trim($val['orderid']);
                         $userarray['pilot_id'] = trim($val['header_user_id']);
-						$userarray['merchant_id'] = trim($val['merchantid']);
+						$userarray['merchant_id'] = trim($val['merchantId']);
 						$userarray['message'] =  !empty($val['message']) ? trim($val['message']) : '';
 						$userarray['reg_date'] = date('Y-m-d h:i:s');
   
