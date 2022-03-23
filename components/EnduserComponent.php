@@ -352,10 +352,12 @@ class EnduserComponent extends Component {
 						$result->save();
 
                         $data = [];
-                        for($i=0;$i<count($val['factor_id']);$i++){
+						$factor_id = json_decode($val['factor_id']);
+						$rating = json_decode($val['rating']);
+                        for($i=0;$i<count($factor_id);$i++){
                             $data[$i]['feedback_id'] = $result->ID;
-                            $data[$i]['factor_id'] = $val['factor_id'][$i];
-                            $data[$i]['rating'] = $val['rating'][$i];
+                            $data[$i]['factor_id'] = $factor_id[$i];
+                            $data[$i]['rating'] = $rating[$i];
                             $data[$i]['reg_date'] = date('Y-m-d H:i:s');
                         }
 
