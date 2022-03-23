@@ -2389,7 +2389,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 						$orderarray['preparedate'] =  $orderlist['preparedate'];
 						$orderarray['instructions'] =  $orderlist['instructions'];
 						$orderarray['discount_number'] =  $orderlist['discount_number'];
-						$orderarray['ordertype'] = $orderlist['ordertype'] == 2 ? 'Offline' : 'Online';
+						$orderarray['ordertype'] =  Utility::orderTypeText($orderlist['ordertype']);
 						$orderarray['order_date'] = date('Y-m-d',strtotime($orderlist['reg_date']));
 						
 						$minutes = $orderlist['preparetime'];
@@ -2404,7 +2404,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 							//$resUPdate = Yii::$app->db->createCommand($sqlUPdate)->execute(); 
 							}
 						}
-						$orderarray['paymenttype'] =  $orderlist['paymenttype']=='cash' ? 'Cash' : 'Online';
+						$orderarray['paymenttype'] =  !empty($orderlist['paymenttype']) ? MyConst::PAYMENT_METHODS[$orderlist['paymenttype']] : '';
 						$orderarray['orderprocess'] =  $orderlist['orderprocess'];
 						$orderarray['orderprocesstext'] =  Utility::orderstatus_details($orderlist['orderprocess'],$orderlist['preparetime'],$orderlist['preparedate']);
 						$orderarray['orderprocessstatus'] =  $orderlist['orderprocessstatus'];
@@ -2499,10 +2499,10 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 			$orderarray['totalamount'] =  $orderlist['amount'];
 			$orderarray['couponamount'] = !empty($orderlist['couponamount']) ? (string)trim($orderlist['couponamount']) : '0';
 		
-			$orderarray['paymenttype'] =  $orderlist['paymenttype']== '1' ? 'Cash' : 'Online';
+			$orderarray['paymenttype'] =  !empty($orderlist['paymenttype'])  ? MyConst::PAYMENT_METHODS[$orderlist['paymenttype']] : '';
 			$orderarray['orderprocesstext'] =  Utility::orderstatus_details($orderlist['orderprocess'],$orderlist['preparetime'],$orderlist['preparedate']);
 			$orderarray['orderprocess'] = $orderlist['orderprocess'];
-			$orderarray['ordertype'] = $orderlist['ordertype'] == 2 ? 'Offline' : 'Online';
+			$orderarray['ordertype'] =  Utility::orderTypeText($orderlist['ordertype']);
 			$orderarray['paidstatus'] =   Utility::status_details($orderlist['paidstatus']);  
 			$orderarray['enckey'] =  Utility::encrypt($orderlist['merchant_id'].','.$orderlist['tablename']); 
 			$orderarray['serviceboy'] = Utility::serviceboy_details($orderlist['serviceboy_id'],"name");
@@ -2949,9 +2949,13 @@ order by remain_coins desc limit '.$val['userCount'] ;
 		,m.food_serve_type,m.subscription_date
         ,m.allocated_msgs,m.used_msgs 
 		, (case when uw.status is not null then true else false end)  wishlist
+		, (case when B.rating is not null then B.rating else "" end) rating
 		from merchant m 
 		left join user_whislist uw on m.ID = uw.merchant_id and uw.user_id = \''.$val['header_user_id'].'\' 
 		and uw.status = \'1\'
+		left join (select sum(rating)/count(ID) rating,merchant_id from (select mf.ID,mf.merchant_id,avg(rating) as rating from merchant_feedback mf
+		inner join merchant_ambiance_rating mar on mf.ID = mar.merchant_feedback_id
+		  group by mf.ID,mf.merchant_id) A group by merchant_id ) B on m.ID =B.merchant_id
 		where m.status = \''.MyConst::TYPE_ACTIVE.'\' 
 		and m.storetype in (\''.$room_reservation_types_ids_string.'\') ';
         $resMerchants = Yii::$app->db->createCommand($sqlMerchants)->queryAll();
