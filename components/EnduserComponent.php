@@ -2949,7 +2949,7 @@ order by remain_coins desc limit '.$val['userCount'] ;
 		,m.food_serve_type,m.subscription_date
         ,m.allocated_msgs,m.used_msgs 
 		, (case when uw.status is not null then true else false end)  wishlist
-		, (case when B.rating is not null then B.rating else "" end) rating
+		, round((case when B.rating is not null then B.rating else "" end),1) rating
 		from merchant m 
 		left join user_whislist uw on m.ID = uw.merchant_id and uw.user_id = \''.$val['header_user_id'].'\' 
 		and uw.status = \'1\'
