@@ -2409,7 +2409,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 						$orderarray['orderprocesstext'] =  Utility::orderstatus_details($orderlist['orderprocess'],$orderlist['preparetime'],$orderlist['preparedate']);
 						$orderarray['orderprocessstatus'] =  $orderlist['orderprocessstatus'];
 						$orderarray['rating'] = !empty($feedbackrating) ? number_format($feedbackrating['rating'],1) : '0';
-						$orderarray['pilot_rating'] = !empty($pilotFeedback['overAllRating']) ? $pilotFeedback['overAllRating'] : '0'; 
+						$orderarray['pilot_rating'] = !empty($pilotFeedback['overAllRating']) ? number_format($pilotFeedback['overAllRating'],1) : '0'; 
 						$orderarray['orderdate'] =  date('d M Y',strtotime($orderlist['reg_date']));
 						$orderarray['enckey'] =  Utility::encrypt($orderlist['merchant_id'].','.$orderlist['tablename']); 
 						/* code for alert disapper in app */
