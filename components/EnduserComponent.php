@@ -342,7 +342,7 @@ class EnduserComponent extends Component {
 						$userarray = $userwherearray = array();
 						$userarray['user_id'] = $val['header_user_id'];
 						$userarray['order_id'] = trim($val['orderid']);
-                        $userarray['pilot_id'] = trim($val['header_user_id']);
+                        $userarray['pilot_id'] = trim($row['serviceboy_id']);
 						$userarray['merchant_id'] = trim($val['merchantId']);
 						$userarray['message'] =  !empty($val['message']) ? trim($val['message']) : '';
 						$userarray['reg_date'] = date('Y-m-d h:i:s');
@@ -2519,7 +2519,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 			$pilotFeedback = Yii::$app->serviceboy->pilotFeedback(['header_user_id' => $orderlist['serviceboy_id'], 'order_id' => $orderlist['ID']]);
 			
 			$orderarray['rating'] = !empty($feedbackrating) ? number_format($feedbackrating['rating'],1) : '0';
-			$orderarray['pilot_rating'] = !empty($pilotFeedback['overAllRating']) ? $pilotFeedback['overAllRating'] : '0';
+			$orderarray['pilot_rating'] = !empty($pilotFeedback['overAllRating']) ? number_format($pilotFeedback['overAllRating'],1) : '0';
 			
 			$orderproducts = OrderProducts::find()
 				->where(['order_id'=>$orderlist['ID'], 'merchant_id'=>$orderlist['merchant_id'], 'user_id'=>$orderlist['user_id']])
