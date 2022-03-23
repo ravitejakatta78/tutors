@@ -857,7 +857,7 @@ class ServiceboyComponent extends Component{
 						$roderarray['serviceboy_id'] = $serviceboydetails['ID']; 
 						//updateQuery($roderarray,'orders',$roderwharray); 
 						$sqlUpdate = 'update orders set orderprocess = \''.$roderarray['orderprocess'].'\'
-						,preparetime = \''.$roderarray['preparetime'].'\',serviceboy_id = \''.$roderarray['serviceboy_id'].'\'
+						,serviceboy_id = \''.$roderarray['serviceboy_id'].'\'
 						where ID = \''.$roderwharray['ID'].'\'';
 						$result = Yii::$app->db->createCommand($sqlUpdate)->execute();
 							if(!empty($roderarray['preparetime']) && $roderarray['preparetime'] > 0 && empty($orderlist['preparetime'])) {
