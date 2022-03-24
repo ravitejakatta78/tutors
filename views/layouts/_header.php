@@ -22,7 +22,7 @@ $merchantDet = \app\models\Merchant::findOne($merchant_id);
               <div class="navbar-header">
                 <!-- Navbar Brand --><a href="<?= \yii\helpers\Url::to('../merchant/merchantdashboard'); ?>" class="navbar-brand d-none d-sm-inline-block">
                   <div class="brand-text d-none d-lg-inline-block">
-				  <img src="<?= Yii::$app->request->baseUrl.'/img/food-q.jpeg';?>" style="max-height:4.3rem;" > </div>
+				  <img src="<?= Yii::$app->request->baseUrl.'/img/superpilot-1.png';?>" style="max-height:3.8rem;" > </div>
                   <div class="brand-text d-none d-sm-inline-block d-lg-none"><strong>HM</strong></div></a>
                 <!-- Toggle Button--><a id="toggle-btn" href="#" class="menu-btn active"><span></span><span></span><span></span></a>
               </div>
