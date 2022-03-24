@@ -4999,6 +4999,7 @@ $catModel = AllocatedRooms::findOne($resUpdate['room_alocated']);
 		extract($_REQUEST);
 		$categorylist = \app\models\RoomReservations::find()->where(['merchant_id' => Yii::$app->user->identity->merchant_id])
 		->asArray()->all();
+		$rooms = [];
 		if(!empty($categorylist))
 		{
 			$category_id = $_REQUEST['category_id'] ?? $categorylist[0]['ID'];
