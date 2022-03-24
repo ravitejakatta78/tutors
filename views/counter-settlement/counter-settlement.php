@@ -56,6 +56,7 @@ $actionId = Yii::$app->controller->action->id;
                           <th>Service Boy</th>
                           <th>Pending</th>
                           <th>Order Amount</th>
+                          <th>Paid Amount</th>
                           <th>Status</th>
                           <th>Action</th>
                       </tr>
@@ -68,6 +69,7 @@ $actionId = Yii::$app->controller->action->id;
 					           <td><?=  $res[$i]['name']; ?></td>
 					           <td><?=  $res[$i]['pending_amount']  ?></td>
 					           <td><?= $res[$i]['order_amount'];  ?></td>
+                     <td><?= $res[$i]['paid_amount'];  ?></td>
                                 <td>
                                     <?php
                                         if($res[$i]['status'] == \app\helpers\MyConst::_NEW) {
