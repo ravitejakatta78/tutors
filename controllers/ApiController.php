@@ -579,8 +579,8 @@ return  $this->asJson($payload);
 	       $sqlalreadyid = "SELECT * FROM users WHERE mobile = '".$val['mobilenumber']."'";
 					$alreadyid = Yii::$app->db->createCommand($sqlalreadyid)->queryOne();
 					if(!empty($alreadyid)){
-	    $mobilenumber = $val['mobilenumber']; 
-	      	//$otp = rand(1111,9999);
+	    				$mobilenumber = $val['mobilenumber']; 
+	      				//$otp = rand(1111,9999);
 						$message = "Hi ".$otp." is OTP for your Registration.";
 						$otp = \app\helpers\Utility::otp_sms($mobilenumber,$message);
 						$otpModel = new \app\models\SequenceMaster;
