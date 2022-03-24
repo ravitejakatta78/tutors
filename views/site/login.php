@@ -33,7 +33,7 @@ AppAsset::register($this);
 						<div class="main-bg">
 							<h6 class="sec-one">SuperPilot Merchant Login</h6>
 							<div class="speci-login first-look">
-								<img src="<?= Yii::$app->request->baseUrl.'/img/superpilot.png';?>" width="100%" alt="" class="img-responsive">
+								<img src="<?= Yii::$app->request->baseUrl.'/img/superpilot.jpeg';?>" width="100%" alt="" class="img-responsive">
 							</div>
 						</div>
 						<div class="bottom-content">
