@@ -178,7 +178,7 @@ var request = $.ajax({
 	$('#editsection').modal('show');
 });		
 }
-function billview(id){
+function billview(id,billType){
   if(id == 0 || id == '' ){
     swal(
       'Warning!',
@@ -197,6 +197,12 @@ function billview(id){
     hiddenField.setAttribute("name", "id");
     hiddenField.setAttribute("type", "hidden");
     hiddenField.setAttribute("value", id);
+    form.appendChild(hiddenField);
+
+    var hiddenField = document.createElement("input");
+    hiddenField.setAttribute("name", "billType");
+    hiddenField.setAttribute("type", "hidden");
+    hiddenField.setAttribute("value", billType);
     form.appendChild(hiddenField);
 
     document.body.appendChild(form);
