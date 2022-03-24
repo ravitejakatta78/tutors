@@ -582,7 +582,7 @@ return  $this->asJson($payload);
 	    				$mobilenumber = $val['mobilenumber']; 
 	      				$otp = rand(1111,9999);
 						$message = "Hi ".$otp." is OTP for your Registration.";
-						$otp = \app\helpers\Utility::otp_sms($mobilenumber,$message,$otp);
+						\app\helpers\Utility::otp_sms($mobilenumber,$message,$otp);
 						$otpModel = new \app\models\SequenceMaster;
 						$otpModel->seq_name = $mobilenumber;
 						$otpModel->seq_number = $otp;
