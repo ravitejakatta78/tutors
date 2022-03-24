@@ -1676,7 +1676,7 @@ function isFoodPrepared(orderid){
                           type: "POST",
                           data: {tableId : tableid,id:orderid,kdschange:1},
                         }).done(function(msg) {
-                    		//window.location.replace("newpos?tableid="+tableid+"&tableName="+$tableName+"&current_order_id="+orderid);
+                    		window.location.replace("newpos?tableid="+tableid+"&tableName="+$tableName+"&current_order_id="+orderid);
                         });
 					} else if (result.dismiss === 'cancel') {
 					    
