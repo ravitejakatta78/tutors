@@ -14,7 +14,7 @@ AppAsset::register($this);
 <html lang="zxx">
 
 <head>
-	<title>FoodQ Merchant Login</title>
+	<title>SuperPilot Merchant Login</title>
 	<link rel="shortcut icon" href="<?php echo Url::base(); ?>/favicon.png" type="image/x-icon" />
 	<!-- Meta tag Keywords -->
 	<meta name="viewport" content="width=device-width, initial-scale=1">
