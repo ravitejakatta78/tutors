@@ -2874,7 +2874,7 @@ order by remain_coins desc limit '.$val['userCount'] ;
 
 			$sqlvalidotp = 'select seq_number as otp from sequence_master where seq_name = \''.$mobilenumber.'\' order by reg_date desc limit 1';
 			$resvalidotp = Yii::$app->db->createCommand($sqlvalidotp)->queryOne();
-			$resvalidotp['otp'] = '1234';
+			//$resvalidotp['otp'] = '1234';
 						if($resvalidotp['otp']==$otp){ 
 							$userarray = array();	
                 			$sqlprevmerchnat = "select max(ID) as id from users";
