@@ -87,7 +87,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
 															onChange="changestatus('serviceboy',
                                                             <?php echo $pilotModel['ID'];?>);"> <span class="slider round"></span> </label>
                                                     </td>
-                                                    <td><button class="btn btn-success" onclick="buzzPilot('<?= $pilotModel['ID'];?>',$pilotModel[ 'loginstatus'])">Buzz
+                                                    <td><button class="btn btn-success" onclick="buzzPilot('<?= $pilotModel['ID'];?>','<?= $pilotModel[ 'loginstatus']; ?>')">Buzz
 													</button></td> 
 										</tr>			
                                                 	<?php $x++; }?>
