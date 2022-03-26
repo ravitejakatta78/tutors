@@ -3163,7 +3163,7 @@ order by remain_coins desc limit '.$val['userCount'] ;
      */
 	public function meetme($val)
 	{
-		$sqlorderdet = "SELECT sb.push_id,u.name username,t.name table_name,o.* 
+		$sqlorderdet = "SELECT sb.push_id,u.name username,o.user_id,t.name table_name,o.* 
           FROM orders o 
 		  inner join serviceboy sb on sb.ID = o.serviceboy_id
 		  inner join users u on u.ID = o.user_id
@@ -3182,6 +3182,7 @@ order by remain_coins desc limit '.$val['userCount'] ;
 			,'tablename' => $tableDet['name']
 			,'section_name' => $sectionDet['section_name']
 			,'merchant_id' => $orderdet['merchant_id']
+			,'user_id' => $orderdet['user_id']
 		];
                         $stitle = 'Meet Me.';
 						$smessage = 'Meet Me On Table '.$orderdet['table_name'];

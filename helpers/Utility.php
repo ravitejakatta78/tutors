@@ -491,18 +491,17 @@ if(!empty($notificationdet)){
         "amount" => !empty($notificationdet['orderamount']) ? $notificationdet['orderamount'] : 0,
        	"user_name" => !empty($notificationdet['username'])  ? $notificationdet['username'] : '',
         "sound" => "audio.mp3",
-        "user_image" => "https://lwlies.com/wp-content/uploads/2017/04/avatar-2009.jpg",
         "page_name" => "screen 1",
         "image_url" => "",
-		"user_id" => !empty($notificationdet['username'])  ? $notificationdet['user_id'] : "",
+		"user_id" => !empty($notificationdet['user_id'])  ? $notificationdet['user_id'] : "",
 		"section_name" => !empty($notificationdet['section_name'])  ? $notificationdet['section_name'] : "",
 		"merchant_id" => !empty($notificationdet['merchant_id'])  ? $notificationdet['merchant_id'] : ""
     ]
 ];
-if(!empty($notificationdet))
-{
-    echo json_encode($fields);exit;
-}
+//if(!empty($notificationdet))
+//{
+//    echo json_encode($fields);exit;
+//}
     $headers = array(
         'Content-Type:application/json',
         'Authorization: key='.$api_key
