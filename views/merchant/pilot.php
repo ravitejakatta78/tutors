@@ -87,7 +87,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
 															onChange="changestatus('serviceboy',
                                                             <?php echo $pilotModel['ID'];?>);"> <span class="slider round"></span> </label>
                                                     </td>
-                                                    <td><button class="btn btn-success" onclick="buzzPilot('<?= $pilotModel['ID'];?>')">Buzz
+                                                    <td><button class="btn btn-success" onclick="buzzPilot('<?= $pilotModel['ID'];?>',$pilotModel[ 'loginstatus'])">Buzz
 													</button></td> 
 										</tr>			
                                                 	<?php $x++; }?>
@@ -250,7 +250,11 @@ $(document).ready(function(){
 	$('#example').DataTable();
 });
 
-function buzzPilot(empId){
+function buzzPilot(empId,loginStatus){
+	if(loginStatus != 1){
+		alert("Pilot is Offline");
+		return false;
+	}
 	var request = $.ajax({
 		url: "pilotbuzz",
 		type: "POST",
