@@ -485,7 +485,7 @@ if(!empty($notificationdet)){
         "type" => !empty($notificationdet['type']) ? $notificationdet['type'] : "" ,
         "title" => $title,
         "body" => $message,
-        "order_id" => $orderid,
+        "order_id" => !empty($notificationdet['order_id']) ? $notificationdet['order_id'] : "",
         "table" => !empty($notificationdet['tablename']) ? $notificationdet['tablename'] : "",
         "payment_mode" => "Online",
         "amount" => !empty($notificationdet['orderamount']) ? $notificationdet['orderamount'] : 0,
