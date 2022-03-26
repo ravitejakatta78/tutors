@@ -502,8 +502,10 @@ else{
 		
 			return $this->redirect('managetable');
 	    }
+		
+		$existedTables = array_column($tableDet,'section_id','name');
 
-		return $this->render('managetable',['model'=>$model,'tableDet'=>$tableDet,'merchantdetails'=>$merchantdetails]);
+		return $this->render('managetable',['model'=>$model,'existedTables' => $existedTables,'tableDet'=>$tableDet,'merchantdetails'=>$merchantdetails]);
 	}
 	public function actionEdittablepopup()
 	{

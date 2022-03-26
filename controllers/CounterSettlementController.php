@@ -31,7 +31,7 @@ class CounterSettlementController extends GoController
         $sdate = isset($_POST['sdate']) ? $_POST['sdate'] : date('Y-m-d');
         $edate = isset($_POST['edate']) ? $_POST['edate'] : date('Y-m-d');
 
-        $sql = "select cs.ID, cs.reg_date, s.name, cs.pending_amount, cs.order_amount, cs.status 
+        $sql = "select cs.ID, cs.reg_date, s.name, cs.pending_amount, cs.paid_amount, cs.order_amount, cs.status 
         from counter_settlement cs 
         inner join serviceboy s on s.ID = cs.pilot_id 
         where date(cs.reg_date) between '".$sdate."' and '".$edate."' and s.merchant_id = '".$this->merchantId."'  
