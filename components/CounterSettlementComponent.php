@@ -77,24 +77,31 @@ class CounterSettlementComponent extends Component{
      */
     public function saveSettlement(array $val)
     {
-        $settlementArray = [];
-        $settlementArray['merchant_id'] = $val['merchantId'];
-        $settlementArray['pilot_id'] = $val['header_user_id'];
-        $settlementArray['order_amount'] = $val['total_amount'];
-        $settlementArray['pending_amount'] = $val['pending_amount'];
-        $settlementArray['paid_amount'] = $val['paid_amount'];
-        $settlementArray['status'] = MyConst::_NEW;
-        $settlementArray['cut_order_id'] = $val['cut_order_id'];
-        $settlementArray['reg_date'] = date('Y-m-d H:i:s');
-        $settlementArray['created_by'] = $val['header_user_id'];
-
-        $result = CounterSettlement::saveSettlement($settlementArray);
-        if($result) {
-            $payload = ['status' => '1', 'message' => 'Added Successfully'];
+        $pendingSettlement = CounterSettlement::find()->where(['status' => MyConst::_NEW])->asArray()->All();
+        if(empty($pendingSettlement)){
+            $settlementArray = [];
+            $settlementArray['merchant_id'] = $val['merchantId'];
+            $settlementArray['pilot_id'] = $val['header_user_id'];
+            $settlementArray['order_amount'] = $val['total_amount'];
+            $settlementArray['pending_amount'] = $val['pending_amount'];
+            $settlementArray['paid_amount'] = $val['paid_amount'];
+            $settlementArray['status'] = MyConst::_NEW;
+            $settlementArray['cut_order_id'] = $val['cut_order_id'];
+            $settlementArray['reg_date'] = date('Y-m-d H:i:s');
+            $settlementArray['created_by'] = $val['header_user_id'];
+    
+            $result = CounterSettlement::saveSettlement($settlementArray);
+            if($result) {
+                $payload = ['status' => '1', 'message' => 'Added Successfully'];
+            }
+            else{
+                $payload = ['status' => '0', 'message' => 'Error While Adding Details!!'];
+            }
         }
         else{
-            $payload = ['status' => '0', 'message' => 'Error While Adding Details!!'];
+            $payload = ['status' => '0', 'message' => 'You have already pending requests!!'];
         }
+        
         return $payload;
     }
 }
