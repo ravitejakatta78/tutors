@@ -3173,7 +3173,16 @@ order by remain_coins desc limit '.$val['userCount'] ;
 		  
 		  if(!empty($orderdet))
 		  {
-		    $notificationdet = ['type' => 'ALERT_ORDER','orderamount' => $orderdet['totalamount'],'username' => $orderdet['username']];
+			$tableDet = Tablename::findOne($orderdet['tablename']);
+			$sectionDet = $tableDet->section; 
+		    $notificationdet = ['type' => 'ALERT_ORDER'
+			,'orderamount' => $orderdet['totalamount']
+			,'order_id' => $orderdet['ID']
+			,'username' => $orderdet['username']
+			,'tablename' => $tableDet['name']
+			,'section_name' => $sectionDet['section_name']
+			,'merchant_id' => $orderdet['merchant_id']
+		];
                         $stitle = 'Meet Me.';
 						$smessage = 'Meet Me On Table '.$orderdet['table_name'];
 						$simage = '';

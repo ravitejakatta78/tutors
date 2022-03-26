@@ -495,7 +495,8 @@ if(!empty($notificationdet)){
         "page_name" => "screen 1",
         "image_url" => "",
 		"user_id" => !empty($notificationdet['username'])  ? $notificationdet['user_id'] : "",
-		"section_name" => ""
+		"section_name" => !empty($notificationdet['section_name'])  ? $notificationdet['section_name'] : "",
+		"merchant_id" => !empty($notificationdet['merchant_id'])  ? $notificationdet['merchant_id'] : ""
     ]
 ];
 //if(!empty($notificationdet))

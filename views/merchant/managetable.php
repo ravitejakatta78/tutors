@@ -250,6 +250,7 @@ $this->registerJs($script);
     {
         var user_input_value;
         var err_value = 0
+        
         $('#add-table-form').find('input').each(function(){
             if($(this).prop('required')){
                 user_input_value  = $(this).val(); // jQuery
