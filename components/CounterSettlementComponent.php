@@ -77,7 +77,9 @@ class CounterSettlementComponent extends Component{
      */
     public function saveSettlement(array $val)
     {
-        $pendingSettlement = CounterSettlement::find()->where(['status' => MyConst::_NEW])->asArray()->All();
+        $pendingSettlement = CounterSettlement::find()
+        ->where(['status' => MyConst::_NEW,'pilot_id' => $val['header_user_id']])
+        ->asArray()->All();
         if(empty($pendingSettlement)){
             $settlementArray = [];
             $settlementArray['merchant_id'] = $val['merchantId'];
