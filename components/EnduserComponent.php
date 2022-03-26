@@ -3163,7 +3163,7 @@ order by remain_coins desc limit '.$val['userCount'] ;
      */
 	public function meetme($val)
 	{
-		$sqlorderdet = "SELECT sb.push_id,u.name username,o.order_id,t.name table_name,o.totalamount 
+		$sqlorderdet = "SELECT sb.push_id,u.name username,t.name table_name,o.* 
           FROM orders o 
 		  inner join serviceboy sb on sb.ID = o.serviceboy_id
 		  inner join users u on u.ID = o.user_id
