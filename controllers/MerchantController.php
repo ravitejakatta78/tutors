@@ -5288,4 +5288,15 @@ $catModel = AllocatedRooms::findOne($resUpdate['room_alocated']);
 			\Yii::$app->db->createCommand()->delete('banners', ['id' => $id])->execute();
 		}
 	}
+	public function actionPilotbuzz()
+	{
+		extract($_POST);
+		$details = Serviceboy::findOne($empId);
+		$notificationdet = ['type' => 'POS_BUZZ','username' => $details['name'],'user_id' => $details['ID']];
+		$stitle = 'POS Buzz';
+		$smessage = 'Need you at counter now';
+		$simage = '';
+		Utility::sendNewFCM($details['push_id'],$stitle,$smessage,$simage,'6',null,null,$notificationdet);
+		return 1;
+	}
 }

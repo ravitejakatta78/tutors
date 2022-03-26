@@ -1,4 +1,3 @@
-
 <?php
 use app\helpers\Utility;
 use yii\bootstrap\ActiveForm;
@@ -46,7 +45,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
 						<th>Logged In</th>
 						<th>Online Status</th>
 						<th>Status</th>
-			<!--			<th>Action</th> -->
+						<th>Buzz</th> 
 				   
                       </tr>
                     </thead>
@@ -88,8 +87,8 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
 															onChange="changestatus('serviceboy',
                                                             <?php echo $pilotModel['ID'];?>);"> <span class="slider round"></span> </label>
                                                     </td>
-                                <!--                    <td class="icons"><a onclick="updatepilot('<?= $pilotModel['ID'];?>')"><span class="fa fa-pencil"></span>
-													</a></td> -->
+                                                    <td><button class="btn btn-success" onclick="buzzPilot('<?= $pilotModel['ID'];?>')">Buzz
+													</button></td> 
 										</tr>			
                                                 	<?php $x++; }?>
                        </tbody>
@@ -248,7 +247,17 @@ $this->registerJs($script);
 ?>
 <script>
 $(document).ready(function(){
-	
 	$('#example').DataTable();
 });
+
+function buzzPilot(empId){
+	var request = $.ajax({
+		url: "pilotbuzz",
+		type: "POST",
+		data: {empId : empId},
+	}).done(function(msg) {
+		alert("Buzzed")
+		
+	});
+}
 </script>

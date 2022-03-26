@@ -489,11 +489,13 @@ if(!empty($notificationdet)){
         "table" => !empty($notificationdet['tablename']) ? $notificationdet['tablename'] : "",
         "payment_mode" => "Online",
         "amount" => !empty($notificationdet['orderamount']) ? $notificationdet['orderamount'] : 0,
-       "user_name" => !empty($notificationdet['username'])  ? $notificationdet['username'] : '',
+       	"user_name" => !empty($notificationdet['username'])  ? $notificationdet['username'] : '',
         "sound" => "audio.mp3",
         "user_image" => "https://lwlies.com/wp-content/uploads/2017/04/avatar-2009.jpg",
         "page_name" => "screen 1",
-        "image_url" => ""
+        "image_url" => "",
+		"user_id" => !empty($notificationdet['username'])  ? $notificationdet['user_id'] : "",
+		"section_name" => ""
     ]
 ];
 //if(!empty($notificationdet))
