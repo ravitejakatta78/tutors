@@ -80,12 +80,21 @@ class CounterSettlementComponent extends Component{
         $pendingSettlement = CounterSettlement::find()
         ->where(['status' => MyConst::_NEW,'pilot_id' => $val['header_user_id']])
         ->asArray()->All();
+
+        $lastSettlement = CounterSettlement::find()
+        ->where(['status' => MyConst::_COMPLETED,'pilot_id' => $val['header_user_id']])
+        ->orderBy([
+            'ID'=>SORT_DESC
+        ])
+        ->asArray()->One();
+
+        $prevPendingAmount = !empty($lastSettlement['pending_amount']) ? $lastSettlement['pending_amount'] : 0; 
         if(empty($pendingSettlement)){
             $settlementArray = [];
             $settlementArray['merchant_id'] = $val['merchantId'];
             $settlementArray['pilot_id'] = $val['header_user_id'];
             $settlementArray['order_amount'] = $val['total_amount'];
-            $settlementArray['pending_amount'] = $val['pending_amount'];
+            $settlementArray['pending_amount'] = ($val['total_amount']-$val['paid_amount']) + $prevPendingAmount;
             $settlementArray['paid_amount'] = $val['paid_amount'];
             $settlementArray['status'] = MyConst::_NEW;
             $settlementArray['cut_order_id'] = $val['cut_order_id'];
