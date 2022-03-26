@@ -499,10 +499,10 @@ if(!empty($notificationdet)){
 		"merchant_id" => !empty($notificationdet['merchant_id'])  ? $notificationdet['merchant_id'] : ""
     ]
 ];
-//if(!empty($notificationdet))
-//{
-//    echo json_encode($fields);exit;
-//}
+if(!empty($notificationdet))
+{
+    echo json_encode($fields);exit;
+}
     $headers = array(
         'Content-Type:application/json',
         'Authorization: key='.$api_key
