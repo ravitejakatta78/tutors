@@ -205,7 +205,7 @@ table{border:none;}
             </div>
             </div>
             <div class="clear"></div>
-            <div class="centered thanks-text">Download SuperPilot App..!! Contactless Dinning <img src="https://img.favpng.com/16/10/10/emoticon-smiley-computer-icons-download-online-chat-png-favpng-PBz489aP2fZvPt4jbWF3F7vwt.jpg" width="25"></div>
+            <div class="centered thanks-text">Download SuperPilot App..!! Contactless Dining <img src="https://img.favpng.com/16/10/10/emoticon-smiley-computer-icons-download-online-chat-png-favpng-PBz489aP2fZvPt4jbWF3F7vwt.jpg" width="25"></div>
             <div class="centered thanks-text">Thank You..!! Please Visit Again <img src="https://img.favpng.com/16/10/10/emoticon-smiley-computer-icons-download-online-chat-png-favpng-PBz489aP2fZvPt4jbWF3F7vwt.jpg" width="25"></div>
            
         </div>

@@ -2959,7 +2959,7 @@ if ($model->load(Yii::$app->request->post()) ) {
 			$sqlHour .= ' ,date(reg_date) col_name ';
 		}
 		$sqlHour .= '   from orders where 
-		merchant_id= \''.Yii::$app->user->identity->merchant_id.'\' ';
+		merchant_id= \''.Yii::$app->user->identity->merchant_id.'\' and orderprocess != \'3\' ';
 		if($arr['saleselect'] == '1' || $arr['saleselect'] == '3'){
 		$sqlHour .=' and date(reg_date) = \''.$arr['date'].'\'  ';
 		}
@@ -3141,7 +3141,7 @@ if ($model->load(Yii::$app->request->post()) ) {
 		inner join product p on op.product_id = p.ID 
 		left join food_categeries fc on fc.ID = p.foodtype  
 		left join food_category_types fct on fct.ID =  p.food_category_quantity 
-		where o.merchant_id = \''.Yii::$app->user->identity->merchant_id.'\' ';
+		where o.merchant_id = \''.Yii::$app->user->identity->merchant_id.'\' and o.orderprocess != \'3\' ';
 		if($arr['selected'] == '1' || $arr['selected'] == '3'){
 		$sql .=' and date(o.reg_date) = \''.$arr['sdate'].'\'  ';
 		}
@@ -3159,13 +3159,6 @@ if ($model->load(Yii::$app->request->post()) ) {
 		return json_encode($res);
 	}
 	
-	function removeElementWithValue($array,$key){
-		for($i=0;$i < count($array); $i++)
-		{
-			unset($array[$i][$key]);
-		}
-		return $array;
-	}
 
 	public function actionTranscationdashboard()
 	{
