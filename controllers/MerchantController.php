@@ -3020,13 +3020,13 @@ if ($model->load(Yii::$app->request->post()) ) {
 		
 		$sql = 'select  ';
 		if($arr['selected'] == '1' || $arr['selected'] == '3' ){
-			$sql .= ' date(reg_date) col_name '; 
+			$sql .= ' DATE_FORMAT(reg_date, "%Y-%b-%d") col_name '; 
 		}
 		else if($arr['selected'] == '2'){
-			$sql .= ' month(reg_date) col_name ';
+			$sql .= ' DATE_FORMAT(reg_date, \'%b\') col_name ';
 		}
 		else if($arr['selected'] == '4'){
-			$sql .= ' date(reg_date) col_name ';
+			$sql .= ' DATE_FORMAT(reg_date, "%Y-%b-%d") col_name ';
 		}
 		$sql .= ' ,sum(case when orderprocess = \'4\' then 1 else 0 end) orderCount_4
 					,sum(case when orderprocess = \'3\' then 1 else 0 end) orderCount_3 

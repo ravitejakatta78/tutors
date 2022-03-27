@@ -4,6 +4,21 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 ?>
 <style>
+.bar-5 {width: 100%; height: 18px; background-color: #04AA6D;  border-radius: 25px;}
+.bar-4 {width: 80%; height: 18px; background-color: #2196F3;border-radius: 25px;}
+.bar-3 {width: 60%; height: 18px; background-color: #00bcd4;border-radius: 25px;}
+.bar-2 {width: 40%; height: 18px; background-color: #ff9800;border-radius: 25px;}
+.bar-1 {width: 25%; height: 18px; background-color: #f44336;border-radius: 25px;}
+
+
+
+/* Place text to the right */
+.right {
+  text-align: right;
+}
+
+
+
 /*.selection{min-width:200px !important;}
 
         g[class^='raphael-group-'][class$='-creditgroup'] {
@@ -622,11 +637,24 @@ use yii\helpers\Url;
                 <div class="col-md-12 pl-0 pr-0">
                     <div class="card">
                         <div class="card-header d-flex">
-                            <h3 class="col-md-12">Restuarant Rating</h3>
+                            <h3 class="col-md-12">Restaurant Rating</h3>
 
                         </div>
                         <div class="card-body">
-                            <div id="chart-rating"></div>
+                            <!--<div id="chart-rating"></div>-->
+                            <?php for($mr=0; $mr < count($merchantRatingArray); $mr++) { ?>
+                            <div class="side">
+                                <div><?= $merchantRatingArray[$mr]['label']; ?></div>
+                            </div>
+                            <div class="middle">
+                                <div class="bar-container">
+                                <div class="bar-<?php echo round($merchantRatingArray[$mr]['value']) ?>"></div>
+                                </div>
+                            </div>
+                            <div class="side right">
+                                <div><?php echo round($merchantRatingArray[$mr]['value']) ?></div>
+                            </div>
+                            <?php } ?>
                         </div>
                     </div>
                 </div>
