@@ -2958,7 +2958,7 @@ if ($model->load(Yii::$app->request->post()) ) {
 			$sqlHour .= ' ,month(reg_date) col_name ';
 		}
 		else if($arr['saleselect'] == '4'){
-			$sqlHour .= ' ,date(reg_date) col_name ';
+			$sqlHour .= ' ,DATE_FORMAT(reg_date, "%Y-%b-%d") col_name ';
 		}
 		$sqlHour .= '   from orders where 
 		merchant_id= \''.Yii::$app->user->identity->merchant_id.'\' and orderprocess != \'3\' ';
@@ -2966,7 +2966,7 @@ if ($model->load(Yii::$app->request->post()) ) {
 		$sqlHour .=' and date(reg_date) = \''.$arr['date'].'\'  ';
 		}
 		else if($arr['saleselect'] == '2'){
-			$sqlHour .=' and date(reg_date) between \''.$yearStartDate.'\' and \''.$arr['date'].'\' ';
+			$sqlHour .=' and date(reg_date) between \''.$yearStartDate.'\' and \''.$arr['date2'].'\' ';
 		}
 		else if($arr['saleselect'] == '4'){
 			$sqlHour .=' and date(reg_date) between \''.$arr['date'].'\' and \''.$arr['date2'].'\' ';
