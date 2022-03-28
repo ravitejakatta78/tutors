@@ -799,6 +799,18 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
                 <input type="hidden" id="crorderstatus">
               </div>
             </div>
+            <?php  if($merchant_det['cancel_with_otp'] == 1){ ?>
+            <div class="form-group row"> 
+              <label class="control-label cr-label col-md-4">OTP</label>
+              <div class="col-md-8">
+                <input type="text" id="cancelotp" name="cancelotp" class="form-control" autocomplete="off">
+                <input type="hidden" id="hiddencancelotp" name="hiddencancelotp" autocomplete="off">
+                <input type="hidden" id="crorderid">
+                <input type="hidden" id="crorderstatus">
+              </div>
+            </div>
+            <?php } ?>
+
           </div>
         </div>
       </div>
@@ -1545,7 +1557,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
     $("#ttl_tip").val($('#ttl-tip-amt').val());
     $("#ttl_amt").val($('#ttl_payble').html());
     $("#merchantcpn").val($('#merchant_coupon').val());
-
+    var cancel_with_otp_val = '<?= $merchant_det['cancel_with_otp']; ?>';
     var prevAmount = '<?= $prevFullSingleOrderDet['amount']; ?>';
     var ttl_sub_amt = $("#ttl_sub_amt").val();
     if (isNaN(ttl_sub_amt)) {
@@ -1555,7 +1567,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
         'warning'
       );
       return false;
-    } else if (prevAmount > ttl_sub_amt) {
+    } else if (prevAmount > ttl_sub_amt && cancel_with_otp_val == 1) {
       var sent_otp = Math.floor(1000 + Math.random() * 9000);
       var request = $.ajax({
       url: "sendlessotp",
@@ -1953,6 +1965,22 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
   function cancelreject(orderid, orderstatus) {
     $("#crorderid").val(orderid);
     $("#crorderstatus").val(orderstatus);
+    var sent_otp = Math.floor(1000 + Math.random() * 9000);
+    var cancel_with_otp_val = '<?= $merchant_det['cancel_with_otp']; ?>';
+    if(cancel_with_otp_val == 1){
+        var request = $.ajax({
+        url: "sendlessotp",
+        type: "POST",
+        data: {
+          sent_otp: sent_otp
+        },
+      }).done(function(msg) {
+        $("#hiddencancelotp").val('');
+        $("#hiddencancelotp").val(sent_otp);
+      });
+    }
+      
+
     $("#myModalCanc").modal('show');
     /* if(orderstatus != 2){
         $(".modal-title").html('Reject Order');
@@ -1982,7 +2010,19 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
       .then((result) => {
         if (result.value) {
           //$("#myModalPrep").modal('toggle');
-          if (cr_reason != '') {
+          var hiddencancelotp = $("#hiddencancelotp").val();
+          var cancelotp = $("#cancelotp").val();
+          var cancel_with_otp_val = '<?= $merchant_det['cancel_with_otp']; ?>';
+
+          if(cancelotp != hiddencancelotp && cancel_with_otp_val == 1){
+            swal(
+                'Warning!',
+                'Please Provide A Valid OTP',
+                'warning'
+              );
+              return false;
+          }
+          else if (cr_reason != '') {
             var request = $.ajax({
               url: "cancelreasonpos",
               type: "POST",
@@ -1993,11 +2033,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
                 tableid: tableid
               },
             }).done(function(msg) {
-              swal(
-                'Success!',
-                'Reason Updated Successfully',
-                'success'
-              );
+             
               window.location.replace("newpos?tableid=" + tableid + "&tableName=" + $tableName + "&current_order_id=0");
             });
           } else {

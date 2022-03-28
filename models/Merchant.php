@@ -42,6 +42,7 @@ use Yii;
  * @property int $cancel_decision
  * @property string $gst_number
  * @property int $merchant_bill_copy 1=Yes,2=No
+ * @property int $cancel_with_otp 1=Yes,2=No
  */
 class Merchant extends \yii\db\ActiveRecord 
 {
@@ -68,7 +69,7 @@ class Merchant extends \yii\db\ActiveRecord
 			, 'servingtype', 'plan', 'useraccess', 'gst_number'], 'string'],
 			[['logo','qrlogo','coverpic'], 'file', 'extensions' => ['png', 'jpg', 'gif']],
             [['otp','owner_type','open_time','close_time','table_res_avail', 'table_occupy_status'
-                , 'popularity', 'cancel_decision', 'merchant_bill_copy'], 'integer'],
+                , 'popularity', 'cancel_decision', 'merchant_bill_copy', 'cancel_with_otp'], 'integer'],
 		    [['mod_date', 'food_serve_type', 'subscription_date','allocated_msgs','used_msgs'], 'safe'],
 		    [['scan_range','tax','tip', 'approx_cost'], 'number'],
             [['user_id', 'unique_id', 'name', 'email'], 'string', 'max' => 50],
@@ -123,7 +124,8 @@ class Merchant extends \yii\db\ActiveRecord
 			'popularity' => 'Popularity',
             'cancel_decision' => 'Cancel Decision',
             'gst_number' => 'GST Number',
-            'merchant_bill_copy' => 'Merchant Bill Copy'
+            'merchant_bill_copy' => 'Merchant Bill Copy',
+            'cancel_with_otp' => 'Cancel With OTP'
         ];
     }
 
