@@ -504,7 +504,7 @@ else{
 	    }
 		$sectionTables = [];
 		for($t=0;$t < count($tableDet); $t++) {
-			$sectionTables[$tableDet[$t]['section_id']][] = $tableDet[$t]['name'];
+			$sectionTables[$tableDet[$t]['section_id']][] = strtoupper($tableDet[$t]['name']);
 		}
 
 		return $this->render('managetable',['model'=>$model,'tableDet'=>$tableDet, 'sectionTables' => $sectionTables, 'merchantdetails'=>$merchantdetails]);

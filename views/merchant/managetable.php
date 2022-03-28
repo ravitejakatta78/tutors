@@ -259,7 +259,7 @@ function validateSpot()
             if($(this).prop('required')){
               if($(this).attr('class') == 'form-control spot'){
                 var spotName = $(this).val();
-                if(jQuery.inArray(spotName, tableNamesArray) >= 0){
+                if(jQuery.inArray(spotName.toUpperCase(), tableNamesArray) >= 0){
                     swal(
                     'Warning!',
                     spotName+' spot name already provided!!',  
