@@ -4481,9 +4481,9 @@ order by reg_date,purchase_number';
 			
 		}
 		else{
-		  $prevFullSingleOrderDet['paymenttype'] = '1';
-			$prevFullSingleOrderDet['serviceboy_id'] = '';		  
-		  
+		  	$prevFullSingleOrderDet['paymenttype'] = '1';
+		  	$prevFullSingleOrderDet['serviceboy_id'] = '';
+		  	$prevFullSingleOrderDet['amount'] = 0;  
 		}
 
 		$resMerchantfoodTax = MerchantFoodCategoryTax::find()
@@ -5296,10 +5296,18 @@ $catModel = AllocatedRooms::findOne($resUpdate['room_alocated']);
 		Utility::sendNewFCM($details['push_id'],$stitle,$smessage,$simage,'6',null,null,$notificationdet);
 		return 1;
 	}
-	public function actionExistingTableNames()
+	public function actionSendlessotp()
 	{
-		$tableDet = Tablename::find()->select('name')->where(['section_id' => $_POST['section_id']])->asArray()->all();
-		return json_encode(array_column($tableDet,'name'));
+		$merchantDet = Merchant::findOne(Yii::$app->user->identity->merchant_id);
+		$message = "Hi ".$_POST['sent_otp']." is OTP for your Registration.";
+		\app\helpers\Utility::otp_sms($merchantDet['mobile'],$message,$_POST['sent_otp']);
+		$otpModel = new \app\models\SequenceMaster;
+		$otpModel->seq_name = $merchantDet['mobile'];
+		$otpModel->seq_number = $_POST['sent_otp'];
+		$otpModel->merchant_id = $merchantDet['ID'];
+		$otpModel->reg_date = date('Y-m-d H:i:s');
+		$otpModel->save();
+		return 1;
 	}
 	
 
