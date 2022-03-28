@@ -472,12 +472,12 @@ else{
 			Yii::$app->response->format = Response::FORMAT_JSON;
 			return ActiveForm::validate($model);
 		}
-		$tableDet = Tablename::find()->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])->asArray()->all();
+
 		$merchantdetails = Merchant::findOne(Yii::$app->user->identity->merchant_id);
 		
 		$tableArr = Yii::$app->request->post('Tablename');
 		$merchant_id = (string)Yii::$app->user->identity->merchant_id;
-		
+		$tableDet = Tablename::find()->where(['merchant_id'=>$merchant_id])->asArray()->all();		
 
 		
 		
@@ -502,10 +502,12 @@ else{
 		
 			return $this->redirect('managetable');
 	    }
-		
-		$existedTables = array_column($tableDet,'section_id','name');
+		$sectionTables = [];
+		for($t=0;$t < count($tableDet); $t++) {
+			$sectionTables[$tableDet[$t]['section_id']][] = $tableDet[$t]['name'];
+		}
 
-		return $this->render('managetable',['model'=>$model,'existedTables' => $existedTables,'tableDet'=>$tableDet,'merchantdetails'=>$merchantdetails]);
+		return $this->render('managetable',['model'=>$model,'tableDet'=>$tableDet, 'sectionTables' => $sectionTables, 'merchantdetails'=>$merchantdetails]);
 	}
 	public function actionEdittablepopup()
 	{
@@ -2672,7 +2674,7 @@ if ($model->load(Yii::$app->request->post()) ) {
 		
 		asort($tabletimeres);
 		$tableorderidres = array_column($res,'table_order_id','tableid');
-		$resindex =  \yii\helpers\ArrayHelper::index($res, null, 'tableid');
+		$resindex =  ArrayHelper::index($res, null, 'tableid');
 		//$tableprodcount = array_count_values(array_column($res,'tableid'));
 
 		return $this->renderPartial('viewkds',['tableres'=>$tableres,'tableorderidres'=>$tableorderidres
@@ -2700,7 +2702,7 @@ if ($model->load(Yii::$app->request->post()) ) {
 		
 		asort($tabletimeres);
 		$tableorderidres = array_column($res,'tableid','table_order_id');
-		$resindex =  \yii\helpers\ArrayHelper::index($res, null, 'table_order_id');
+		$resindex =  ArrayHelper::index($res, null, 'table_order_id');
 
 		return $this->render('viewkds1',['tableres'=>$tableres,'tableorderidres'=>$tableorderidres
 		,'tabletimeres'=>$tabletimeres,'resindex'=>$resindex,'tableorderidres'=>$tableorderidres
@@ -4423,8 +4425,8 @@ order by reg_date,purchase_number';
 		foodtype from product where merchant_id = \''.$merchant_id.'\' and status=\'1\') p on p.foodtype = fc.ID 
 		where fc.merchant_id = \''.$merchant_id.'\'';
 		$res = Yii::$app->db->createCommand($sql)->queryAll();
-		$result = \yii\helpers\ArrayHelper::index($res, null, 'ID');
-		$fsresult = \yii\helpers\ArrayHelper::index($res, null, 'food_section_id');
+		$result = ArrayHelper::index($res, null, 'ID');
+		$fsresult = ArrayHelper::index($res, null, 'food_section_id');
 		unset($fsresult[0]);
 		//echo "<pre>";print_r($fsresult);exit;
 		$sqlproductDetails = 'select P.ID,P.title,P.food_category_quantity
@@ -4439,7 +4441,7 @@ order by reg_date,purchase_number';
         left join section_item_price_list sipl on sipl.item_id =  P.ID and sipl.section_id = \''.$table_section_id.'\'
 		where P.merchant_id = \''.$merchant_id.'\' and status=\'1\' ';
 		$productDetails = Yii::$app->db->createCommand($sqlproductDetails)->queryAll();
-		$allProductDetails = \yii\helpers\ArrayHelper::index($productDetails, null, 'modified_title');
+		$allProductDetails = ArrayHelper::index($productDetails, null, 'modified_title');
 		$fcqarr = array_column($productDetails,'food_type_name','ID');
 
 		$sqlPrevWeekOrders = 'select ID,tablename,orderprocess from orders where date(reg_date) between \''.date('Y-m-d', strtotime('-7 days')).'\' 
@@ -4490,7 +4492,7 @@ order by reg_date,purchase_number';
 		->asArray()->All();
 
 		
-	    $MerchantfoodTaxArr = \yii\helpers\ArrayHelper::index($resMerchantfoodTax, null, 'food_category_id');
+	    $MerchantfoodTaxArr = ArrayHelper::index($resMerchantfoodTax, null, 'food_category_id');
 
 		$prodvsfcidarr = array_column($productDetails,'food_category_id','ID');
 		//echo "<pre>";print_r($prodvsfcidarr);exit;
@@ -5294,4 +5296,11 @@ $catModel = AllocatedRooms::findOne($resUpdate['room_alocated']);
 		Utility::sendNewFCM($details['push_id'],$stitle,$smessage,$simage,'6',null,null,$notificationdet);
 		return 1;
 	}
+	public function actionExistingTableNames()
+	{
+		$tableDet = Tablename::find()->select('name')->where(['section_id' => $_POST['section_id']])->asArray()->all();
+		return json_encode(array_column($tableDet,'name'));
+	}
+	
+
 }

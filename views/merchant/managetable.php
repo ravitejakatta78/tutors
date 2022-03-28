@@ -107,7 +107,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
         <div class="modal-body">
 				<?php	$form = ActiveForm::begin([
     		'id' => 'add-table-form',
-		'options' => ['class' => 'form-horizontal','wrapper' => 'col-xs-12','onsubmit' => 'validateSpot()'],
+		'options' => ['class' => 'form-horizontal','wrapper' => 'col-xs-12','onsubmit' => 'return validateSpot()'],
         	'layout' => 'horizontal',
 			 'fieldConfig' => [
         'horizontalCssClasses' => [
@@ -137,11 +137,11 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
     <tbody>
                 <tr>
             <td>
-                <input type="text"  name="tablename[]" class="form-control" required/>
+                <input type="text"  name="tablename[]" class="form-control spot" autocomplete="off" required/>
             </td>
             
 			<td>
-                <input type="text" name="capacity[]" class="form-control" required>
+                <input type="text" name="capacity[]" class="form-control" autocomplete="off" required>
             </td>
             
         </tr>
@@ -246,12 +246,29 @@ JS;
 $this->registerJs($script);
 ?>
 <script>
-    function validateSpot()
+var err_value = 0;
+function validateSpot()
     {
         var user_input_value;
-        var err_value = 0
+        var sectionTablesJson = '<?= json_encode($sectionTables); ?>';
+        var sectionTables = JSON.parse(sectionTablesJson);
+        var section_id = $("#tablename-section_id").val();
+        var tableNamesArray = sectionTables[section_id] ? sectionTables[section_id] : [] ;
+        
         $('#add-table-form').find('input').each(function(){
             if($(this).prop('required')){
+              if($(this).attr('class') == 'form-control spot'){
+                var spotName = $(this).val();
+                if(jQuery.inArray(spotName, tableNamesArray) >= 0){
+                    swal(
+                    'Warning!',
+                    spotName+' spot name already provided!!',  
+                    'warning'
+                    );
+                    err_value = err_value + 1;
+                }
+
+              }
                 user_input_value  = $(this).val(); // jQuery
                 if(user_input_value == ''){
                     if(err_value == 0){
@@ -262,11 +279,15 @@ $this->registerJs($script);
                 }
             }
         });
-
         if(err_value > 0){
-            return false;
+          return false;
         }
-    }
+
+      }
+
+function myCallback(response) {
+  
+}    
 function deletetable(id){
 //	var res = confirm('Are you sure want to delete??')
 		    swal({
