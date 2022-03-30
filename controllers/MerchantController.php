@@ -2766,9 +2766,15 @@ if ($model->load(Yii::$app->request->post()) ) {
 		$orderStatusCount = Yii::$app->db->createCOmmand($sqlOrderStatusCount)->queryAll();
 		$ordStatusCount = array_column($orderStatusCount,'cnt','orderprocess');
 		
-		$selectPaidCOunt = ' select sum(case when paymenttype = \'cash\' 
-		then totalamount else 0 end) paidByCash
-		,sum(case when paymenttype != \'cash\' then totalamount else 0 end) paidOnline
+		$selectPaidCOunt = ' select sum(case when paymenttype = \'1\' 
+		then totalamount else 0 end) pay_1
+		,sum(case when paymenttype = \'2\' 
+		then totalamount else 0 end) pay_2
+		,sum(case when paymenttype = \'3\' 
+		then totalamount else 0 end) pay_3
+		,sum(case when paymenttype = \'4\' 
+		then totalamount else 0 end) pay_4
+		,sum(case when paymenttype != \'1\' then totalamount else 0 end) paidOnline
 		,sum(case when paidstatus = \'0\' then totalamount else 0 end) notPaid
 		,sum(case when paidstatus = \'1\' then totalamount else 0 end) completePaid
         ,sum(case when orderprocess != \'4\' then 1 else 0 end) runningOrders
@@ -2778,7 +2784,12 @@ if ($model->load(Yii::$app->request->post()) ) {
 		$resPaidCOunt = Yii::$app->db->createCOmmand($selectPaidCOunt)->queryOne();
 		$yearStartDate = date('Y').'-01-01';
 		//echo json_encode($resSales);exit;
-
+		$paymentMethodAmount = $paymentArray = [];
+		foreach(MyConst::PAYMENT_METHODS as $k => $v){
+			$paymentMethodAmount['label'] = $v;
+			$paymentMethodAmount['value'] = $resPaidCOunt['pay_'.$k];
+			$paymentArray[] = $paymentMethodAmount;
+		}
 
 	$saleselect = isset($saleselect) ? $saleselect : '4';
 	$saleChartArr = ['saleselect' => $saleselect,'date'=>$date,'date2'=>$date];
@@ -2848,6 +2859,7 @@ if ($model->load(Yii::$app->request->post()) ) {
 		,'toalSalesChart' => $toalSalesChart
 		, 'orderPerformanceArray' => $orderPerformanceArray
 		,'merchantRatingArray' => $merchantRatingArray,'topSaleChartDet' => $topSaleChartDet
+		, 'paymentArray' => json_encode($paymentArray)
 		]);
 	}
 	
@@ -3391,7 +3403,7 @@ if ($model->load(Yii::$app->request->post()) ) {
 
             $merchantNotidication = new MerchantNotifications;
             $merchantNotidication->merchant_id = $orderDet['merchant_id'];
-            $merchantNotidication->message = \app\helpers\MyConst::PAYMENT_METHODS[$orderpaymethod].' Payment of Rs. '.$orderDet['totalamount'].'  
+            $merchantNotidication->message = MyConst::PAYMENT_METHODS[$orderpaymethod].' Payment of Rs. '.$orderDet['totalamount'].'  
 				received on Order '.$orderDet['order_id'].' of '.$tableUpdate['name'].'-'.$tableUpdate->section['section_name'];
             $merchantNotidication->seen = '0';
             $merchantNotidication->created_on = date('Y-m-d H:i:s');
@@ -3423,7 +3435,7 @@ if ($model->load(Yii::$app->request->post()) ) {
 				$notificaitonarary['serviceboy_id'] = $orderDet['serviceboy_id'];
 				$notificaitonarary['order_id'] = (string)$id;
 				$notificaitonarary['title'] = 'Paid Order';
-				$notificaitonarary['message'] =  \app\helpers\MyConst::PAYMENT_METHODS[$orderpaymethod].' Payment of Rs. '.$orderDet['totalamount'].'  
+				$notificaitonarary['message'] =  MyConst::PAYMENT_METHODS[$orderpaymethod].' Payment of Rs. '.$orderDet['totalamount'].'  
 				received on Order '.$orderDet['order_id'].' of '.$tableUpdate['name'].'-'.$tableUpdate->section['section_name'];
 				$notificaitonarary['ordertype'] = 'Payment';
 				$notificaitonarary['seen'] = '0';

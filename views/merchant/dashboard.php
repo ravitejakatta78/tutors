@@ -504,10 +504,10 @@ use yii\helpers\Url;
                     <div class="card-header d-flex">
                         <h3 class="col-md-8 pl-0">Order Performance</h3>
                         <div class="col-md-4 pr-0">
-                            <select class="form-control">
+                            <!-- <select class="form-control">
                                 <option>Select</option>
                                 <option>Today</option>
-                            </select>
+                            </select> -->
                         </div>
                     </div>
                     <div class="card-body">
@@ -521,7 +521,7 @@ use yii\helpers\Url;
                             <div class="row">
                                 <div class="col-md-6 statistic mb-0" style="border-right: 1px solid #e8e8e8;">
                                     <div class="text"><strong
-                                            class="counter"><?= round($resPaidCOunt['paidByCash'])?? 0; ?></strong><br><small
+                                            class="counter"><?= round($resPaidCOunt['pay_1'])?? 0; ?></strong><br><small
                                             style="color:grey;">Paid By Cash</small></div>
                                 </div>
                                 <div class="col-md-6 statistic mb-0">
@@ -794,12 +794,34 @@ use yii\helpers\Url;
         var orderMainStatusStr = '<?= $strOrderMainStatus;?>';
         var topSaleChartDet = '<?= $topSaleChartDet; ?>';
         var totalSaleChartDet = '<?= $toalSalesChart; ?>';
+        var paymentJson = '<?= $paymentArray; ?>';
+
         saleChart(str);
         orderMainStatus(orderMainStatusStr);
         topOrderAmountChart(topSaleChartDet);
         totalSaleChart(totalSaleChartDet);
+        paymentMethodChart(paymentJson);
     });
 
+    function paymentMethodChart(paymentJson){
+        var paymentArray = JSON.parse(paymentJson);
+        $("#chart-retension").insertFusionCharts({
+  type: "bar2d",
+  width: "100%",
+  height: "100%",
+  dataFormat: "json",
+  dataSource: {
+    chart: {
+      caption: "Payment Method Sales",
+      yaxisname: "Total Sale",
+      aligncaptionwithcanvas: "0",
+      plottooltext: "₹ <b>$dataValue</b>  received",
+      theme: "fusion"
+    },
+    data: paymentArray
+  }
+});
+    }
     function topOrderAmountChart(topSaleChartDet) {
         var topSaleChart = JSON.parse(topSaleChartDet);
         $("#chart-expenses").insertFusionCharts({
@@ -1083,6 +1105,9 @@ use yii\helpers\Url;
     }
     $(document).ready(function() {
 
+        
+        
+
         FusionCharts.ready(function() {
             var chartObj = new FusionCharts({
                 type: 'doughnut2d',
@@ -1143,81 +1168,7 @@ use yii\helpers\Url;
 
 
 
-        $("#chart-retension").insertFusionCharts({
-            type: "msarea",
-            width: "100%",
-            height: "400",
-            dataFormat: "json",
-            dataSource: {
-                chart: {
-                    caption: "GDP Growth Rate Comparison",
-                    yaxisname: "Quarterly GDP Growth Rate in %",
-                    subcaption: "India vs China",
-                    drawcrossline: "1",
-                    numbersuffix: "%",
-                    plottooltext: "$seriesName's GDP grew $dataValue in $label",
-                    theme: "fusion"
-                },
-                categories: [{
-                    category: [{
-                            label: "April 2016"
-                        },
-                        {
-                            label: "July 2016"
-                        },
-                        {
-                            label: "Oct 2016"
-                        },
-                        {
-                            label: "Jan 2017"
-                        },
-                        {
-                            label: "April 2017"
-                        }
-                    ]
-                }],
-                dataset: [{
-                        seriesname: "India",
-                        data: [{
-                                value: "9.2"
-                            },
-                            {
-                                value: "7.9"
-                            },
-                            {
-                                value: "7.5"
-                            },
-                            {
-                                value: "7"
-                            },
-                            {
-                                value: "6.1"
-                            }
-                        ]
-                    },
-                    {
-                        seriesname: "China",
-                        data: [{
-                                value: "6.7"
-                            },
-                            {
-                                value: "6.7"
-                            },
-                            {
-                                value: "6.7"
-                            },
-                            {
-                                value: "6.8"
-                            },
-                            {
-                                value: "6.9"
-                            }
-                        ]
-                    }
-                ]
-            }
-        });
-
+        
 
     });
     </script>
