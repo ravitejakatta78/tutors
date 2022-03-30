@@ -769,7 +769,7 @@ return $contents;
 	 * @param int $val
 	 * @return string
 	 */
-	public function orderTypeText($val)
+	public static function orderTypeText($val)
 	{
 		if($val == '1' || $val == '3') {
 			$orderType = 'Online';

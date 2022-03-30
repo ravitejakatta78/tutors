@@ -624,6 +624,8 @@ class ServiceboyComponent extends Component{
 	public function orderswithstatus($val)
 	{
 		$serviceboydetails = Serviceboy::findOne($val['header_user_id']);
+		$merchantdetails = Merchant::findOne($serviceboydetails['merchant_id']);
+		$decisionCancelStatus = ['2','3'];
 		$date = date('Y-m-d');
 					$notpaidorderlistarray = $paidorderlistarray = $orderlistarray = array();
 					$sqlnotpaidorderlistarray = 'select * from orders where merchant_id = \''.$serviceboydetails['merchant_id'].'\'  ';
@@ -688,6 +690,8 @@ class ServiceboyComponent extends Component{
 
                         $orderarray['tax'] = $orderlist['tax'];
 						$orderarray['discount_number'] = $orderlist['discount_number'];
+						$orderarray['decision_making'] = in_array($merchantdetails['cancel_decision'],$decisionCancelStatus) ? true : false;	
+
 						$orderarray['userprofilepic'] = !empty($orderlist['user_id']) ? Utility::user_image($orderlist['user_id']) : '';
 						$sqlpendingamount = "select sum(totalamount) as pendingamount from order_transactions where order_id = '".$orderlist['ID']."' 
 						and merchant_id = '".$orderlist['merchant_id']."' and user_id = '".$orderlist['user_id']."' and paymenttype = 'cash'
@@ -755,9 +759,10 @@ class ServiceboyComponent extends Component{
 		
 		$sqlorderlist = 'select * from orders where ID = \''.$orderid.'\' order by ID desc';
 		$orderlist = Yii::$app->db->createCommand($sqlorderlist)->queryOne();
-				
 		$merchantdetails = Merchant::findOne($orderlist['merchant_id']);
-		
+		$decisionCancelStatus = ['2','3'];
+			
+
 		if(!empty($orderlist)){
 			$tableDetails = Tablename::findOne($orderlist['tablename']);	
 			$orderarray = $totalordersarray = array(); 
@@ -793,6 +798,7 @@ class ServiceboyComponent extends Component{
 			$orderarray['discount_number'] =  sprintf("%.2f", (!empty($orderlist['discount_number']) ?   $orderlist['discount_number'] : 0));
             $orderarray['ordertype'] =  $orderlist['ordertype'];
             $orderarray['ordertypetext'] =  Utility::orderTypeText($orderlist['ordertype']);
+			$orderarray['decision_making'] = in_array($merchantdetails['cancel_decision'],$decisionCancelStatus) ? true : false;	
 
 			$sqlpendingamount = "select sum(totalamount) as pendingamount from order_transactions 
 						where order_id = '".$orderlist['ID']."' and merchant_id = '".$orderlist['merchant_id']."' 
