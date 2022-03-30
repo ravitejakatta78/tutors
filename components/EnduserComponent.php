@@ -1793,6 +1793,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 							$userarray['paidstatus'] = '0';
 							$userarray['paymentby'] = '1';
 							$userarray['ordertype'] = 1;
+							$userarray['paymenttype'] = !empty($val['paymenttype']) ? $val['paymenttype'] : null;
 							$userarray['coupon'] = $couponcode;
 							$userarray['instructions'] = $val['instructions'];
 							$sqlprevmerchnat = "select max(orderline) as id from orders where merchant_id = '".$merchantid."' and reg_date >='".date('Y-m-d')." 00:00:01' and reg_date <='".date('Y-m-d')." 23:59:59'";
