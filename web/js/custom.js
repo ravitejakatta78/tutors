@@ -286,7 +286,7 @@ function placeOrder(id,name,current_order_id)
 {
 	        var form=document.createElement('form');
         form.setAttribute('method','post');
-        form.setAttribute('action','placeorder');
+        form.setAttribute('action','newpos');
         //form.setAttribute('target','_blank');
 
     var hiddenField = document.createElement("input");

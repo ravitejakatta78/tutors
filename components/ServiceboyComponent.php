@@ -542,6 +542,8 @@ class ServiceboyComponent extends Component{
 	}
 	public function neworders($val){
 		$serviceboydetails = Serviceboy::findOne($val['header_user_id']);
+		$merchantdetails = Merchant::findOne($serviceboydetails['merchant_id']);
+		$decisionCancelStatus = ['2','3'];
 	$date = date('Y-m-d');
 			$sqlTableId = 'select tb.ID from pilot_table pt 
 			inner join sections s on pt.section_id = s.ID
@@ -583,6 +585,7 @@ class ServiceboyComponent extends Component{
 						$orderarray['coupon'] = $orderlist['coupon'];
                         $orderarray['ordertypetext'] =  Utility::orderTypeText($orderlist['ordertype']);
 						$orderarray['userprofilepic'] = !empty($orderlist['user_id']) ? Utility::user_image($orderlist['user_id']) : '';
+						$orderarray['decision_making'] = in_array($merchantdetails['cancel_decision'],$decisionCancelStatus) ? true : false;	
 
 						$sqlpendingamount = "select sum(totalamount) as pendingamount from order_transactions where order_id = '".$orderlist['ID']."' 
 						and merchant_id = '".$orderlist['merchant_id']."' and user_id = '".$orderlist['user_id']."' 
