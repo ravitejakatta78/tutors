@@ -71,7 +71,6 @@ class EnduserComponent extends Component {
 					 return $payload;
 	}
 	public function registration($val) {
-	    Yii::trace('=====reg====='.json_encode($val));
 		if(!empty($val['name']) && !empty($val['mobile'])){ 
 			$userarray = array();	
 			$sqlprevmerchnat = "select max(ID) as id from users";
@@ -183,7 +182,6 @@ class EnduserComponent extends Component {
 		return $payload;
 	}
     public function forgotpassword($val) {
-        Yii::trace("====forgot password======".json_encode($val));
 		$username = $val['username']; 
 		if(!empty($username)){ 
 			if (filter_var($username, FILTER_VALIDATE_EMAIL)) {
@@ -250,7 +248,6 @@ class EnduserComponent extends Component {
 	}
     public function forgotpasswordotp($val) 
 	{
-	    Yii::trace('=====forgetpasswordotp===val=='.json_encode($val));
 		if(!empty($val['usersid'])){
 		        $usersid =  trim($val['usersid']);
 				$userdetails = Users::findOne($usersid);
@@ -275,7 +272,6 @@ class EnduserComponent extends Component {
 	}
     public function updatepassword($val)
     {
-        Yii::trace("===updatepassword val =====".json_encode($val));
 		  if(!empty($val['usersid'])&&!empty($val['password'])){
 		  $customer_id =  trim($val['usersid']);
 		  $row = Users::findOne($customer_id);
