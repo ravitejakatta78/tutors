@@ -2803,13 +2803,10 @@ if ($model->load(Yii::$app->request->post()) ) {
 	$topSaleArr = ['selected' => $selected,'sdate'=>$date,'edate'=>$date,'chartType' => 1];
 	$topSaleChartDet = $this->topSaleChart($topSaleArr);
 
-         $sqlpilot = 'SELECT sb.name,count(o.ID) total_served_orders,
-                         sum(case when o.orderprocess = \'4\' then 1 else 0 end) completed_orders,
-                         sum(case when o.orderprocess = \'3\' then 1 else 0 end) rejected_order,sum(o.totalamount) totalamount 
-                         FROM orders o inner join serviceboy sb on o.serviceboy_id = sb.ID 
-                         where date(o.reg_date)
-                         and o.merchant_id = \''.$merchant_id.'\' group by sb.name LIMIT 5';
-                $pilotdet = Yii::$app->db->createCommand($sqlpilot)->queryAll();
+	$pilotOptionsArr = ['selected' => $selected,'sdate'=>$date,'edate'=>$date];
+	$pilotdet = $this->pilotSaleHistory($pilotOptionsArr);
+
+         
 
 	 $sqlTableDetails = 'select s.section_name as label
 	,sum(case when orderprocess = \'4\' then totalamount else 0 end) completedamount
@@ -2861,6 +2858,35 @@ if ($model->load(Yii::$app->request->post()) ) {
 		,'merchantRatingArray' => $merchantRatingArray,'topSaleChartDet' => $topSaleChartDet
 		, 'paymentArray' => json_encode($paymentArray)
 		]);
+	}
+
+	public function pilotSaleHistory($arr)
+	{
+		$yearStartDate = date('Y').'-01-01';
+		$arr['edate'] = isset($arr['edate']) ? $arr['edate'] : date('Y-m-d');
+
+		$sqlpilot = 'SELECT sb.name,count(o.ID) total_served_orders,
+		sum(case when o.orderprocess = \'4\' then 1 else 0 end) completed_orders,
+		sum(case when o.orderprocess = \'3\' then 1 else 0 end) rejected_order,sum(o.totalamount) totalamount 
+		FROM orders o inner join serviceboy sb on o.serviceboy_id = sb.ID 
+		where  o.merchant_id = \''.Yii::$app->user->identity->merchant_id.'\' and o.orderprocess != \'3\' ';
+		
+		
+		if($arr['selected'] == '1' || $arr['selected'] == '3'){
+			$sqlpilot .=' and date(o.reg_date) = \''.$arr['sdate'].'\'  ';
+			}
+			else if($arr['selected'] == '2'){
+				$sqlpilot .=' and date(o.reg_date) between \''.$yearStartDate.'\' and \''.date('Y-m-d').'\' ';
+			}
+			else if($arr['selected'] == '4'){
+				$sqlpilot .=' and date(o.reg_date) between \''.$arr['sdate'].'\' and \''.$arr['edate'].'\' ';
+			}
+
+			$sqlpilot .=' group by sb.name LIMIT 5';
+		$pilotdet = Yii::$app->db->createCommand($sqlpilot)->queryAll();
+		
+		return $pilotdet;
+
 	}
 	
 	public function actionAjaxsalechart(){

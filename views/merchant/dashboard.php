@@ -691,7 +691,7 @@ use yii\helpers\Url;
 
 
 
-    <section class="pt-0 pb-0">
+    <!-- <section class="pt-0 pb-0">
         <div class="col-lg-12">
             <div class="card">
 
@@ -744,22 +744,33 @@ use yii\helpers\Url;
         </div>
 
 
-    </section>
+    </section> -->
     <section class="pb-0 pt-0">
         <div class="col-lg-12">
             <div class="card">
 
-                <div class="card-header d-flex align-items-center pt-0 pb-0">
-                    <h3 class="h4 col-md-10 pl-0 tab-title">Pilot Report</h3>
-                    <div class="dropdown no-arrow col-md-2 float-right">
-                        <select class="form-control">
+                <!-- <div class="card-header d-flex align-items-center pt-0 pb-0">
+                    <h3 class="h4 col-md-2 pl-0 tab-title">Pilot Report</h3>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control datepicker9" id="datepicker11"
+                                                value="<?= date('Y-m-d'); ?>" style="display:none">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input type="text" class="form-control datepicker12" id="datepicker10"
+                                                value="<?= date('Y-m-d'); ?>" style="display:none">
+                                        </div>
+                    <div class=" col-md-2">
+                        <select class="form-control" id="select5">
                             <option value="1">Today</option>
-                            <option value="2">Week</option>
-                            <option value="3">Month</option>
-                            <option value="3">Customize</option>
+                            <option value="2">Month</option>
+                            <option value="3">Date</option>
+                            <option value="4">Date Range</option>
                         </select>
                     </div>
-                </div>
+                    <div class="col-md-1">
+                                            <button class="btn btn-primary" id="search4">Go</button>
+                                        </div>
+                </div> -->
                 <div class="card-body">
                     <table id="example" class="table table-striped table-bordered" style="border-radius: 4px 4px 0 0;">
                         <thead class="thead-light">
@@ -1026,6 +1037,25 @@ use yii\helpers\Url;
         var selected = $("#select4").val();
         var request = $.ajax({
             url: "ajax-total-sales-chart",
+            type: "POST",
+            data: {
+                sdate: date1,
+                edate: date2,
+                selected: selected
+            },
+        }).done(function(msg) {
+          totalSaleChart(msg);
+        });
+
+
+    });
+
+    $("#search4").click(function() {
+        var date1 = $("#datepicker10").val();
+        var date2 = $("#datepicker111").val();
+        var selected = $("#select5").val();
+        var request = $.ajax({
+            url: "ajax-pilot-sale-history",
             type: "POST",
             data: {
                 sdate: date1,
