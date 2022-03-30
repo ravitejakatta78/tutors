@@ -4,20 +4,37 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 ?>
 <style>
-.bar-5 {width: 100%; height: 18px; background-color: #04AA6D;  border-radius: 25px;}
-.bar-4 {width: 80%; height: 18px; background-color: #2196F3;border-radius: 25px;}
-.bar-3 {width: 60%; height: 18px; background-color: #00bcd4;border-radius: 25px;}
-.bar-2 {width: 40%; height: 18px; background-color: #ff9800;border-radius: 25px;}
-.bar-1 {width: 25%; height: 18px; background-color: #f44336;border-radius: 25px;}
-
-
-
-/* Place text to the right */
-.right {
-  text-align: right;
-}
-
-
+        .container {
+            background-color: rgb(192, 192, 192);
+            width: 80%;
+                border-radius: 15px;
+        }
+      
+        .skill {
+            background-color: rgb(116, 194, 92);
+            color: white;
+            padding: 1%;
+            text-align: right;
+            font-size: 20px;
+            border-radius: 15px;
+        }
+      
+        .bar-5 {
+            width: 100%;
+        }
+        .bar-4 {
+            width: 80%;
+        }
+        .bar-3 {
+            width: 60%;
+        }
+        .bar-2 {
+            width: 40%;
+        }
+        .bar-1 {
+            width: 20%;
+        }
+      
 
 /*.selection{min-width:200px !important;}
 
@@ -642,7 +659,7 @@ use yii\helpers\Url;
                         </div>
                         <div class="card-body">
                             <!--<div id="chart-rating"></div>-->
-                            <?php for($mr=0; $mr < count($merchantRatingArray); $mr++) { ?>
+                            <?php /* for($mr=0; $mr < count($merchantRatingArray); $mr++) { ?>
                             <div class="side">
                                 <div><?= $merchantRatingArray[$mr]['label']; ?></div>
                             </div>
@@ -654,7 +671,16 @@ use yii\helpers\Url;
                             <div class="side right">
                                 <div><?php echo round($merchantRatingArray[$mr]['value']) ?></div>
                             </div>
-                            <?php } ?>
+                            <?php } */ ?>
+                                <h1>My Skills</h1>
+                                <?php  for($mr=0; $mr < count($merchantRatingArray); $mr++) { ?>
+                                <p><?= $merchantRatingArray[$mr]['label']; ?></p>
+                                <div class="container">
+                                    <div class="skill bar-<?= round($merchantRatingArray[$mr]['value']) ?>"><?= round($merchantRatingArray[$mr]['value']) ?></div>
+                                </div>
+                                <?php } ?>
+                            
+
                         </div>
                     </div>
                 </div>
