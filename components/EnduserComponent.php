@@ -2411,7 +2411,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 						$orderarray['orderprocessstatus'] =  $orderlist['orderprocessstatus'];
 						$orderarray['rating'] = !empty($feedbackrating) ? number_format($feedbackrating['rating'],1) : '0';
 						$orderarray['pilot_rating'] = !empty($pilotFeedback['overAllRating']) ? number_format($pilotFeedback['overAllRating'],1) : '0'; 
-						$orderarray['orderdate'] =  date('d M Y',strtotime($orderlist['reg_date']));
+						$orderarray['orderdate'] =  date('d M Y h:i A',strtotime($orderlist['reg_date']));
 						$orderarray['enckey'] =  Utility::encrypt($orderlist['merchant_id'].','.$orderlist['tablename']); 
 						/* code for alert disapper in app */
 						if($orderlist['orderprocessstatus']=='1'){
@@ -2514,7 +2514,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 			$orderarray['tip'] = $orderlist['tips'];
 			$orderarray['subscription'] = $orderlist['subscription'];
 			$orderarray['instructions'] = $orderlist['instructions'] ?? "";
-			$orderarray['order_date'] = date('Y-m-d',strtotime($orderlist['reg_date']));
+			$orderarray['order_date'] = date('Y-m-d h:i A',strtotime($orderlist['reg_date']));
 
 			$feedbackrating = $this->getMerchantRating($orderlist['merchant_id']);
 			$pilotFeedback = Yii::$app->serviceboy->pilotFeedback(['header_user_id' => $orderlist['serviceboy_id'], 'order_id' => $orderlist['ID']]);
