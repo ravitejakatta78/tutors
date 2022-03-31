@@ -1,12 +1,16 @@
-
 <?php
 use app\helpers\Utility;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use app\models\Merchant;
 use aryelds\sweetalert\SweetAlert;
+
 $actionId = Yii::$app->controller->action->id;
 $paytypearray = \app\helpers\MyConst::PAYMENT_METHODS;
+$merchantdetails = Merchant::findOne(Yii::$app->user->identity->merchant_id);
+$decisionCancelStatus = ['1','3'];
+
 ?>
 <style>
 .fixed {position:fixed; top:0;right: 15px;width: 245px;}
@@ -141,7 +145,9 @@ $parcelCount = (array_values(array_filter(array_column($parcelDetails,'orderproc
 				<div class="text-center mt-1">
 				<button class="placeorder btn" onclick="statusPopUp('<?= $tableDetails[$i]['ID'] ;?>')">Complete</button>
 		<!--		<button class="btn btn-danger btn-xs placeordercnl" onclick="tableorderstatuschange('<?= $tableDetails[$i]['ID'] ;?>','<?= $tableDetails[$i]['tableId'] ;?>','<?= $tableDetails[$i]['orderprocess'] ;?>')">Cancelled</button> -->
-				<button class="btn btn-danger btn-xs placeordercnl" onclick="cancelreject('<?= $tableDetails[$i]['ID'] ;?>','<?= $tableDetails[$i]['tableId'] ;?>')">Cancel</button>
+		<?php if(in_array($merchantdetails['cancel_decision'],$decisionCancelStatus)) { ?>
+					<button class="btn btn-danger btn-xs placeordercnl" onclick="cancelreject('<?= $tableDetails[$i]['ID'] ;?>','<?= $tableDetails[$i]['tableId'] ;?>')">Cancel</button>
+				<?php } ?>
 				</div>
 			</div>
 				</div>
