@@ -165,23 +165,31 @@ use yii\helpers\Url;
 </style>
 <!-- Page Header-->
 <header class="page-header">
+<?php 
+                                $merchantOverAllRating = 0;
+                                if(!empty($merchantRatingArray)){
+                                    $merchantIndividualRating = array_column($merchantRatingArray,'value');
+                                    $merchantOverAllRating = ceil(array_sum($merchantIndividualRating)/count($merchantIndividualRating));
+                                }
+                                
+                            ?>
     <div class="container-fluid col-md-12">
         <div class="row">
             <h2 class="no-margin-bottom float-left col-md-4">Dashboard</h2>
-            <div class="col-md-6 text-right">
-                <span>User Rating:</span>
-                <span class="fa fa-star checked"></span>
-                <span class="fa fa-star checked"></span>
-                <span class="fa fa-star checked"></span>
-                <span class="fa fa-star"></span>
-                <span class="fa fa-star"></span>
+            <div class="col-md-8 text-right">
+                <span>Rating:</span>
+                <span class="fa fa-star <?php if($merchantOverAllRating >= 1) { ?>checked <?php } ?>"></span>
+                <span class="fa fa-star <?php if($merchantOverAllRating >= 2) { ?>checked <?php } ?>"></span>
+                <span class="fa fa-star <?php if($merchantOverAllRating >= 3) { ?>checked <?php } ?>"></span>
+                <span class="fa fa-star <?php if($merchantOverAllRating >= 4) { ?>checked <?php } ?>"></span>
+                <span class="fa fa-star <?php if($merchantOverAllRating >= 5) { ?>checked <?php } ?>"></span>
             </div>
 
-            <div class="float-right col-md-2">
+            <!--<div class="float-right col-md-2">
                 <select class="form-control">
                     <option>Select</option>
                 </select>
-            </div>
+            </div> -->
         </div>
     </div>
     <div class="clearfix"></div>
@@ -654,33 +662,19 @@ use yii\helpers\Url;
                 <div class="col-md-12 pl-0 pr-0">
                     <div class="card">
                         <div class="card-header d-flex">
-                            <h3 class="col-md-12">Restaurant Rating</h3>
+                            
+                            <h3 class="col-md-12">Restaurant Rating 
+                               
+                            </h3>
 
                         </div>
                         <div class="card-body">
-                            <!--<div id="chart-rating"></div>-->
-                            <?php /* for($mr=0; $mr < count($merchantRatingArray); $mr++) { ?>
-                            <div class="side">
-                                <div><?= $merchantRatingArray[$mr]['label']; ?></div>
-                            </div>
-                            <div class="middle">
-                                <div class="bar-container">
-                                <div class="bar-<?php echo round($merchantRatingArray[$mr]['value']) ?>"></div>
-                                </div>
-                            </div>
-                            <div class="side right">
-                                <div><?php echo round($merchantRatingArray[$mr]['value']) ?></div>
-                            </div>
-                            <?php } */ ?>
-                                <h1>My Skills</h1>
                                 <?php  for($mr=0; $mr < count($merchantRatingArray); $mr++) { ?>
                                 <p><?= $merchantRatingArray[$mr]['label']; ?></p>
                                 <div class="container">
                                     <div class="skill bar-<?= round($merchantRatingArray[$mr]['value']) ?>"><?= round($merchantRatingArray[$mr]['value']) ?></div>
                                 </div>
                                 <?php } ?>
-                            
-
                         </div>
                     </div>
                 </div>
