@@ -642,7 +642,7 @@ use yii\helpers\Url;
                 <div class="col-md-12 pl-0 pr-0">
                     <div class="card">
                         <div class="card-header d-flex">
-                            <h3 class="col-md-12">Customer Retension Rate</h3>
+                            <h3 class="col-md-12">Payment Method Sales</h3>
 
                         </div>
                         <div class="card-body">
