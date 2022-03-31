@@ -334,11 +334,12 @@ class EnduserComponent extends Component {
             $row = Feedback::find()
                 ->where(['order_id'=>$val['orderid']])
                 ->asArray()->One();
+			$orderDet = Orders::findOne($val['orderid']);	
             if(empty($row)){
 						$userarray = $userwherearray = array();
 						$userarray['user_id'] = $val['header_user_id'];
 						$userarray['order_id'] = trim($val['orderid']);
-                        $userarray['pilot_id'] = trim($row['serviceboy_id']);
+                        $userarray['pilot_id'] = trim($orderDet['serviceboy_id']);
 						$userarray['merchant_id'] = trim($val['merchantId']);
 						$userarray['message'] =  !empty($val['message']) ? trim($val['message']) : '';
 						$userarray['reg_date'] = date('Y-m-d h:i:s');
