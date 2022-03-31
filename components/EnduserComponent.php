@@ -109,7 +109,7 @@ class EnduserComponent extends Component {
 						$result->save();
 						if($result->save()){
 						$message = "Hi ".$userarray['name']." ".$userarray['otp']." is your otp for verification.";
-						 Utility::otp_sms($userarray['mobile'],$message);
+						 Utility::otp_sms($userarray['mobile'],$message,$userarray['otp']);
 							/*$sqluserdetails = "select ID from users where unique_id = '".$userarray['unique_id']."'"; 
 							$userdetails = Yii::$app->db->createCommand($sqluserdetails)->queryOne();*/
 							$userdetails = Users::find()->where(['unique_id' => $userarray['unique_id']])->asArray()->One();
@@ -119,7 +119,7 @@ class EnduserComponent extends Component {
 						} 
 					}else{
 						$message = "Hi ".$userarray['name']." ".$userarray['otp']." is your otp for verification.";
-						 Utility::otp_sms($userarray['mobile'],$message);
+						 Utility::otp_sms($userarray['mobile'],$message,$userarray['otp']);
 							/*$sqluserdetails = "select ID from users where unique_id = '".$alreadyid['unique_id']."'";
 							$userdetails = Yii::$app->db->createCommand($sqluserdetails)->queryOne();*/
 							$userdetails = Users::find()->where(['unique_id' => $alreadyid['unique_id']])->asArray()->One();
@@ -169,7 +169,7 @@ class EnduserComponent extends Component {
 			$userdetails = Users::findOne($usersid);
 			if(!empty($userdetails['ID'])){ 
 							$message = "Hi ".$userdetails['name']." ".$userdetails['otp']." is your otp for verification.";
-							Utility::otp_sms($userdetails['mobile'],$message);
+							Utility::otp_sms($userdetails['mobile'],$message,$userdetails['otp']);
 							$payload = array("status"=>'1',"text"=>"OTP Sent Successfully"); 
 			}else{
 					
@@ -222,9 +222,8 @@ class EnduserComponent extends Component {
 						$email = $row['email'];
 						$result = mail($email,$subject,$emailmessage,$headers);
 						if($result){
-						            Yii::trace("====forgot password======".$userarray['otp']);
 							$message = "Hi ".$row['name']." ".$userarray['otp']." is your otp for Forgot password.";
-							Utility::otp_sms($row['mobile'],$message);
+							Utility::otp_sms($row['mobile'],$message,$userarray['otp']);
 						 
 						
 						$payload = array("status"=>'1',"usersid"=>$row['ID'],"text"=>"OTP Sent successfully");
@@ -2838,16 +2837,14 @@ order by remain_coins desc limit '.$val['userCount'] ;
 			return $payload;
 	}
 	public function verifymobile($val) {
-        Yii::trace("====forgot password======".json_encode($val));
 		$mobilenumber = $val['mobilenumber']; 
 		if(!empty($mobilenumber)){
 					$alreadyid = Users::find()->where(['mobile'=>$mobilenumber])->asArray()->One();
 					if(empty($alreadyid)){
 		    
 					$otp = rand(1111,9999);
-			            Yii::trace("====Registration ====mobile number =====".$mobilenumber."=====".$otp);
 						$message = "Hi ".$otp." is OTP for your Registration.";
-						Utility::otp_sms($mobilenumber,$message);
+						Utility::otp_sms($mobilenumber,$message,$otp);
 						$otpModel = new SequenceMaster;
 						$otpModel->seq_name = $mobilenumber;
 						$otpModel->seq_number = $otp;
