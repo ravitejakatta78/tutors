@@ -2470,6 +2470,8 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 		$orderlist = Orders::findOne($orderid);
 		if(!empty($orderlist)){
 			$merchantdetails = Merchant::findOne($orderlist['merchant_id']);
+            $merchantFeedBackDetail = MerchantFeedback::find()->where(['merchant_id' => $orderlist['merchant_id']
+                ,'user_id' => $orderlist['user_id'], 'order_id' => $orderlist['ID'] ])->asArray()->One();
 			$orderarray = $totalordersarray = array(); 
 			$totalproductaarray = array();
 			$minutes = $orderlist['preparetime'];
@@ -2517,7 +2519,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 			
 			$orderarray['rating'] = !empty($feedbackrating) ? number_format($feedbackrating['rating'],1) : '0';
 			$orderarray['pilot_rating'] = !empty($pilotFeedback['overAllRating']) ? number_format($pilotFeedback['overAllRating'],1) : '0';
-			
+			$orderarray['user_rating'] = !empty($merchantFeedBackDetail) ? false : true;
 			$orderproducts = OrderProducts::find()
 				->where(['order_id'=>$orderlist['ID'], 'merchant_id'=>$orderlist['merchant_id'], 'user_id'=>$orderlist['user_id']])
 				->asArray()->All();
@@ -3393,7 +3395,7 @@ order by remain_coins desc limit '.$val['userCount'] ;
             }
 
 
-            $payload = ['status' => '1', 'message' => 'Feedback Added Successfully'];
+            $payload = ['status' => '1', 'text' => 'Feedback Added Successfully'];
         }
         else{
             $payload = ['status' => '0', 'message' => 'User has already provided the feedback'];
