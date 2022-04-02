@@ -843,7 +843,6 @@ use yii\helpers\Url;
   dataFormat: "json",
   dataSource: {
     chart: {
-      caption: "Payment Method Sales",
       yaxisname: "Total Sale",
       aligncaptionwithcanvas: "0",
       plottooltext: "₹ <b>$dataValue</b>  received",
