@@ -3364,11 +3364,12 @@ order by remain_coins desc limit '.$val['userCount'] ;
 	public function addMerchantRating($val)
     {
         $merchantFeedBackDetail = MerchantFeedback::find()->where(['merchant_id' => $val['merchantId']
-            ,'user_id' => $val['header_user_id'] ])->asArray()->One();
+            ,'user_id' => $val['header_user_id'], 'order_id' => $val['orderid'] ])->asArray()->One();
         if(empty($merchantFeedBackDetail)) {
             $model = new MerchantFeedback;
             $model->merchant_id = $val['merchantId'];
             $model->user_id = $val['header_user_id'];
+            $model->order_id = $val['orderid'];
             $model->feedback = !empty($val['message']) ? $val['message'] : null;
             $model->reg_date = date('Y-m-d H:i:s');
             $model->save();

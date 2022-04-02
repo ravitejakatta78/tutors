@@ -11,6 +11,7 @@ use Yii;
  * @property int $merchant_id
  * @property string|null $feedback
  * @property int $user_id
+ * @property int $order_id
  * @property string $reg_date
  */
 class MerchantFeedback extends \yii\db\ActiveRecord
@@ -30,7 +31,7 @@ class MerchantFeedback extends \yii\db\ActiveRecord
     {
         return [
             [['merchant_id', 'user_id'], 'required'],
-            [['merchant_id', 'user_id'], 'integer'],
+            [['merchant_id', 'user_id', 'order_id'], 'integer'],
             [['feedback'], 'string'],
             [['reg_date'], 'safe'],
         ];
@@ -46,6 +47,7 @@ class MerchantFeedback extends \yii\db\ActiveRecord
             'merchant_id' => 'Merchant ID',
             'feedback' => 'Feedback',
             'user_id' => 'User ID',
+            'order_id' => 'Order ID',
             'reg_date' => 'Reg Date',
         ];
     }
