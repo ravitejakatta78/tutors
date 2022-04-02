@@ -400,7 +400,7 @@ use yii\helpers\Url;
                         <div class="card-header">
                             <div class="row p-0">
                                 <div class="col-md-2">
-                                    <h3 class="h4 pl-0 tab-title">Sale Report</h3>
+                                    <h3 class="h4 pl-0 tab-title">Sale Revenue</h3>
                                 </div>
                                 <div class="col-md-10">
                                     <div class="row p-0">
@@ -446,7 +446,7 @@ use yii\helpers\Url;
                 <div class="col-md-12 pl-0 pr-0">
                     <div class="card">
                         <div class="card-header d-flex">
-                            <h3 class="col-md-2">Sales Report</h3>
+                            <h3 class="col-md-2">Sales Orders</h3>
                             <div class="col-md-10">
                                 <div class="row p-0">
                                     <div class="col-md-4">
@@ -1073,7 +1073,7 @@ use yii\helpers\Url;
             dataFormat: "json",
             dataSource: {
                 chart: {
-                    caption: "Sales Report (Completed , Cancelled Orders)",
+                    caption: "Sales Orders (Completed , Cancelled Orders)",
                     xaxisname: "Date",
                     yaxisname: "Orders",
                     formatnumberscale: "1",
