@@ -2496,7 +2496,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 			$orderarray['totalamount'] =  $orderlist['amount'];
 			$orderarray['couponamount'] = !empty($orderlist['couponamount']) ? (string)trim($orderlist['couponamount']) : '0';
 		
-			$orderarray['paymenttype'] =  !empty($orderlist['paymenttype'])  ? MyConst::PAYMENT_METHODS[$orderlist['paymenttype']] : '';
+			$orderarray['paymenttype'] =  !empty($orderlist['paymenttype'])  ? (MyConst::PAYMENT_METHODS[$orderlist['paymenttype']] ?? "")  : "";
 			$orderarray['orderprocesstext'] =  Utility::orderstatus_details($orderlist['orderprocess'],$orderlist['preparetime'],$orderlist['preparedate']);
 			$orderarray['orderprocess'] = $orderlist['orderprocess'];
 			$orderarray['ordertype'] =  Utility::orderTypeText($orderlist['ordertype']);
