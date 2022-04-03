@@ -772,9 +772,9 @@ return $contents;
 	public static function orderTypeText($val)
 	{
 		if($val == '1' || $val == '3') {
-			$orderType = 'Online';
+			$orderType = 'Online Order';
 		}else{
-			$orderType = 'Offline';
+			$orderType = 'Offline Order';
 		}
 
 		return $orderType;
