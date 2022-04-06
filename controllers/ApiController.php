@@ -580,9 +580,9 @@ return  $this->asJson($payload);
 	public function login($val){
 	    
 	  if(!empty($val['mobilenumber'])){
-	       $sqlalreadyid = "SELECT * FROM users WHERE mobile = '".$val['mobilenumber']."'";
-					$alreadyid = Yii::$app->db->createCommand($sqlalreadyid)->queryOne();
-					if(!empty($alreadyid)){
+	      // $sqlalreadyid = "SELECT * FROM users WHERE mobile = '".$val['mobilenumber']."'";
+				//	$alreadyid = Yii::$app->db->createCommand($sqlalreadyid)->queryOne();
+					//if(!empty($alreadyid)){
 	    				$mobilenumber = $val['mobilenumber']; 
 	      				$otp = rand(1111,9999);
 						$message = "Hi ".$otp." is OTP for your Registration.";
@@ -594,10 +594,10 @@ return  $this->asJson($payload);
 						$otpModel->reg_date = date('Y-m-d H:i:s');
 						$otpModel->save();
 						$payload = array("status"=>'1',"text"=>"OTP Sent successfully");
-	        }
-	        else{
-	 	        $payload = array("status"=>'0',"text"=>"Please Sign Up");
-	        }
+	        //}
+//	        else{
+//	 	        $payload = array("status"=>'0',"text"=>"Please Sign Up");
+//	        }
 		}else{
 	 	$payload = array("status"=>'0',"text"=>"Please enter the mobile number");
 	  }
