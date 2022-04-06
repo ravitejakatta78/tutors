@@ -267,6 +267,7 @@ public function beforeAction($action)
                     break;
                 case 'get-user-name':
                     $payload = Yii::$app->enduser->getUserName($_REQUEST);
+                    return $this->asJson($payload);
                     break;
 
 			}
