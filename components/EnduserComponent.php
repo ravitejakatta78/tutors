@@ -2515,11 +2515,14 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 			$orderarray['order_date'] = date('Y-m-d h:i A',strtotime($orderlist['reg_date']));
 
 			$feedbackrating = $this->getMerchantRating($orderlist['merchant_id']);
-			$pilotFeedback = Yii::$app->serviceboy->pilotFeedback(['header_user_id' => $orderlist['serviceboy_id'], 'order_id' => $orderlist['ID']]);
-			
+			$pilotOrderFeedback = Yii::$app->serviceboy->pilotFeedback(['header_user_id' => $orderlist['serviceboy_id'], 'order_id' => $orderlist['ID']]);
+            $pilotFeedback = Yii::$app->serviceboy->pilotFeedback(['header_user_id' => $orderlist['serviceboy_id']]);
+
 			$orderarray['rating'] = !empty($feedbackrating) ? number_format($feedbackrating['rating'],1) : '0';
 			$orderarray['pilot_rating'] = !empty($pilotFeedback['overAllRating']) ? number_format($pilotFeedback['overAllRating'],1) : '0';
-			$orderarray['user_rating'] = !empty($merchantFeedBackDetail) ? false : true;
+            $orderarray['pilot_order_rating'] = !empty($pilotOrderFeedback['overAllRating']) ? number_format($pilotOrderFeedback['overAllRating'],1) : '0';
+
+            $orderarray['user_rating'] = !empty($merchantFeedBackDetail) ? false : true;
 			$orderproducts = OrderProducts::find()
 				->where(['order_id'=>$orderlist['ID'], 'merchant_id'=>$orderlist['merchant_id'], 'user_id'=>$orderlist['user_id']])
 				->asArray()->All();
