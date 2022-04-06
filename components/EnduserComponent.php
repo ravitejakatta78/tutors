@@ -792,7 +792,7 @@ class EnduserComponent extends Component {
 							$feedbackFactorRating[$f]['factor_name'] = \app\models\MerchantAmbianceRating::FACTORS[$feedbackFactorRating[$f]['ambiance_id']]; 
 						}
 						 $merchants['factor_rating'] = !empty($feedbackFactorRating) ? $feedbackFactorRating  : null;
-                         $merchants['star_rating'] = ['1' => 2.1,'2' => 30,'3' => 40,'4' => 50,'5' => 60  ];
+                         $merchants['star_rating'] = ['1' => 30,'2' => 30,'3' => 40,'4' => 50,'5' => 60,'total' =>  210 ];
 
                          $payload = ["status"=>'1', "merchant"=>$merchants, 'merchantInfo' => $merchantInfo
                                 , 'amenityArray' => $amenityArray];
