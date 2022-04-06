@@ -3412,5 +3412,18 @@ order by remain_coins desc limit '.$val['userCount'] ;
 
 		return $feedbackrating;
 	}
+
+    public function getUserName($val)
+    {
+        $userDetails = Users::find()->where(['mobile' => $val['mobilenumber']])->asArray()->One();
+        if(!empty($userDetails)){
+            $payload = ['name' => $userDetails['name'], 'status' => 1];
+        }
+        else{
+            $payload = ['name' => "", 'status' => 1];
+        }
+
+        return $payload;
+    }
 }
 ?>

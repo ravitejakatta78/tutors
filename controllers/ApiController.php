@@ -265,6 +265,9 @@ public function beforeAction($action)
                 case 'get-merchant-factors':
                     $this->getMerchantFactors($_REQUEST);
                     break;
+                case 'get-user-name':
+                    $this->getUserName($_REQUEST);
+                    break;
 
 			}
 		}
@@ -1442,6 +1445,19 @@ cos((latitude*pi()/180)) * cos(((".$longitude."- longitude)* pi()/180))))*180/pi
         if(!empty($usersid)){
             $val['header_user_id'] = $usersid;
             $payload = Yii::$app->enduser->addMerchantRating($val);
+        }else{
+            $payload = array('status'=>'0','message'=>'Invalid users details');
+        }
+        return $this->asJson($payload);
+    }
+
+    public function getUserName($val)
+    {
+        $headerslist = apache_request_headers();
+        $usersid = base64_decode($headerslist['Authorization']);
+        if(!empty($usersid)){
+            $val['header_user_id'] = $usersid;
+            $payload = Yii::$app->enduser->getUserName($val);
         }else{
             $payload = array('status'=>'0','message'=>'Invalid users details');
         }
