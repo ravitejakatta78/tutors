@@ -667,6 +667,7 @@ return  $this->asJson($payload);
                                 $merchants['approx_cost'] =  $merchantsdata['approx_cost'];
 
                                 $merchants['factor_rating'] = !empty($feedbackFactorRating) ? $feedbackFactorRating  : null;
+                                $merchants['star_rating'] = ['1' => 30,'2' => 30,'3' => 40,'4' => 50,'5' => 60,'total' =>  210 ];
 
 
                             if($merchants['popularity'] == '1' || $merchants['popularity'] == '3'){
