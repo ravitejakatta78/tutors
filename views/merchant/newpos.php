@@ -777,13 +777,13 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
 
 
 <!--Cancel  Modal -->
-<div id="myModalCanc" class="modal fade" role="dialog">
+<div id="myModalCanc" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog">
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title">Cancel</h4>
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <button type="button" class="close" onclick="refreshorder()">&times;</button>
       </div>
 
       <div class="modal-body">
@@ -825,13 +825,13 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
 
 
 <!--OTP less qty  Modal -->
-<div id="myModalLess" class="modal fade" role="dialog">
+<div id="myModalLess" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog">
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title">Confirm OTP</h4>
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <button type="button" class="close" onclick="refreshorder()" >&times;</button>
       </div>
 
       <div class="modal-body">
@@ -1145,7 +1145,18 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
         .removeClass('active'); //remove the class from the found button
     });
 
+
+
+
+
+
   });
+
+  window.onload = function () {
+      document.onkeydown = function (e) {
+          return (e.which || e.keyCode) != 116;
+      };
+  }
 
   $("#pilotselection").change(function() {
     $("#pilotid").val(this.value);
@@ -2014,7 +2025,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
           var cancelotp = $("#cancelotp").val();
           var cancel_with_otp_val = '<?= $merchant_det['cancel_with_otp']; ?>';
 
-          if(cancelotp != hiddencancelotp && cancel_with_otp_val == 1){
+          if(cancelotp != hiddencancelotp && cancel_with_otp_val == 1 && cancelotp != null){
             swal(
                 'Warning!',
                 'Please Provide A Valid OTP',
@@ -2067,4 +2078,10 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
       }
   });
 
+  function refreshorder() {
+      var current_order_id = '<?= $current_order_id; ?>';
+      var tableid = '<?= $tableid ?>';
+      var tableName = '<?= $tableName ?>';
+      window.location.replace("newpos?tableid=" + tableid + "&tableName=" + tableName + "&current_order_id=" + current_order_id);
+  }
 </script>
