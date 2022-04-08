@@ -792,7 +792,14 @@ class EnduserComponent extends Component {
 							$feedbackFactorRating[$f]['factor_name'] = \app\models\MerchantAmbianceRating::FACTORS[$feedbackFactorRating[$f]['ambiance_id']]; 
 						}
 						 $merchants['factor_rating'] = !empty($feedbackFactorRating) ? $feedbackFactorRating  : null;
-                         $merchants['star_rating'] = ['1' => 30,'2' => 30,'3' => 40,'4' => 50,'5' => 60,'total' =>  210 ];
+                         $starRating = Yii::$app->merchant->merchantStarRating(['merchantId' =>$merchantid]);
+                        $merchants['star_rating'] = [
+                            '1' => !empty($starRating['1']) ? $starRating['1']   : 0
+                            ,'2' => !empty($starRating['2']) ? $starRating['2']  : 0
+                            ,'3' => !empty($starRating['3']) ? $starRating['3']  : 0
+                            ,'4' => !empty($starRating['4']) ? $starRating['4'] : 0
+                            ,'5' => !empty($starRating['5']) ? $starRating['5'] : 0
+                            ,'total' =>  !empty($starRating['total_ratings']) ? $starRating['total_ratings'] : 0 ];
 
                          $payload = ["status"=>'1', "merchant"=>$merchants, 'merchantInfo' => $merchantInfo
                                 , 'amenityArray' => $amenityArray];

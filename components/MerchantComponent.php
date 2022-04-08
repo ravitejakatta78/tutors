@@ -670,5 +670,23 @@ class MerchantComponent extends Component{
 		}
 		return $payload;
 	}
+
+    public function merchantStarRating($val)
+    {
+        $sql = "
+            select 
+            sum(case when rating = 5 then 1 else 0 end) as '5',
+sum(case when rating = 4 then 1 else 0 end) as '4',
+sum(case when rating = 3 then 1 else 0 end) as '3',
+sum(case when rating = 2 then 1 else 0 end) as '2',
+sum(case when rating = 1 then 1 else 0 end) as '1',
+count(ID) total_ratings from (
+select mf.ID,ceil(avg(rating)) as rating from merchant_feedback mf
+		inner join merchant_ambiance_rating mar on mf.ID = mar.merchant_feedback_id
+		where mf.merchant_id =  '" . $val['merchantId'] . "' group by mf.ID
+		) A";
+$res = Yii::$app->db->createCommand($sql)->queryOne();
+return $res;
+    }
 }
 ?>
