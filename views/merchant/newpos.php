@@ -1578,7 +1578,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
         'warning'
       );
       return false;
-    } else if (prevAmount > ttl_sub_amt && cancel_with_otp_val == 1) {
+    } else if (parseFloat(prevAmount) > parseFloat(ttl_sub_amt) && cancel_with_otp_val == 1 && parseFloat(prevAmount) != parseFloat(ttl_sub_amt)) {
       var sent_otp = Math.floor(1000 + Math.random() * 9000);
       var request = $.ajax({
       url: "sendlessotp",
