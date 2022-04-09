@@ -2369,8 +2369,9 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 						$merchantdetails = Merchant::findOne($orderlist['merchant_id']);
 
 						$feedbackrating = $this->getMerchantRating($merchantdetails['ID']);
-						$pilotFeedback = Yii::$app->serviceboy->pilotFeedback(['header_user_id' => $orderlist['serviceboy_id'], 'order_id' => $orderlist['ID']]);
-						
+						$pilotFeedback = Yii::$app->serviceboy->pilotFeedback(['header_user_id' => $orderlist['serviceboy_id']]);
+                        $pilotOrderFeedback = Yii::$app->serviceboy->pilotFeedback(['header_user_id' => $orderlist['serviceboy_id'], 'order_id' => $orderlist['ID']]);
+
 						
 						$totalproductaarray = array();
 						$orderarray['order_id'] =  $orderlist['ID'];
@@ -2413,8 +2414,10 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 						$orderarray['orderprocesstext'] =  Utility::orderstatus_details($orderlist['orderprocess'],$orderlist['preparetime'],$orderlist['preparedate']);
 						$orderarray['orderprocessstatus'] =  $orderlist['orderprocessstatus'];
 						$orderarray['rating'] = !empty($feedbackrating) ? number_format($feedbackrating['rating'],1) : '0';
-						$orderarray['pilot_rating'] = !empty($pilotFeedback['overAllRating']) ? number_format($pilotFeedback['overAllRating'],1) : '0'; 
-						$orderarray['orderdate'] =  date('d M Y h:i A',strtotime($orderlist['reg_date']));
+						$orderarray['pilot_rating'] = !empty($pilotFeedback['overAllRating']) ? number_format($pilotFeedback['overAllRating'],1) : '0';
+                        $orderarray['pilot_order_rating'] = !empty($pilotOrderFeedback['overAllRating']) ? number_format($pilotOrderFeedback['overAllRating'],1) : '0';
+
+                        $orderarray['orderdate'] =  date('d M Y h:i A',strtotime($orderlist['reg_date']));
 						$orderarray['enckey'] =  Utility::encrypt($orderlist['merchant_id'].','.$orderlist['tablename']); 
 						/* code for alert disapper in app */
 						if($orderlist['orderprocessstatus']=='1'){
