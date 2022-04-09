@@ -669,12 +669,12 @@ return  $this->asJson($payload);
                                 $merchants['factor_rating'] = !empty($feedbackFactorRating) ? $feedbackFactorRating  : null;
                                 $starRating = Yii::$app->merchant->merchantStarRating(['merchantId' => $merchantsdata['ID']]);
                                 $merchants['star_rating'] = [
-                                    '1' => !empty($starRating['1']) ? $starRating['1']   : 0
-                                    ,'2' => !empty($starRating['2']) ? $starRating['2']  : 0
-                                    ,'3' => !empty($starRating['3']) ? $starRating['3']  : 0
-                                    ,'4' => !empty($starRating['4']) ? $starRating['4'] : 0
-                                    ,'5' => !empty($starRating['5']) ? $starRating['5'] : 0
-                                    ,'total' =>  !empty($starRating['total_ratings']) ? $starRating['total_ratings'] : 0 ];
+                                    '1' => !empty($starRating['1']) ? (int)$starRating['1']   : 0
+                                    ,'2' => !empty($starRating['2']) ? (int)$starRating['2']  : 0
+                                    ,'3' => !empty($starRating['3']) ? (int)$starRating['3']  : 0
+                                    ,'4' => !empty($starRating['4']) ? (int)$starRating['4'] : 0
+                                    ,'5' => !empty($starRating['5']) ? (int)$starRating['5'] : 0
+                                    ,'total' =>  !empty($starRating['total_ratings']) ? (int)$starRating['total_ratings'] : 0 ];
 
 
                             if($merchants['popularity'] == '1' || $merchants['popularity'] == '3'){
