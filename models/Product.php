@@ -45,7 +45,7 @@ class Product extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['merchant_id', 'title', 'availabilty', 'status', 'reg_date'], 'required'],
+            [['merchant_id', 'title', 'availabilty', 'status', 'reg_date', 'unique_id'], 'required'],
             [['title', 'slug', 'labeltag', 'serveline', 'price', 'saleprice', 'image', 'availabilty', 'status'], 'string'],
             [['foodtype', 'food_category_quantity', 'upselling','item_type','today_special', 'taste_range'], 'integer'],
             [['mod_date'], 'safe'],
@@ -66,8 +66,8 @@ class Product extends \yii\db\ActiveRecord
         return [
             'ID' => 'ID',
             'merchant_id' => 'Merchant ID',
-            'unique_id' => 'Unique ID',
-            'title' => 'Title',
+            'unique_id' => 'Item Code',
+            'title' => 'Item Name',
             'slug' => 'Slug',
             'labeltag' => 'Labeltag',
             'serveline' => 'Serveline',
@@ -94,11 +94,11 @@ class Product extends \yii\db\ActiveRecord
         $validateCompleteArray = [];
         $oldProductDet = Product::find()->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])->asArray()->all();
         foreach($oldProductDet as $product){
-            $validateArray['newTitle'] = $product['title'] .'-'.$product['food_category_quantity'];
+            $validateArray['newTitle'] = strtoupper($product['title']) .'-'.$product['food_category_quantity'];
             $validateCompleteArray[] = $validateArray['newTitle'];
         }
 
-        if(in_array($this->$attribute.'-'.$this->food_category_quantity , $validateCompleteArray)){
+        if(in_array(strtoupper($this->$attribute).'-'.$this->food_category_quantity , $validateCompleteArray)){
             $this->addError($attribute, 'Name Combination has already taken');
         }
     }
@@ -111,12 +111,12 @@ class Product extends \yii\db\ActiveRecord
         if(isset($oldDet) && @$oldDet[$attribute].'-'.@$oldDet['food_category_quantity'] != $this->$attribute.'-'.$this->food_category_quantity) {
             $oldProductDet = Product::find()->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])->asArray()->all();
             foreach($oldProductDet as $product){
-                $validateArray['newTitle'] = $product['title'] .'-'.$product['food_category_quantity'];
+                $validateArray['newTitle'] = strtoupper($product['title']) .'-'.$product['food_category_quantity'];
                 $validateCompleteArray[] = $validateArray['newTitle'];
             }
         }
 
-        if(in_array($this->$attribute.'-'.$this->food_category_quantity , $validateCompleteArray)){
+        if(in_array(strtoupper($this->$attribute).'-'.$this->food_category_quantity , $validateCompleteArray)){
             $this->addError($attribute, 'Name Combination has already taken');
         }
 
