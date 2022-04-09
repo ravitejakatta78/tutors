@@ -2479,7 +2479,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 			$merchantdetails = Merchant::findOne($orderlist['merchant_id']);
             $merchantFeedBackDetail = MerchantFeedback::find()->where(['merchant_id' => $orderlist['merchant_id']
                 ,'user_id' => $orderlist['user_id'], 'order_id' => $orderlist['ID'] ])->asArray()->One();
-			$orderarray = $totalordersarray = array(); 
+			$orderarray = $totalordersarray = array();
 			$totalproductaarray = array();
 			$minutes = $orderlist['preparetime'];
 			if(!empty($orderlist['preparetime']) && $orderlist['preparetime'] > '0'  && !empty($orderlist['preparedate'])){
@@ -2529,7 +2529,7 @@ select foodtype,case when foodtype = \'0\' then \'All\'  else fc.food_category e
 			$orderarray['pilot_rating'] = !empty($pilotFeedback['overAllRating']) ? number_format($pilotFeedback['overAllRating'],1) : '0';
             $orderarray['pilot_order_rating'] = !empty($pilotOrderFeedback['overAllRating']) ? number_format($pilotOrderFeedback['overAllRating'],1) : '0';
 
-            $orderarray['user_rating'] = !empty($merchantFeedBackDetail) ? false : true;
+            $orderarray['user_rating'] = ($merchantFeedBackDetail == null) ? false : true;
 			$orderproducts = OrderProducts::find()
 				->where(['order_id'=>$orderlist['ID'], 'merchant_id'=>$orderlist['merchant_id'], 'user_id'=>$orderlist['user_id']])
 				->asArray()->All();
