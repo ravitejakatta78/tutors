@@ -16,7 +16,7 @@ class Utility{
 	$foodCatFullDet = FoodCategeries::allcategeries();
 	$foodCatDet = array_column($foodCatFullDet,'food_category','ID');
 	
-	return $foodCatDet[$status];
+	return @$foodCatDet[$status];
     }
     public static function sectiontype_value($section_id)
     { 

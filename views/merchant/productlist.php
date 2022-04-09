@@ -137,7 +137,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
 	   <div class="form-group row">
 	   <label class="control-label col-md-4">Item Name</label>
 	   <div class="col-md-8">
-			      <?= $form->field($model, 'title')->textinput(['class' => 'form-control title','autocomplete'=>'off','placeholder'=>'Item Name'])->label(false); ?>
+			      <?= $form->field($model, 'title', ['enableAjaxValidation' => true])->textinput(['class' => 'form-control title','autocomplete'=>'off','placeholder'=>'Item Name'])->label(false); ?>
 	   </div>
 	   </div>
 	   <div class="form-group row">
@@ -189,7 +189,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
 	   	   <div class="form-group row">
 	   <label class="control-label col-md-4">Category Unit</label>
 	   <div class="col-md-8">
-			      <?= $form->field($model, 'food_category_quantity')
+			      <?= $form->field($model, 'food_category_quantity', ['enableAjaxValidation' => true])
 				  ->dropdownlist([]
 				  ,['prompt'=>'Select'])->label(false); ?>
 	   </div></div>
@@ -201,7 +201,7 @@ foreach (Yii::$app->session->getAllFlashes() as $message) {
 	   	   <div class="form-group row">
 	   <label class="control-label col-md-4">Item Code</label>
 	   <div class="col-md-8">
-			      <?= $form->field($model, 'unique_id')->textinput(['class' => 'form-control'])->label(false); ?>
+			      <?= $form->field($model, 'unique_id', ['enableAjaxValidation' => true])->textinput(['class' => 'form-control'])->label(false); ?>
 	   </div></div>
 	   <div class="form-group row">
 	   <label class="control-label col-md-4">Taste Category</label>

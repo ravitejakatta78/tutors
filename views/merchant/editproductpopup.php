@@ -24,13 +24,13 @@ use yii\helpers\Url;
 	   <div class="form-group row">
 	   <label class="control-label col-md-4">Item Name</label>
 	   <div class="col-md-8">
-			      <?= $form->field($model, 'title')->textinput(['class' => 'form-control titleedit','onkeydown'=>'autocompleteproduct()' ,'placeholder'=>'Item Name'])->label(false); ?>
+			      <?= $form->field($model, 'title', ['enableAjaxValidation' => true])->textinput(['class' => 'form-control titleedit','onkeydown'=>'autocompleteproduct()' ,'placeholder'=>'Item Name'])->label(false); ?>
 	   </div>
 	   </div>
 	   <div class="form-group row">
 	   <label class="control-label col-md-4">Item Code</label>
 	   <div class="col-md-8">
-			      <?= $form->field($model, 'unique_id')->textinput(['class' => 'form-control titleedit','onkeydown'=>'autocompleteproduct()' ,'placeholder'=>'Item Code'])->label(false); ?>
+			      <?= $form->field($model, 'unique_id', ['enableAjaxValidation' => true])->textinput(['class' => 'form-control titleedit','onkeydown'=>'autocompleteproduct()' ,'placeholder'=>'Item Code'])->label(false); ?>
 	   </div>
 	   </div>
 	   <div class="form-group row">
@@ -92,7 +92,7 @@ use yii\helpers\Url;
 	   	   <div class="form-group row">
 	   <label class="control-label col-md-4">Category Unit</label>
 	   <div class="col-md-8">
-			      <?= $form->field($model, 'food_category_quantity')
+			      <?= $form->field($model, 'food_category_quantity', ['enableAjaxValidation' => true])
 				  ->dropdownlist([\yii\helpers\ArrayHelper::map(\app\models\FoodCategoryTypes::find()
 				  ->where(['merchant_id'=>Yii::$app->user->identity->merchant_id,'food_cat_id'=>$model->foodtype])
 				  

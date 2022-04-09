@@ -51,6 +51,10 @@ class Product extends \yii\db\ActiveRecord
             [['mod_date'], 'safe'],
             [['merchant_id', 'unique_id', 'taste_category'], 'string', 'max' => 50],
             [['reg_date'], 'string', 'max' => 20],
+            [['title','food_category_quantity'], 'productnameinsertunique','on'=>'insertproduct','message'=>'Name has already taken'],
+            [['title','food_category_quantity'], 'productnameupdateunique','on'=>'updateproduct','message'=>'Name has already taken'],
+            ['unique_id', 'productidinsertunique','on'=>'insertproduct'],
+            ['unique_id', 'productidupdateunique','on'=>'updateproduct'],
         ];
     }
 
@@ -83,5 +87,64 @@ class Product extends \yii\db\ActiveRecord
             'taste_range' => 'Taste Range'
 
         ];
+    }
+
+    public function productnameinsertunique($attribute,$param)
+    {
+        $validateCompleteArray = [];
+        $oldProductDet = Product::find()->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])->asArray()->all();
+        foreach($oldProductDet as $product){
+            $validateArray['newTitle'] = $product['title'] .'-'.$product['food_category_quantity'];
+            $validateCompleteArray[] = $validateArray['newTitle'];
+        }
+
+        if(in_array($this->$attribute.'-'.$this->food_category_quantity , $validateCompleteArray)){
+            $this->addError($attribute, 'Name Combination has already taken');
+        }
+    }
+    public function productnameupdateunique($attribute,$param)
+    {
+       $validateCompleteArray = [];
+       $oldDet = Product::find()
+            ->where(['unique_id' => $this->unique_id,'merchant_id' => Yii::$app->user->identity->merchant_id])
+            ->asArray()->One();
+        if(isset($oldDet) && @$oldDet[$attribute].'-'.@$oldDet['food_category_quantity'] != $this->$attribute.'-'.$this->food_category_quantity) {
+            $oldProductDet = Product::find()->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])->asArray()->all();
+            foreach($oldProductDet as $product){
+                $validateArray['newTitle'] = $product['title'] .'-'.$product['food_category_quantity'];
+                $validateCompleteArray[] = $validateArray['newTitle'];
+            }
+        }
+
+        if(in_array($this->$attribute.'-'.$this->food_category_quantity , $validateCompleteArray)){
+            $this->addError($attribute, 'Name Combination has already taken');
+        }
+
+    }
+    public function productidinsertunique($attribute,$param)
+    {
+        $validateCompleteArray = [];
+        $oldProductDet = Product::find()->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])->asArray()->all();
+        $oldProductId = array_column($oldProductDet,'unique_id');
+
+
+
+        if(in_array($this->$attribute, $oldProductId)){
+            $this->addError($attribute, 'Item Code has already taken');
+        }
+    }
+    public function productidupdateunique($attribute,$param)
+    {
+        $validateCompleteArray = [];
+        $oldDet = Product::find()
+            ->where(['title' => $this->title,'merchant_id' => Yii::$app->user->identity->merchant_id,'food_category_quantity' => $this->food_category_quantity])
+            ->asArray()->One();
+        if(isset($oldDet) && @$oldDet[$attribute] != $this->$attribute) {
+            $oldProductDet = Product::find()->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])->asArray()->all();
+            $oldProductId = array_column($oldProductDet,'unique_id');
+            if(in_array($this->$attribute, $oldProductId)){
+                $this->addError($attribute, 'Item Code has already taken');
+            }
+        }
     }
 }

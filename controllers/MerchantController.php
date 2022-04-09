@@ -72,7 +72,14 @@ class MerchantController extends GoController
 	->asArray()->all();
 
 	$model = new Product;
-	if ($model->load(Yii::$app->request->post()) ) {
+    $model->scenario = 'insertproduct';
+    // validate any AJAX requests fired off by the form
+    if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        return ActiveForm::validate($model);
+    }
+
+	if ($model->load(Yii::$app->request->post())) {
 		$productArr = Yii::$app->request->post('Product');
 		$model->merchant_id = (string)$merchantId;
 		$model->unique_id = !empty($productArr['unique_id']) ? $productArr['unique_id'] : Utility::get_uniqueid('product','PR');
@@ -565,6 +572,7 @@ else{
  		extract($_POST);
 		$merchantid = Yii::$app->user->identity->merchant_id;		
 		$model = new Product;
+        $model->scenario = 'updateproduct';
 		if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
 			Yii::$app->response->format = Response::FORMAT_JSON;
 			return ActiveForm::validate($model);
