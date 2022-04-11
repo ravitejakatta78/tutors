@@ -24,7 +24,7 @@ use Yii;
  * @property int $item_type 1=Veg 2=Non Veg
  * @property int $today_special 1=Yes 2=No
  * @property string $taste_category
- * @property int $taste_range  
+ * @property int $taste_range
  * @property string $reg_date
  * @property string $mod_date
  */
@@ -104,8 +104,8 @@ class Product extends \yii\db\ActiveRecord
     }
     public function productnameupdateunique($attribute,$param)
     {
-       $validateCompleteArray = [];
-       $oldDet = Product::find()
+        $validateCompleteArray = [];
+        $oldDet = Product::find()
             ->where(['unique_id' => $this->unique_id,'merchant_id' => Yii::$app->user->identity->merchant_id])
             ->asArray()->One();
         if(isset($oldDet) && @$oldDet[$attribute].'-'.@$oldDet['food_category_quantity'] != $this->$attribute.'-'.$this->food_category_quantity) {
@@ -124,12 +124,14 @@ class Product extends \yii\db\ActiveRecord
     public function productidinsertunique($attribute,$param)
     {
         $validateCompleteArray = [];
-        $oldProductDet = Product::find()->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])->asArray()->all();
+        $oldProductDet = Product::find()
+            ->select('UPPER(unique_id) unique_id')
+            ->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])->asArray()->all();
         $oldProductId = array_column($oldProductDet,'unique_id');
 
 
 
-        if(in_array($this->$attribute, $oldProductId)){
+        if(in_array(strtoupper($this->$attribute), $oldProductId)){
             $this->addError($attribute, 'Item Code has already taken');
         }
     }
@@ -137,12 +139,13 @@ class Product extends \yii\db\ActiveRecord
     {
         $validateCompleteArray = [];
         $oldDet = Product::find()
+            ->select('UPPER(unique_id) unique_id')
             ->where(['title' => $this->title,'merchant_id' => Yii::$app->user->identity->merchant_id,'food_category_quantity' => $this->food_category_quantity])
             ->asArray()->One();
         if(isset($oldDet) && @$oldDet[$attribute] != $this->$attribute) {
             $oldProductDet = Product::find()->where(['merchant_id'=>Yii::$app->user->identity->merchant_id])->asArray()->all();
             $oldProductId = array_column($oldProductDet,'unique_id');
-            if(in_array($this->$attribute, $oldProductId)){
+            if(in_array(strtoupper($this->$attribute), $oldProductId)){
                 $this->addError($attribute, 'Item Code has already taken');
             }
         }
